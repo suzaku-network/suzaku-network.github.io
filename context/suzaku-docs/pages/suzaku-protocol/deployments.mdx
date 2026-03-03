@@ -1,0 +1,138 @@
+import { Callout, Cards, Card } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+# Suzaku Protocol Contracts Deployments
+
+## Mainnet (Avalanche C-Chain)
+
+<Callout type="info">
+  Suzaku Protocol is deployed on Avalanche Mainnet with support for multiple collateral types.
+</Callout>
+
+### Core Infrastructure
+
+#### Factories & Registries
+
+| Contract                  | Address                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| DefaultCollateralFactory  | [0xE5296638Aa86BD4175d802A210E158688e41A93c](https://snowscan.xyz/address/0xE5296638Aa86BD4175d802A210E158688e41A93c) |
+| VaultFactory              | [0x3E669B3aEc2227f1454cDAd4B475a636e575694a](https://snowscan.xyz/address/0x3E669B3aEc2227f1454cDAd4B475a636e575694a) |
+| DelegatorFactory          | [0x657741f081e7c7Ea74cabb8e9C9004c913c8C2BE](https://snowscan.xyz/address/0x657741f081e7c7Ea74cabb8e9C9004c913c8C2BE) |
+| SlasherFactory            | [0x2eB000900452bCF56F607480F4872C07D45F4415](https://snowscan.xyz/address/0x2eB000900452bCF56F607480F4872C07D45F4415) |
+| L1Registry                | [0xaA59b19A7636bf6d821aA124A14eEE6C92746110](https://snowscan.xyz/address/0xaA59b19A7636bf6d821aA124A14eEE6C92746110) |
+| OperatorRegistry          | [0xCccb4eC6408bF2c9D057d63DAB01E55BB536936e](https://snowscan.xyz/address/0xCccb4eC6408bF2c9D057d63DAB01E55BB536936e) |
+| OperatorVaultOptInService | [0xE437b5EFA4c0717Ec15ACED13a82bBd8ce92da47](https://snowscan.xyz/address/0xE437b5EFA4c0717Ec15ACED13a82bBd8ce92da47) |
+| OperatorL1OptInService    | [0x48a990A31EC2B994A54f248BFD560954991Fa574](https://snowscan.xyz/address/0x48a990A31EC2B994A54f248BFD560954991Fa574) |
+| VaultHelper               | [0x9677f7E5fD716eAb3e8EFeD53fE22CB8968d95b8](https://snowscan.xyz/address/0x9677f7E5fD716eAb3e8EFeD53fE22CB8968d95b8) |
+
+#### Collateral Tokens
+
+| Contract                   | Address                                                                                                               |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Suzaku Token (SUZ)         | [0x451532F1C9eb7E4Dc2d493dB52b682C0Acf6F5EF](https://snowscan.xyz/address/0x451532F1C9eb7E4Dc2d493dB52b682C0Acf6F5EF) |
+| DefaultCollateral: sAVAX   | [0xE3C983013B8c5830D866F550a28fD7Ed4393d5B7](https://snowscan.xyz/address/0xE3C983013B8c5830D866F550a28fD7Ed4393d5B7) |
+| DefaultCollateral: BTC.b   | [0x203E9101e09dc87ce391542E705a07522d19dF0d](https://snowscan.xyz/address/0x203E9101e09dc87ce391542E705a07522d19dF0d) |
+| DefaultCollateral: AUSD    | [0xa53E127Bfd9C4d0310858D9D5Fcdf1D2617d4C41](https://snowscan.xyz/address/0xa53E127Bfd9C4d0310858D9D5Fcdf1D2617d4C41) |
+| DefaultCollateral: SolvBTC | [0x1D8bd363922465246A91B7699e7B32BAbf5FEF62](https://snowscan.xyz/address/0x1D8bd363922465246A91B7699e7B32BAbf5FEF62) |
+| DefaultCollateral: COQ     | [0x8F1dea444380A2DDC5e6669f508d235401CaEE5F](https://snowscan.xyz/address/0x8F1dea444380A2DDC5e6669f508d235401CaEE5F) |
+| DefaultCollateral: ggAVAX  | [0x0CEc099933F0Da490DFF91724b02e2203FAAf9Af](https://snowscan.xyz/address/0x0CEc099933F0Da490DFF91724b02e2203FAAf9Af) |
+| DefaultCollateral: SUZ     | [0xc96d4958f69db878190ec661ede04657458dce5a](https://snowscan.xyz/address/0xc96d4958f69db878190ec661ede04657458dce5a) |
+| DefaultCollateral: PLYR    | [0x45269Ef7A01062C2ffd1C56bF3B2D549B8FB6F82](https://snowscan.xyz/address/0x45269Ef7A01062C2ffd1C56bF3B2D549B8FB6F82) |
+
+### L1 Deployments
+
+<Callout type="info">
+  Suzaku Protocol supports multiple L1s with custom configurations. Below are the deployed L1 ecosystems.
+</Callout>
+
+#### PLYR L1 Staking Contracts
+
+| Contract                | Address                                                                                                               |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| PLYR Token (underlying) | [0xC09a033927f9fD558C92CF7AeAbE34B71ce4B31E](https://snowscan.xyz/address/0xC09a033927f9fD558C92CF7AeAbE34B71ce4B31E) |
+| DefaultCollateral: PLYR | [0x45269Ef7A01062C2ffd1C56bF3B2D549B8FB6F82](https://snowscan.xyz/address/0x45269Ef7A01062C2ffd1C56bF3B2D549B8FB6F82) |
+| VaultTokenized (sPLYR)  | [0xFEafE001E6080Be907A63C7492748c100541C48B](https://snowscan.xyz/address/0xFEafE001E6080Be907A63C7492748c100541C48B) |
+| L1RestakeDelegator      | [0xE29B991dB2cc0E764B455AF79c64C7296E3c19E4](https://snowscan.xyz/address/0xE29B991dB2cc0E764B455AF79c64C7296E3c19E4) |
+
+#### PLYR L1 Middleware Contracts
+
+| Contract                 | Address                                                                                                               |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| AvalancheL1Middleware    | [0x53C2C7428345D63139c32C3F5A11990373A99CB2](https://snowscan.xyz/address/0x53C2C7428345D63139c32C3F5A11990373A99CB2) |
+| BalancerValidatorManager | [0x5D8aBF189f5e167aD5b089d93828Dc091dD85690](https://snowscan.xyz/address/0x5D8aBF189f5e167aD5b089d93828Dc091dD85690) |
+
+## Testnet (Fuji)
+
+<Callout type="info">
+  Suzaku's Fuji testnet hosts the full suite of Core, Vault and Middleware
+  contracts on Avalanche Fuji for end‑to‑end testing.
+</Callout>
+
+### Underlying assets (mock tokens)
+
+| Contract               | Address                                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| UnderlyingAsset: sAVAX | [0x33f6229838948d14f022cc2bb4654b6d75745e79](https://testnet.snowscan.xyz/address/0x33f6229838948d14f022cc2bb4654b6d75745e79) |
+
+### Collateral contracts
+
+| Contract               | Address                                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| CollateralAsset: sAVAX | [0x59fbBa1845690Fb202d69a77CFEc5564df12D3DE](https://testnet.snowscan.xyz/address/0x59fbBa1845690Fb202d69a77CFEc5564df12D3DE) |
+| CollateralFactory      | [0x6441cA48f9d19E68e8AEb572De5c4836f8329903](https://testnet.snowscan.xyz/address/0x6441cA48f9d19E68e8AEb572De5c4836f8329903) |
+
+### Core factories, registries & services
+
+| Contract                  | Address                                                                                                                       |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| DelegatorFactory          | [0xC11D12ea4A2dcf67509A488585ff5120DccDceaA](https://testnet.snowscan.xyz/address/0xC11D12ea4A2dcf67509A488585ff5120DccDceaA) |
+| L1Registry                | [0xB9826Bbf0deB10cC3924449B93F418db6b16be36](https://testnet.snowscan.xyz/address/0xB9826Bbf0deB10cC3924449B93F418db6b16be36) |
+| OperatorL1OptInService    | [0x0360C1cB32A20D97b358538D9Db71339ce2c9592](https://testnet.snowscan.xyz/address/0x0360C1cB32A20D97b358538D9Db71339ce2c9592) |
+| OperatorRegistry          | [0x46D45D6be6214F6bd8124187caD1a5302755d7A2](https://testnet.snowscan.xyz/address/0x46D45D6be6214F6bd8124187caD1a5302755d7A2) |
+| OperatorVaultOptInService | [0xC30c9f7482B2ED82d0532812285295f8b7453941](https://testnet.snowscan.xyz/address/0xC30c9f7482B2ED82d0532812285295f8b7453941) |
+| SlasherFactory            | [0x143e7fe257010A3855DFfacD5dC0BFBAb181b8f4](https://testnet.snowscan.xyz/address/0x143e7fe257010A3855DFfacD5dC0BFBAb181b8f4) |
+| VaultFactory              | [0xC3b09a650c78daFb79e3C5B782402C8dc523fE88](https://testnet.snowscan.xyz/address/0xC3b09a650c78daFb79e3C5B782402C8dc523fE88) |
+| Owner                     | [0x2811086Bd8962C536264e711470f7ef9A783a5eB](https://testnet.snowscan.xyz/address/0x2811086Bd8962C536264e711470f7ef9A783a5eB) |
+
+### Vault instances
+
+| Contract     | Address                                                                                                                       |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Vault: sAVAX | [0x85F212C69f0C567011E1eCFf956dCc0014754A2c](https://testnet.snowscan.xyz/address/0x85F212C69f0C567011E1eCFf956dCc0014754A2c) |
+| Delegator    | [0x6484B25D84Fe78a1C051398eE6f3fFAb2B2c352f](https://testnet.snowscan.xyz/address/0x6484B25D84Fe78a1C051398eE6f3fFAb2B2c352f) |
+
+### Middleware (L1)
+
+| Contract            | Address                                                                                                                       |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| MiddlewareL1        | [0xbf9e863cF9F00f48D3Ed9D009515114365502569](https://testnet.snowscan.xyz/address/0xbf9e863cF9F00f48D3Ed9D009515114365502569) |
+| VaultManager        | [0xc892ef1A2AB00909fbc7d63B3b38DBf16ef56590](https://testnet.snowscan.xyz/address/0xc892ef1A2AB00909fbc7d63B3b38DBf16ef56590) |
+| ValidatorManager    | [0x84F2B4D4cF8DA889701fBe83d127896880c04325](https://testnet.snowscan.xyz/address/0x84F2B4D4cF8DA889701fBe83d127896880c04325) |
+| PrimaryAsset: sAVAX | [0x59fbBa1845690Fb202d69a77CFEc5564df12D3DE](https://testnet.snowscan.xyz/address/0x59fbBa1845690Fb202d69a77CFEc5564df12D3DE) |
+
+### Testnet Vault parameters (sAVAX)
+
+| Parameter             | Value         |
+| --------------------- | ------------- |
+| epochDuration (vault) | 3 600 s (1 h) |
+| depositWhitelist      | false         |
+| depositLimit          | 1 000 sAVAX   |
+| initialVaultVersion   | 1             |
+
+### Middleware parameters (L1)
+
+| Parameter                     | Value                       |
+| ----------------------------- | --------------------------- |
+| epochDuration (middleware)    | 1 800 s (30 min)            |
+| slashingWindow                | 2 100 s (35 min)            |
+| weightUpdateWindow            | 900 s (15 min)              |
+| primaryAssetMinStake          | 100 sAVAX (5000 L1 weight)  |
+| primaryAssetMaxStake          | 500 sAVAX (25000 L1 weight) |
+| primaryAssetWeightScaleFactor | 0.02                        |

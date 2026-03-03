@@ -1,0 +1,89 @@
+import { Callout, Cards, Card, Steps } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+# For L1 Builders
+
+Suzaku is meant to **support L1 builders** in every step of their journey.
+
+## What can be built with Suzaku?
+
+Suzaku is designed to help **Avalanche L1 builders** securely scale and decentralize their validator sets through (liquid) staking.
+
+The primary use case enabled by Suzaku is building **application-specific blockchains** (Appchains) and **general-purpose L1s**. The L1 is deployed as an [Avalanche L1](https://docs.avax.network/protocol/avalanche-l1s) and can use any [Avalanche VM](#avalanche-vms) and benefits from the [Avalanche Consensus](#avalanche-consensus).
+
+### The Avalanche stack
+
+We leverage the Avalanche stack to ensure Avalanche L1s can achieve the best performance without compromising scalability.
+
+#### Avalanche Consensus
+
+The [Avalanche Consensus](https://docs.avax.network/learn/avalanche-consensus) is one of the **best consensus protocols** available today. It offers **single-block immutable finality** (no fork/canonical chain) and can **scale to thousands of nodes** with minimal impact on performance.
+
+All chains deployed on Avalanche inherit the Avalanche Consensus.
+
+#### Avalanche VMs
+
+Avalanche is a highly flexible platform that supports various [Virtual Machines](https://docs.avax.network/learn/virtual-machines) (as long as they implement the standard interface) that network builders can choose from:
+
+- The **[Subnet EVM](https://github.com/ava-labs/subnet-evm)** allows building EVM-compatible blockchains with the support for custom [stateful precompiles](https://docs.avax.network/virtual-machines/evm-customization/introduction#stateful-precompiled-contracts) to extend their capabilities
+- **Custom VMs** can be built for maximal performance or flexibility.
+
+### Security modules
+
+Suzaku provides Avalanche L1s with **open-source security modules** to enable bootstrapping and scaling their cryptoeconomic security.
+
+The security modules are smart contracts deployed on the [Avalanche C-Chain](https://docs.avax.network/learn/primary-network#c-chain).
+
+#### Proof of Stake
+
+The **primary source of cryptoeconomic security** of a Proof of Stake (PoS) L1 is staking. Node operators are required to stake a minimum amount of the **L1 native token**.
+
+Suzaku offers a security module (built on top of [ACP-77](https://github.com/avalanche-foundation/ACPs/blob/main/ACPs/77-reinventing-subnets/README.md) and [ACP-99](https://github.com/avalanche-foundation/ACPs/pull/99)) to enforce a network’s **staking requirements**.
+
+#### PoA to PoS transition
+
+An Avalanche chain will typically **launch as a Proof of Authority** (PoA) network, where all the node operators are trustworthy partners of the project.
+
+As it scales and decentralizes, the network will transition to PoS. Suzaku provides a security module that allows a **smooth transition from PoA to PoS** by gradually opening the network to external operators.
+
+See [Progressive Decentralization](/suzaku-protocol/for-builders/progressive-decentralization) for more details.
+
+#### Liquid staking
+
+The most common architecture is a **single LST vault** for the L1, curated by the L1 team with technical support from the Suzaku team. The L1 team deploys the vault, and the community can stake their native tokens to receive LST tokens (e.g., `sPLYR`, `sALOT`).
+
+These LST tokens can be used across the DeFi ecosystem to earn additional yield while still contributing to the network's security. The vault delegates staked tokens to operators who run validators for the L1.
+
+See [How It Works](/suzaku-protocol/for-builders/how-it-works) for a detailed explanation of the dominant architecture.
+
+#### Restaking (Optional)
+
+Restaking is an **optional enhancement** that can significantly increase and stabilize the cryptoeconomic security of a network by tapping into existing shared collateral. This can be especially useful for TVL-intensive L1s.
+
+L1s can enable restaking from the beginning or add it at any time. Learn more in the [Dual Staking Model](/suzaku-protocol/for-builders/dual-staking-model) section.
+
+#### Slashing
+
+<Callout type="info">
+
+**Suzaku will launch without slashing.**  
+Slashing is a **very complex topic** and we are exercising caution to implement it, first because no other restaking marketplace has enabled it yet, and second because the Avalanche Primary Network doesn't use slashing and proved that is not a requirement to achieve decentralization.
+
+</Callout>
+
+If needed in the future, Suzaku can provide **unified slashing modules**—for example, based on validator uptime. Each network can opt-in, set its own parameters, or choose to use custom slashing mechanisms.
+
+
+
+### Operator tooling
+
+Onboarding operators to run Suzaku-secured L1s is highly efficient thanks to open-source tooling available out of the box in the Avalanche L1 ecosystem. This allows networks to scale and decentralize with ease.
+
+Learn more in the [operators' docs section](/suzaku-protocol/for-operators/operator-guide)

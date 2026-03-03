@@ -1,0 +1,69 @@
+import { Callout } from "nextra/components";
+
+# Progressive Decentralization
+
+The Suzaku Protocol enables Avalanche L1s to **progressively decentralize** their validator set.
+
+This model allows L1s to:
+
+1. Launch with a **Proof-of-Authority** (PoA) model. The list of validators is **controlled by the L1** team. They are operating the nodes themselves or delegate this to a trusted group of [**Operators**](/suzaku-protocol#operators).
+2. Switch to a an hybrid model (see [BalancerValidatorManager](#balancer-validator-manager)), by splitting the network weight in two: PoA and permissionless **Proof-of-Stake** (PoS) / **Dual staking**, enabling **permissionless Operators** to validate the network.
+3. **Gradually increase** the total **weight of the permissionless validator set** as the L1 matures.
+4. Reach **full decentralization** and remove the Proof-of-Authority validator set.
+
+## Lifecyle of an Avalanche L1 decentralized with Suzaku
+
+Let's take the example of an Avalanche L1 that wants to progressively decentralize using Suzaku.
+
+### Phase 1: Launch
+
+A **new Avalanche L1** launches on mainnet with their **native asset, \$TOKEN**, used as the gas token. The L1 has 5 validator nodes, operated by the L1 team. At this point, there is no concept of staking the native \$TOKEN, the L1 is **Proof-of-Authority (PoA)**.
+
+![Phase 1](/img/suzaku-protocol/balancervalidatormanager-1-poa.png)
+
+<Callout type="info">
+  During phase 1, the L1 is only using the
+  [`PoAValidatorManager`](https://github.com/ava-labs/icm-contracts/blob/v1.0.8/contracts/validator-manager/PoAValidatorManager.sol)
+  smart contract to manage the validator set.
+</Callout>
+
+### Phase 2: Open the L1 validation to permissionless Operators
+
+The L1 team upgrades the Validator Manager to a `BalancerValidatorManager` that manages a **PoA validator set** and a **permissionless validator set** through 2 "security modules".
+
+They decide to open **20%** of the L1 total weight to permissionless validators, keeping the other **80%** for the PoA validator set that they still manage.
+
+The permissionless validator set is managed through the **Suzaku `AvalancheL1Middleware`** contract, allowing the L1 to set up staking requirements for permissionless validators. Most L1s start with native token staking only, with restaking as an optional enhancement.
+
+![Phase 2](/img/suzaku-protocol/balancervalidatormanager-2-semi-permissioned.png)
+
+### Phase 3: Increase permissionless weight
+
+The L1 team progressively increases the total weight of the permissionless validator set to **80%** of the total weight. This can be done at their own pace, and at any time they want, according to the maturity of the L1.
+
+![Phase 3](/img/suzaku-protocol/balancervalidatormanager-3-increase-pos.png)
+
+<Callout type="info">
+  At any point, the L1 team can also decide to change the Dual staking
+  requirements, see [Dual staking
+  model](/suzaku-protocol/for-builders/dual-staking-model).
+</Callout>
+
+### Phase 4: Make the L1 100% permissionless
+
+![Phase 4](/img/suzaku-protocol/balancervalidatormanager-4-permissionless.png)
+
+Once the L1 team is confident with the maturity of the L1 and the good distribution of the stake and validator set, they move on to make the L1 **100% permissionless** by setting the weight managed by the `PoAValidatorManager` to **0**. Effectively turning the L1 into a **Proof-of-Stake (PoS)** L1.
+
+## Balancer Validator Manager
+
+[`BalancerValidatorManager`](https://github.com/suzaku-network/suzaku-contracts-library/blob/main/src/contracts/ValidatorManager/BalancerValidatorManager.sol) is a **[ACP-99](https://github.com/avalanche-foundation/ACPs/tree/main/ACPs/99-validatorsetmanager-contract)-compliant** smart contract that can be used to manage the validator set of Avalanche L1s.
+
+By allowing to **balance the weight** of an L1 between **multiple security modules**, the `BalancerValidatorManager` is a core component of the **progressive decentralization** model enabled by the Suzaku Protocol.
+
+These security modules can be any smart contract implementing the [`ISecurityModule`](https://github.com/suzaku-network/suzaku-contracts-library/blob/main/src/interfaces/ValidatorManager/ISecurityModule.sol) interface. The most common setup uses:
+
+- [`PoASecurityModule`](https://github.com/suzaku-network/suzaku-contracts-library/blob/main/src/contracts/ValidatorManager/SecurityModule/PoASecurityModule.sol): A Proof-of-Authority validator module for the L1 team to manage the initial validator set.
+- [`AvalancheL1Middleware`](https://github.com/suzaku-network/suzaku-contracts-library/blob/main/src/contracts/Middleware/AvalancheL1Middleware.sol): Manages Operator registration, Vault registration, stake accounting, and slashing for Avalanche L1s in the Suzaku Protocol (for permissionless validators).
+
+See [Protocol Specifications](/suzaku-protocol/protocol-specs#core-contracts) for more technical details.

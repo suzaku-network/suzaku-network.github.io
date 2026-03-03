@@ -1,0 +1,56 @@
+import { Callout } from "nextra/components";
+
+# SUZ Airdrops
+
+## Airdrops Allocation
+
+A total of **7.5% of the total SUZ supply** has been set aside to reward early protocol supporters through airdrops.
+
+## Suzaku Points Seasons
+
+Suzaku points are distributed during seasons.
+
+**Season 1 ended on July 31st 2025** and was used to determine the distribution of the first SUZ airdrop. **4.75% of the total SUZ supply** is allocated to this season.
+
+The remaining 2.75% of the supply will be distributed in upcoming seasons.
+
+## Suzaku Season 1 Airdrop
+
+The season 1 airdrop will be distributed as follows:
+
+- 50% of the airdrop will be distributed as unlocked SUZ tokens
+- 50% of the airdrop will be distributed as sSUZ (staked SUZ) that will be vesting linearly over 6 months
+
+<Callout type="info">
+  Users who have an airdrop < 375 SUZ will receive it entirely as unlocked SUZ tokens.
+</Callout>
+
+For more information about sSUZ, see [SUZ Staking](/suz-token/suz-staking).
+
+### Claiming the airdrop
+
+The airdrop is powered by [Sablier](https://sablier.com).
+
+You can check your eligibility and claim your airdrop on our dApp at [app.suzaku.network/airdrop](https://app.suzaku.network/airdrop).
+
+### Airdrop points boost
+
+To incentivize virtuous behavior for SUZ airdrop recipients, a **special points boost** is in place for upcoming seasons.
+
+The baseline for the points boost is: if the airdrop recipient has more SUZ tokens staked than their airdrop amount, they get a points boost relative to the extra amount of tokens staked.
+The maximum points boost a user can reach is 2x.
+
+The points boost for a staker $s$ for an hour $h$ is given by:
+
+$\Large B_{s}(h) = \min (\max (\frac {s_s(h)}{A_{s}}, 2),1)$
+
+Where:
+
+- $s_s(h)$ represents the amount of sSUZ tokens of the staker $s$ at the hour $h$
+- $A_s$ represents the amount of sSUZ tokens airdropped to the staker $s$ in season 1
+
+As a concrete example, given a staker who received a total airdrop of 6,000 SUZ and 6,000 sSUZ:
+
+- If they stake all their SUZ airdrop (totalling 12,000 sSUZ), this translates to a boost of $\frac {12,000}{6,000}=2$x for their points
+- If they only stake 3,000 SUZ (totalling 9,000 sSUZ), this translates to a boost of $\frac {9,000}{6,000}=1.5$x for their points
+- If they don't stake any SUZ, this translates to no boost for their points

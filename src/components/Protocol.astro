@@ -1,0 +1,109 @@
+---
+import Card from "@/components/Card.astro";
+---
+
+<section id="protocol" class="py-24 px-6 border-t border-white/10">
+  <div class="max-w-5xl mx-auto">
+    <p class="type-label text-suzaku-green/80 mb-4">The protocol</p>
+    <h2 class="type-heading mb-4">Progressive decentralization, built in.</h2>
+    <p class="type-subheading text-white/40 mb-16 max-w-2xl">
+      Our protocol connects L1 teams, stakers, and operators around a
+      shared security model. L1s move from PoA to PoS at their own pace. No
+      contract migration. No disruption.
+    </p>
+
+    <!-- Phases -->
+    <p class="type-label text-white/50 mb-6">Decentralization phases</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+      <Card padding="sm">
+        <div class="type-label text-white/50 mb-3">Phase 1</div>
+        <div class="type-card-title text-white mb-3">Full PoA</div>
+        <p class="type-body text-white/50">
+          The L1 team controls the entire validator set. Centralized, fast, and
+          fully controlled.
+        </p>
+      </Card>
+      <Card padding="sm">
+        <div class="type-label text-white/50 mb-3">Phase 2</div>
+        <div class="type-card-title text-suzaku-green mb-3">First PoS slice</div>
+        <p class="type-body text-white/50">
+          The BalancerValidatorManager (ACP-99) splits validator weight between
+          PoA and permissionless PoS. Most L1s open at 10&ndash;20% PoS.
+        </p>
+      </Card>
+      <Card padding="sm">
+        <div class="type-label text-white/50 mb-3">Phase 3</div>
+        <div class="type-card-title text-suzaku-green mb-3">Growing PoS weight</div>
+        <p class="type-body text-white/50">
+          Raise the PoS share progressively as the network matures and
+          confidence grows. No rush, no migration required.
+        </p>
+      </Card>
+      <Card padding="sm">
+        <div class="type-label text-white/50 mb-3">Phase 4</div>
+        <div class="type-card-title text-suzaku-green mb-3">Full PoS</div>
+        <p class="type-body text-white/50">
+          Set PoA weight to zero. 100% permissionless. The L1 is fully
+          community-secured.
+        </p>
+      </Card>
+    </div>
+
+    <!-- Participants -->
+    <p class="type-label text-white/50 mb-6">Protocol participants</p>
+    <div class="grid md:grid-cols-3 gap-5 mb-16">
+      <Card>
+        <div class="type-card-title text-suzaku-green mb-3">L1 teams</div>
+        <p class="type-body text-white/50">
+          Deploy and curate an LST vault. Set staking requirements and operator
+          conditions. Define the security model for their network. Our team
+          handles the technical setup and ongoing support.
+        </p>
+      </Card>
+      <Card>
+        <div class="type-card-title text-suzaku-green mb-3">Stakers</div>
+        <p class="type-body text-white/50">
+          Deposit native L1 tokens, receive an LST in return. Keep liquidity
+          while securing the network. Earn L1 token rewards and AVAX
+          incentives. Already live: sALOT on Dexalot.
+        </p>
+      </Card>
+      <Card>
+        <div class="type-card-title text-suzaku-green mb-3">Operators</div>
+        <p class="type-body text-white/50">
+          Professional node runners. Opt in to L1s and vaults of their
+          choosing, run validators, earn rewards based on uptime. More
+          operators means a higher Nakamoto coefficient.
+        </p>
+      </Card>
+    </div>
+
+    <!-- Auditors -->
+    <div>
+      <p class="type-label text-white/50 mb-8">Audited by</p>
+      <div class="flex flex-wrap items-center gap-10">
+        <a href="https://www.cyfrin.io/" target="_blank" rel="noopener noreferrer">
+          <img
+            src="/partners/auditors/cyfrin-logo.svg"
+            alt="Cyfrin"
+            class="w-44 h-auto object-contain opacity-50 hover:opacity-90 transition-opacity"
+          />
+        </a>
+        <a href="https://omniscia.io/" target="_blank" rel="noopener noreferrer">
+          <img
+            src="/partners/auditors/omniscia-logo.svg"
+            alt="Omniscia"
+            class="w-44 h-auto object-contain opacity-50 hover:opacity-90 transition-opacity"
+          />
+        </a>
+        <a href="https://www.octane.security/" target="_blank" rel="noopener noreferrer">
+          <img
+            src="/partners/auditors/octane-logo.svg"
+            alt="Octane"
+            class="w-44 h-auto object-contain opacity-50 hover:opacity-90 transition-opacity"
+          />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

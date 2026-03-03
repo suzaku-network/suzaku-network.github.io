@@ -1,0 +1,187 @@
+import { Callout, Cards, Card } from "nextra/components";
+import Image from "next/image";
+
+<Cards>
+  <Card
+    title="🚀 (Re)stake now to earn Suzaku points!"
+    href="https://app.suzaku.network"
+    target="_blank"
+  />
+</Cards>
+
+# Suzaku Points
+
+Stakers **earn Suzaku points** by depositing their assets into the protocol.
+
+## Understanding Suzaku points
+
+Suzaku Points are a measure-of-engagement with the Suzaku protocol during its launch phase. These **points reflect participation and contribution to the ecosystem's growth**. While they may influence future token distributions, their primary purpose is to recognize and reward early adopters and active participants.
+
+## Suzaku points system overview
+
+The **Suzaku points system** is designed to fairly reward participants based on their contributions. Here's a high-level overview of how points are calculated:
+
+1. **Assets**: Points are earned based on **what assets a staker deposits on the protocol**.
+
+2. **Value**: The USD value of deposits is a key factor in point calculation.
+
+3. **Multipliers**: The system includes **Early Bird periods** to encourage early participation. Additionally, **each asset can have a specific multiplier**. **DeFi integrations** will also have specific multipliers.
+
+<Callout type="info">Points are updated every day.</Callout>
+
+### The points formula
+
+The baseline Suzaku points formula is: `3 points per day per USD`; on top of which are added multipliers.
+
+The number of points $P_{st}(h)$ accrued by a staker $s$ for a given token $t$ during hour $h$ is given by:
+
+$\Large P_{st}(h) =  \frac {a_{st}(h) \cdot p_t(h) \cdot m_t(h)}{24} \cdot 3 \cdot M(h) \cdot \prod_{i=1}^n D_{i}(h) \cdot \max_{j \in J}(C_{sj}(h)) \cdot R_{s}(h)$
+
+Where:
+
+- $a_{st}(h)$ represents the amount in token $t$ deposited by staker $s$ at hour $h$.
+- $p_{t}(h)$ represents the price in USD of token $t$ at hour $h$.
+- $m_{t}(h)$ represents the multiplier for token $t$ at hour $h$.
+- $M(h)$ represents the global (Early Bird) multiplier active at hour $h$.
+- $D_{i}(h)$ represents the multiplier for DeFi integration $i$ at hour $h$.  
+  Note that **DeFi integrations multipliers are cumulative**, e.g. you can deposit an asset into an LRT (DeFi integration #1) and provide liquidity for this LRT on a DEX (DeFi integration #2).
+- $C_{sj}(h)$ represents the multiplier for community partner $j$ for staker $s$ at hour $h$.  
+  Note that only **the highest multiplier** from all community partners is applied.
+- $R_s(h)$ represents the multiplier for referral code of staker $s$ at hour $h$.
+
+<Callout type="info">
+  The Suzaku points system is subject to refinement as we gather community
+  feedback and optimize the protocol. Any significant updates will be clearly
+  communicated through official Suzaku channels.
+</Callout>
+
+## Suzaku points seasons
+
+Suzaku points are split into seasons, that are used to determine the distribution of the SUZ token and other partners' airdrops and rewards.
+
+Here are the start and end dates of the seasons unveiled so far:
+
+| Season | Start date           | End date             |
+| ------ | -------------------- | -------------------- |
+| 1      | 2024-10-09 15:00 UTC | 2025-07-31 15:00 UTC |
+| 2      | 2025-07-31 15:00 UTC | TBD                  |
+
+## Early Bird multipliers
+
+To encourage early participation, the Suzaku points system will have two special periods with increased multipliers:
+
+| Period                   | Start date              | End date              | Multiplier |
+| ------------------------ | ----------------------- | --------------------- | ---------- |
+| **Launch period**        | Suzaku Restaking launch | 3 months after launch | 2x         |
+| **Bootstrapping period** | 3 months after launch   | 5 months after launch | 1.5x       |
+
+Specific dates for these periods will be announced through official Suzaku channels.
+
+## Supported assets
+
+At launch, the Suzaku points will be allocated to deposits in the following assets with the following multipliers:
+
+| Asset       | Token address on Avalanche C-Chain                                                                                    | Multiplier |
+| ----------- | --------------------------------------------------------------------------------------------------------------------- | ---------- |
+| **SUZ**     | [0x451532f1c9eb7e4dc2d493db52b682c0acf6f5ef](https://snowtrace.io/token/0x451532f1c9eb7e4dc2d493db52b682c0acf6f5ef)   | 3x         |
+| **sAVAX**   | [0x2b2c81e08f1af8835a78bb2a90ae924ace0ea4be](https://snowtrace.io/token/0x2b2c81e08f1af8835a78bb2a90ae924ace0ea4be)   | 1.2x       |
+| **BTC.b**   | [0x152b9d0fdc40c096757f570a51e494bd4b943e50](https://snowtrace.io/token/0x152b9d0fdc40c096757f570a51e494bd4b943e50)   | 1.5x       |
+| **AUSD**    | [0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a](https://snowtrace.io/token/0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a)   | 1.8x       |
+| **SolvBTC** | [0xbc78D84Ba0c46dFe32cf2895a19939c86b81a777](https://snowtrace.io/token/0xbc78D84Ba0c46dFe32cf2895a19939c86b81a777)   | 1.2x       |
+| **COQ**     | [0x420FcA0121DC28039145009570975747295f2329](https://snowtrace.io/token/0x420FcA0121DC28039145009570975747295f2329)   | 1.5x       |
+| **stAVAX**  | [0xA25EaF2906FA1a3a13EdAc9B9657108Af7B703e3](https://snowtrace.io/token/0xA25EaF2906FA1a3a13EdAc9B9657108Af7B703e3)   | 1.2x       |
+| **PLYR**    | [0xC09a033927f9fD558C92CF7AeAbE34B71ce4B31E](https://snowtrace.io/address/0xC09a033927f9fD558C92CF7AeAbE34B71ce4B31E) | 2.5x       |
+
+Each asset plays a unique role in the ecosystem. Additional assets may be added in the future as the protocol evolves.
+
+## DeFi integrations
+
+The following DeFi integrations are supported:
+
+| DeFi integration                                                       | Multiplier      |
+| ---------------------------------------------------------------------- | --------------- |
+| **Milk LRTs** by [Yield Yak](https://yieldyak.com/avalanche/)          | 1.5x            |
+| **LRT DEX pools** on [Blackhole](https://blackhole.xyz/)               | 1.25x           |
+| **LRT points/yield trading** on [Stable Jack](https://stablejack.xyz/) | 1.5x (baseline) |
+
+<Callout type="info">
+  You can check your Suzaku points accrued from DeFi integrations on the [Suzaku
+  DeFi page](https://app.suzaku.network/defi).
+</Callout>
+
+### Disabled DeFi integrations
+
+The following DeFi integrations are disabled and **don't accrue points** at the moment:
+
+| DeFi integration                                     |
+| ---------------------------------------------------- |
+| **LRT DEX pools** on [LFJ](https://lfj.gg/avalanche) |
+
+## Referrals
+
+### Program overview
+
+The Suzaku referral program rewards both referrers and users who use referral codes. Here's what you need to know:
+
+- **Referrer Rewards**: Referrers receive the equivalent of 10% of their 1st degree referred users' points and 2% of their 2nd degree referred users' points (without affecting the referred users' earnings)
+- **User Benefits**: Users who deposit with a referral code receive a points multiplier based on the referral code's total TVL:
+
+  | Total Value Locked (TVL) tied to the referral code | Points multiplier |
+  | -------------------------------------------------- | ----------------- |
+  | Less than \$25k                                    | 1.1x              |
+  | \$25k to \$50k                                     | 1.2x              |
+  | \$50k to \$100k                                    | 1.3x              |
+  | \$100k or more                                     | 1.5x              |
+
+- **Transparency**: Track program performance on [Dune Analytics](https://dune.com/suzaku/dashboard)
+
+### How it works
+
+1. **Get Your Link**: Connect your wallet to [Suzaku app](https://app.suzaku.network) to generate your unique referral code
+2. **Share**: Use the `Copy Link` button to copy your link or click the `Share on X` button to share directly on X
+
+<Image
+  src="/img/suzaku-protocol/suzaku-referral-link.png"
+  alt="referral-link"
+  width={350}
+  height={350}
+  style={{ margin: "2rem auto", display: "block" }}
+/>
+
+<Callout type="warning">
+  Linking your address to a referral code is **permanent** and applies to all
+  future deposits.
+</Callout>
+
+## Kaito / Arena Champion Incentives Program
+
+The [Kaito](https://kaito.ai) / [Arena](https://arena.social) Champions Incentives Program rewards eligible community members with Suzaku points and multiplier bonuses.
+
+### Program overview
+
+Eligible participants receive:
+
+- 200,000 Suzaku Points
+- 1.5x Points Multiplier (applied at airdrop)
+
+### How it works
+
+1. **Connect your wallet**: Connect your wallet to the [Suzaku app](https://app.suzaku.network)
+
+2. **Sign in with your X Account**: Navigate to the [link-x page](https://app.suzaku.network/link-x) and sign in with your X account.
+
+3. **Link your account**: Each X account can only be linked to one wallet address, and each wallet address can only be linked to one X account.
+
+4. **Verify eligibility**: Upon successful verification, eligible participants will receive confirmation of their rewards allocation.
+
+## Our commitment to transparency
+
+Suzaku is dedicated to maintaining transparency in the points system. Points are calculated using Dune Analytics. You can view the calculations on the official [Suzaku Dune query](https://dune.com/queries/4105667). While calculations are performed off-chain for efficiency, we are committed to providing clear explanations and updates about the process.
+
+## Participant feedback
+
+Your input is valuable! If you notice any inconsistencies or have suggestions for improving the points system, please share your thoughts through our community platforms. We're committed to fostering an open dialogue and continuously enhancing the Suzaku experience.
+
+## Important note
+
+Suzaku points are designed to measure and reward participation. They are not financial instruments and do not guarantee any future benefits. Always refer to official Suzaku communications for the most up-to-date information on the points system and its potential implications.

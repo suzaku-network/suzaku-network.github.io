@@ -1,0 +1,61 @@
+import { Cards, Card } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+# Suzaku Relayer Network
+
+The Suzaku Relayer Network (SuzakuRN) is an **Avalanche L1** that supercharges the [InterChain Messaging (ICM)](https://docs.avax.network/cross-chain/avalanche-warp-messaging/overview) protocol with critical properties: censorship resistance, liveness, and validity.
+
+## InterChain Messaging Primer
+
+### Protocol overview
+
+[InterChain Messaging](https://docs.avax.network/cross-chain/interchain-messaging/overview) enables **trustless cross-chain communications** between Avalanche networks without relying on any trusted third party. ICM is an efficient protocol that verifies message integrity using cryptographic signatures from validators of the origin chain. While **off-chain relayers are needed to transfer messages** from the source chain to the destination chain, they **cannot submit invalid messages** (that the source chain did not sign).
+
+#### ICM vs IBC
+
+ICM and IBC ([Inter-Blockchain Communication Protocol](https://tutorials.cosmos.network/academy/3-ibc/)) used in the [Cosmos](https://cosmos.network/) ecosystem, are both trustless protocols relying on verifiable proofs without needing to trust the messages relayer.
+
+ICM differs in architecture as it **does not require light clients** on both ends of the connection. Connecting Avalanche L1s is streamlined since ICM is integrated within Avalanche Network Clients (ANCs). This integration is facilitated because all Avalanche validator nodes utilize the [P-Chain](https://docs.avax.network/learn/primary-network#p-chain) as a registry for their public signing keys, enabling validators from any chain to verify signatures generated on other network chains.
+
+### ICM limitations
+
+- **Subject to censorship:** if 2 networks rely on a limited number of entities to relay messages between their chains, these entities could **collude to censor messages** (permanently or temporarily, e.g. to increase MEV profit) or **be subject to outages**, with the same outcome for users.
+- **Subject to hacks:** ICM messages rely on validator BLS keys for signing. If an attacker successfully compromises a sufficient number of keys from a small Avalanche source chain, they could **forge cross-chain messages** that do not correspond to genuine on-chain state transitions. Since the destination chain validates these messages solely based on the public BLS keys registered on the P-Chain, such **fraudulent messages would be accepted**, potentially leading to unintended actions (e.g. unlock bridged assets) and disruptions within the ecosystem.
+- **Difficult to incentivize:** ICM relayers **pay gas fees on the destination chain** to deliver messages. Therefore, they require an **incentive to relay messages**. [Teleporter](https://github.com/ava-labs/teleporter), the EVM-compatible overlay on top of ICM, allows to **attach a bounty to each message**, that the relayer can claim after successful message delivery. Yet, the gas fees to be paid on the destination chain often require **another token** than the relayer incentive. This implies that relayers have the burden of (i) constantly **calculating if messages are worth relaying** and (ii) constantly **rebalancing gas tokens between chains**.
+
+## SuzakuRN
+
+To address these limitations, the Suzaku Relayer Network relies on a **decentralized set of relayers** to **maximize liveness**, **eliminate censorship**, **simplify incentive schemes**, and **reduce the attack surface** for messages from small networks.
+
+### Liveness and censorship-resistance
+
+The primary goal of SuzakuRN is to enforce censorship resistance upon ICM relayers, by:
+
+- **Ensuring liveness:** we make sure that each route between two Avalanche chains has a sufficient number of allocated relayers operated by different entities.
+- **Penalizing bad-behaving relayers:** each relayer has to stake an amount of $SUZ to join SuzakuRN. Each message detected by the network is attributed to a group of relayers. If a relayer repeatedly fails to deliver messages in time, its stake will be slashed.
+
+### Notary service
+
+To protect against hacks due to BLS key leakage (see above), Avalanche chains can opt-in to the Suzaku _Notary_ service, where the Suzaku Relayer Network will **act as a circuit breaker**, **only relaying** messages that:
+
+- **Result from valid state transitions** on the source chain
+- **Do not conflict** with the previously relayed messages (in the case of double signing)
+
+For more detailed information about the concept of _notary_, see [this post](https://github.com/avalanche-foundation/ACPs/discussions/71#discussioncomment-8933615) by Aaron Buchwald, Software engineer at Ava Labs.
+
+### Simplified incentive schemes
+
+SuzakuRN allows Avalanche L1s to simplify the incentive schemes used to reward relayers:
+
+- The L1 team **subsidizes the relaying gas fees** on its chain, removing (i) the need for relayers to perform complex computations to make sure that relaying a message is worth it
+- The L1 team pays a **fixed fee per message relayed** to their chain. The fees can be paid in \$SUZ, \$AVAX, or \$USDC, and they are in any case converted to $SUZ before being redistributed to relayers.
+- Relayers are **rewarded in a single currency**: $SUZ (the Suzaku token)
+
+A nice side effect of this incentive scheme is that **users will only pay gas on the source L1** upon bridging.

@@ -1,0 +1,144 @@
+---
+---
+
+<section id="risks" class="py-24 px-6 border-t border-white/10">
+  <div class="max-w-5xl mx-auto">
+    <p class="type-label text-suzaku-green/80 mb-4">The risks</p>
+    <h2 class="type-heading mb-4">What's really at stake</h2>
+    <p class="type-subheading text-white/40 mb-16 max-w-2xl">
+      Centralized validator sets carry invisible risks. Until a hack, an
+      outage, or a legal order makes them very real.
+    </p>
+
+    <!-- Risk carousel -->
+    <div id="risk-carousel" class="mb-8">
+      <!-- Progress bars -->
+      <div class="flex gap-2 mb-6">
+        <button
+          class="risk-tab flex-1 h-1 rounded-full bg-white/10 overflow-hidden cursor-pointer"
+          data-index="0"
+          aria-label="Bridged TVL theft"
+        >
+          <div class="risk-fill h-full w-0 bg-suzaku-gradient rounded-full"></div>
+        </button>
+        <button
+          class="risk-tab flex-1 h-1 rounded-full bg-white/10 overflow-hidden cursor-pointer"
+          data-index="1"
+          aria-label="Liveness failure"
+        >
+          <div class="risk-fill h-full w-0 bg-suzaku-gradient rounded-full"></div>
+        </button>
+        <button
+          class="risk-tab flex-1 h-1 rounded-full bg-white/10 overflow-hidden cursor-pointer"
+          data-index="2"
+          aria-label="Censorship & capture"
+        >
+          <div class="risk-fill h-full w-0 bg-suzaku-gradient rounded-full"></div>
+        </button>
+      </div>
+
+      <!-- Tiles -->
+      <div class="relative">
+        <div
+          class="risk-tile border border-suzaku-green rounded-lg p-8 bg-white/[0.02]"
+          data-tile="0"
+        >
+          <div class="type-card-title text-suzaku-green mb-4">Bridged TVL theft</div>
+          <p class="type-body text-white/50">
+            If enough validators are controlled by a single party, an attacker
+            can drain every asset bridged onto your chain. With a low Nakamoto
+            coefficient, that threshold is dangerously easy to reach.
+          </p>
+        </div>
+        <div
+          class="risk-tile hidden border border-white/10 rounded-lg p-8 bg-white/[0.02]"
+          data-tile="1"
+        >
+          <div class="type-card-title text-suzaku-green mb-4">Liveness failure</div>
+          <p class="type-body text-white/50">
+            A small validator set is a single point of failure. One outage, one
+            compromised machine, one provider going down. Your chain halts.
+            Decentralization is your uptime guarantee.
+          </p>
+        </div>
+        <div
+          class="risk-tile hidden border border-white/10 rounded-lg p-8 bg-white/[0.02]"
+          data-tile="2"
+        >
+          <div class="type-card-title text-suzaku-green mb-4">Censorship &amp; capture</div>
+          <p class="type-body text-white/50">
+            Concentrated validator ownership can be coerced by regulators,
+            attackers, or internal disputes. A single point of control is a
+            single point of failure for your entire chain.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 border border-suzaku-teal/20 rounded-lg bg-suzaku-teal/[0.04]">
+      <p class="type-body text-white/60">
+        <span class="text-suzaku-green font-extrabold">OpSec exploits are on a streak.</span>
+        ByBit lost $1.4B in February 2025. Swissborg lost $41.5M in September
+        2025. As smart contract security improves, infrastructure becomes the
+        primary attack vector. Your L1's service providers are not immune.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes fillBar {
+    from { width: 0% }
+    to   { width: 100% }
+  }
+  .risk-fill.animating {
+    animation: fillBar 5s linear forwards;
+  }
+</style>
+
+<script>
+  const DURATION = 5000;
+
+  const tiles = document.querySelectorAll<HTMLElement>(".risk-tile");
+  const tabs  = document.querySelectorAll<HTMLElement>(".risk-tab");
+  const fills = document.querySelectorAll<HTMLElement>(".risk-fill");
+
+  let current = 0;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  function activate(index: number) {
+    tiles.forEach((t, i) => {
+      t.classList.toggle("hidden", i !== index);
+      t.classList.toggle("border-suzaku-green", i === index);
+      t.classList.toggle("border-white/10", i !== index);
+    });
+    fills.forEach((f) => {
+      f.classList.remove("animating");
+      void (f as HTMLElement).offsetWidth;
+    });
+    fills[index].classList.add("animating");
+    current = index;
+
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => activate((current + 1) % tiles.length), DURATION);
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      activate(Number(tab.dataset.index));
+    });
+  });
+
+  const carousel = document.getElementById("risk-carousel");
+  carousel?.addEventListener("mouseenter", () => {
+    if (timer) clearTimeout(timer);
+    fills[current].style.animationPlayState = "paused";
+  });
+  carousel?.addEventListener("mouseleave", () => {
+    fills[current].style.animationPlayState = "running";
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => activate((current + 1) % tiles.length), DURATION);
+  });
+
+  activate(0);
+</script>

@@ -1,0 +1,259 @@
+import { Callout, Cards, Card, Steps } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+---
+
+# Curator Guide
+
+<Callout emoji="🚧">This section is under construction.</Callout>
+
+## Suzaku Core Curator interactions
+
+**Requirements**
+- [suzaku-cli](https://github.com/suzaku-network/suzaku-cli/) installed
+- A private key for the **Curator** with AVAX balance on the C-Chain
+
+### L1RestakeDelegator deployment
+
+<Callout emoji="🚧">This section is under construction.</Callout>
+
+``` bash copy
+git clone git@github.com:suzaku-network/suzaku-deployer.git && suzaku-deployer
+forge install
+```
+
+```bash copy
+export PK=0x...
+export FUJI_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
+export VERIFY_URL=https://api-testnet.snowscan.xyz/api
+export ETHERSCAN_API_KEY=your_snowscan_key...
+
+```
+
+### Set L1 limit
+
+DONE BY THE L1???
+
+```bash copy
+DELEGATOR=0x6484B25D84Fe78a1C051398eE6f3fFAb2B2c352f
+L1_LIMIT=100000000000000000000000
+ASSET_CLASS=1
+pnpm cli --network fuji --private-key $PK set-l1-limit $DELEGATOR $BALANCER_VALIDATOR_MANAGER $L1_LIMIT $ASSET_CLASS
+```
+
+The arguments are:
+- `DELEGATOR` it the address of the `L1RestakeDelegator`
+- `L1_LIMIT` is the maximum stake the L1 can receive from the `L1RestakeDelegator`. It is set to an arbitrary high value of 200,000 sAVAX in the example and can be adapted accordingly.
+- `ASSET_CLASS` is `1` since we are setting the maxium stake for the Primary Asset Class. 
+
+### Set Operator shares for a L1
+
+```bash copy
+DELEGATOR=0x6484B25D84Fe78a1C051398eE6f3fFAb2B2c352f
+BALANCER_VALIDATOR_MANAGER=...
+OPERATOR=0xfFF4224c953682C0866cb45643512D8Eee6eB608
+SHARES=10
+ASSET_CLASS=1
+pnpm cli --network fuji --private-key $PK set-operator-l1-shares $DELEGATOR $BALANCER_VALIDATOR_MANAGER $OPERATOR $SHARES $ASSET_CLASS
+```
+
+The arguments are:
+- `DELEGATOR` it the address of the `L1RestakeDelegator`.
+- `BALANCER_VALIDATOR_MANAGER`: The `BalanceValidatorManager` address
+- `OPERATOR` is the address of the Operator receiving the delegated shares. `0xfFF4224c953682C0866cb45643512D8Eee6eB608` is a testnet Operator managed by the [Ash](https://ash.center/) team.
+- `SHARES` is the number of shares delegated to the Operator
+- `ASSET_CLASS` is `1` since we are setting delegated shares for the Primary Asset Class. 
+
+<Callout type="info">
+`pnpm cli --network fuji get-operators` can be used to get the list of registered Suzaku Operators.
+</Callout>
+
+At this point and if there is enough stake in the Vault, the Operator is ready to start validating the L1, see [Operator Guide](/suzaku-protocol/for-operators/operator-guide).
+
+## Collateral Class Selection
+
+When setting up a **Vault**, one of the key decisions is selecting the **Collateral** token. This token must match one of the Collateral classes supported by the L1 chain(s) the Curator wants to delegate to.
+
+<Callout type="info">
+Each Collateral token belongs to exactly one Collateral class (primary or secondary) for each L1. For detailed information on Collateral classes, see [Collateral Classes](/suzaku-protocol/for-builders/collateral-class).
+</Callout>
+
+- **Primary Collateral:** The L1's native token or a derivative. Required for validators to meet the L1's requirement.
+- **Secondary Collateral:** Additional tokens (such as stablecoins or other assets) required in L1s using dual-staking for additional security.
+
+A Vault can only hold one type of Collateral. Curators need to choose which class they want to support based on market availability, liquidity, and the L1 requirements they want to meet.
+
+## Vault Configuration
+
+Vaults can be created with the `DeployVaultFull.s.sol` script, which ultimately calls `IVaultTokenized.initialize()`. The key parameters to set are:
+
+**Initial Setup**
+- **`collateral`**: The Collateral token stakable into the Vault. This must match L1 staking requirements that have this Collateral in one of their asset classes (primary or secondary).  
+- **`epochDuration`**: Time (in seconds) for each vault epoch (e.g., `604800` = 7 days). This determines the cycle for deposits and withdrawals.  
+
+**Deposit Settings**
+- **`depositWhitelist`**: Whether to restrict Collateral deposits to addresses in the allowlist.  
+- **`isDepositLimit` / `depositLimit`**: These parameters determine whether to cap the total Vault deposit amount.  
+
+**Admin Roles**
+- **`defaultAdminRoleHolder`**: The top-level admin address (can be `0x0` if the Vault needs to be immutable).  
+- Additional role holders can be set for managing whitelists, deposit limits, and other functions.
+
+**Delegator**
+- **`L1RestakeDelegator`** contract is set through the deployment script and is immutable. Once chosen, it **cannot** be replaced.
+- This contract controls how stake is allocated to different L1s and operators.
+
+**Slashing Configuration**
+Because Suzaku's principal slashing is unimplemented, `address(0)` should be passed for the **slasher**—no actual token burn will occur.
+
+<Callout type="info">
+  The configuration of a Vault is critical as many parameters are immutable. Choose settings carefully based on your staking strategy and security requirements.
+</Callout>
+
+## Delegator Module
+
+When a Vault is deployed, the `L1RestakeDelegator.sol` contract controls how the stake is distributed among L1s and operators:
+
+### Key Configuration Functions
+
+- `setL1Limit(l1, collateralClassId, amount)`  
+  - Sets how much total stake goes to a specific L1 (up to `amount`)
+  - This limit should be less than the `maxL1Limit` set by the Avalanche L1
+  - Controls the maximum exposure to any single L1 network
+
+- `setOperatorL1Shares(l1, collateralClassId, operator, shares)` 
+  - Assigns a portion of the Vault's stake to a specific operator on a specific L1
+  - Uses a share-based allocation system for flexibility
+
+### Stake Distribution Formula
+
+The operator's final stake is calculated as:
+```
+operator_stake = (operator_shares / total_shares_for_L1) * min(vault_active_stake, l1Limit)
+```
+
+This formula ensures:
+- Fair distribution based on relative shares
+- Adherence to both Vault active stake and L1 limits previously defined
+- Dynamic adjustment as Vault stake or limits change
+
+<Callout type="info">
+   Stake allocations to the operator can be updated by users holding the `OPERATOR_L1_SHARES_SET_ROLE` role.
+</Callout>
+
+## Vault L1 Limits
+
+The curator needs to ensure:
+
+1. The L1 is already registered in the `L1Registry` and available for delegation.
+
+2. The L1 has set a maximum stake limit (`maxL1Limit`) in the Delegator contract.
+
+3. Sets its own L1 limit in the Delegator, which must be smaller than the L1's `maxL1Limit`:
+   ```solidity
+   L1RestakeDelegator.setL1Limit(l1, collateralClassId, myMaxForThisChain);
+   ```
+
+For more information on the L1 onboarding, review the [For L1 Builders](/suzaku-protocol/for-builders) section.
+
+<Callout type="info">
+  If the Vault's **Collateral** token isn't recognized in the L1's Collateral classes, delegation is not possible.
+</Callout>
+
+---
+
+## Operator Stake Allocation
+
+The Curators responsibility regarding operators is to allocate stake to those that are already registered and opted in to the Vault and to the L1s it wants to secure.
+
+### Allocating Stake to Operators
+
+Before allocating stake, the Vault has to ensure the operator has:
+- Registered in Suzaku's `OperatorRegistry`
+- Opted into the Vault
+- Opted into the L1 they wish to validate
+
+Once confirmed, the Vault can allocate stake shares using the Suzaku CLI:
+```bash copy
+pnpm cli --network fuji set-operator-l1-shares <delegatorAddress> <l1Address> <operatorAddress> <shares> <collateralClassId> 
+```
+
+<Callout type="info">
+  For more information on the Suzaku CLI, you can visit the [suzaku-cli repository](https://github.com/suzaku-network/suzaku-cli/) on GitHub. Clone the repository and follow the installation instructions to get started with the CLI commands.
+</Callout>
+
+
+## Deposit & Withdrawal Mechanics
+
+### Deposits
+- `vault.deposit(onBehalfOf, amount)`  
+  - Mints "active shares" representing the user's stake portion.  
+  - Checks whitelist and/or deposit‑cap flags if they’re enabled.
+
+### Withdrawals
+
+- **Step 1 – Withdraw (inside epoch N)**  
+  - Call `vault.withdraw(claimer, amount)`.  
+  - Users active shares are burned; *withdrawal shares* are minted and locked until the epoch ends.
+
+- **Step 2 – Cool‑down (entire epoch N + 1)**  
+  - Nothing for the user to do.  
+  - Withdrawal shares mature during this full epoch.
+
+- **Step 3 – Claim (from the start of epoch N + 2 onward)**  
+  - Call `vault.claim(recipient, epoch)`.  
+  - Withdrawal shares are burned and the Collateral is transferred.
+
+**Max wait**  
+Time from the initial `withdraw` call to the first block where `claim` is possible is at most **2 × epochDuration** seconds.
+
+<Callout type="info">
+  The Vault updates `activeStake` each epoch. Delegated stake is derived from `activeVaultBalance`.
+</Callout>
+
+
+## Detailed Parameter Explanations
+
+1. **`collateral`**  
+   - The ERC-20 token for staking. Must appear in the L1's Collateral class.
+
+2. **`burner`**  
+   - Address for slashed tokens.
+
+3. **`epochDuration`**  
+   - Epoch length in seconds.
+
+4. **`depositWhitelist`** (`bool`)  
+   - `true` → deposit only from whitelisted addresses.  
+
+5. **`isDepositLimit`** (`bool`)  
+   - `true` → enforce global deposit cap.  
+
+6. **`depositLimit`** (`uint256`)  
+   - The max total deposit if `isDepositLimit` is `true`.
+
+7. **`defaultAdminRoleHolder`**  
+   - Address with `DEFAULT_ADMIN_ROLE`. Can grant/revoke any role.
+
+8. **`depositWhitelistSetRoleHolder`**  
+   - Admin to enable/disable `depositWhitelist`.
+
+9. **`depositorWhitelistRoleHolder`**  
+   - Admin to manage whitelisted addresses.
+
+10. **`isDepositLimitSetRoleHolder`**  
+    - Admin to enable/disable deposit cap.
+
+11. **`depositLimitSetRoleHolder`**  
+    - Admin to change numeric `depositLimit`.
+
+12. **`name` and `symbol`**  
+    - For the ERC-20 Vault share token.
+

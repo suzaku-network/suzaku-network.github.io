@@ -1,0 +1,86 @@
+import { Callout, Cards, Card, Steps } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+---
+
+# Introduction
+
+<Callout emoji="🚧">This section is under construction.</Callout>
+
+A **Curator** is responsible for managing a **Vault** and its delegation strategy, distributing users' stake across different L1s while balancing risk and rewards. They play a crucial role in determining how pooled stake is allocated and managed.
+
+## Curator-Managed Contracts
+
+### Suzaku Vaults
+
+The Vault [VaultTokenized.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/vault/VaultTokenized.sol) is an upgradable contract. It's the core component that converts deposited Collateral into ERC20-like shares representing each user's stake. It provides Curators with the ability to:
+
+- Set deposit and withdrawal rules and limits at deployment
+- Configure Vault epochs that determine withdrawal timelines
+- Manage stake delegation across operators and Avalanche L1s via the Delegator contract
+- Track historical records of stake and share balances
+
+This design allows Curators to manage user funds safely while directing stake to validators.
+
+### Delegator Contract
+The Delegator contract manages how pooled stake from Vaults is distributed across L1 networks and operators. It calculates effective stake per operator to ensure optimal allocation of resources.
+
+The implementation includes:
+- [BaseDelegator.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/delegator/BaseDelegator.sol): Provides core functionality with checkpointing for historical records
+- [L1RestakeDelegator.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/delegator/L1RestakeDelegator.sol): Extends the base contract with specific implementation
+
+Key functions include:
+- `setL1Limit`: Controls how much stake goes to each L1
+- `setOperatorL1Shares`: Determines stake allocation per operator
+
+The contract calculates effective stake based on Vault active stake, L1 limits, and operator share ratios, while integrating with opt-in services and registries to verify eligible operators and L1s. Security is maintained through role-based permissions.
+
+## Curator-Accessible Contracts
+
+### Permissionless contracts
+
+- **Vault Factory:** This contract is responsible for deploying new Vaults and managing their lifecycle. It ensures that only approved implementations are used and maintains a registry of all Vault entities. ([VaultFactory.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/VaultFactory.sol))
+
+- **Delegator Factory:** Whitelists delegator implementations. A new implementation contract—with, for example, new slashing logic or shares distribution logic—must be whitelisted in the official Delegator Factory before being used. ([DelegatorFactory.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/DelegatorFactory.sol))
+
+- **Operator-Vault Optin service:** Actively used when a Vault registers to determine which operators it wants to work with. This service facilitates the permissionless opt-in of operators by Vaults. [OperatorVaultOptInService.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/service/OperatorVaultOptInService.sol)
+
+- **Operator Registry:** A permissionless registry that records and manages eligible operators. It maintains a list of operators that Curators can delegate stake to. ([OperatorRegistry.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/OperatorRegistry.sol))
+
+- **L1 Registry:** A permissionless registry that records and manages eligible Avalanche-based L1 networks. Curators can delegate stake from their Vaults to these registered L1s. ([L1Registry.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/L1Registry.sol))
+
+### External Permissioned Contracts
+
+- **Vault Manager:** This contract manages the registration of Vaults by the L1, sets maximum stake limits, and ensures Vaults comply with the network's operational parameters. ([MiddlewareVaultManager.sol](https://github.com/suzaku-network/suzaku-core/blob/main/src/contracts/middleware/MiddlewareVaultManager.sol))
+
+## Integration Flow
+A high-level checklist for integrating a new Vault into Suzaku:
+
+<Steps>
+  ### Create & configure a Vault
+  - Deploy Vault with appropriate Collateral token, epoch duration, and deposit settings
+  - Configure the Delegator contract to manage stake allocation
+
+  ### Onboard L1s
+  - L1s register themselves on Suzaku's `L1Registry`
+  - Curator sets stake limits for each L1 via `setL1Limit(l1, collateralClassId, amount)`
+
+  ### Onboard operators
+  - Operators register on Suzaku and opt in to the Vault and desired L1s
+  - Curator allocates shares to operators with `setOperatorL1Shares(l1, collateralClassId, operator, shares)`
+
+  ### Deposit stake
+  - Stakers deposit Collateral in the Vault
+  - Stake is automatically routed based on curator configurations
+</Steps>
+
+<Callout type="info">
+  At present, there is **no slasher** module, so these settings can be ignored.
+</Callout>

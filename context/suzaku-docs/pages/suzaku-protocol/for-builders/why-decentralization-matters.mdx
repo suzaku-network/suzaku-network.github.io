@@ -1,0 +1,98 @@
+import { Callout, Cards, Card } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+# Why Decentralization Matters
+
+**Decentralization is a spectrum**. It is costly, hard to measure, and it seems like most users don't care at all. So a legitimate question is: **does it really matter?** 
+
+The truth is, **most of the time, it doesn't**. But when it is eventually put to the test, you'd better hope your network is decentralized _enough_, or **you might lose just about everything**.
+
+## What's Really at Risk on an L1?
+
+Several properties come to mind when we think about what we expect from a "decentralized" L1:
+
+- **Liveness:** the network continues to operate even if some nodes fail or go offline
+- **Censorship resistance:** no single entity can block or reverse transactions
+- **Credible neutrality:** the network enforces rules impartially, treating all participants equally
+
+But we often forget **the most important: the security of user funds**, and more specifically, of **bridged assets**. If all your users lose their funds, you can probably say goodbye to your project.
+
+## Weaknesses of Avalanche ICM for Small L1s
+
+In the context of Avalanche, an L1 communicates with other chains (especially with the C-Chain for access to liquidity and integrations) using **ICM (InterChain Messaging)**, and pays a rent (L1 validator fee) in AVAX to the P-Chain for that.
+
+While extremely efficient, **ICM has known weaknesses**, specifically for chains with a **low number of validators**, and more importantly, for chains with a **low Nakamoto coefficient**.
+
+### The BLS Key Compromise Risk
+
+ICM messages rely on validator BLS keys for signing. If an attacker successfully compromises a sufficient number of keys from a small Avalanche source chain, they could **forge cross-chain messages** that do not correspond to genuine on-chain state transitions. 
+
+Since the destination chain validates these messages solely based on the public BLS keys registered on the P-Chain, such **fraudulent messages would be accepted**, potentially leading to unintended actions (e.g. unlock bridged assets) and disruptions within the ecosystem.
+
+**The risk increases dramatically when the Nakamoto coefficient is low** (i.e., when a small number of entities control a large portion of the network). If an attacker can compromise just 67% of the validator keys, they can forge messages and potentially drain bridged assets.
+
+### The TVL at Risk
+
+The amount of value at risk is directly proportional to the **Total Value Locked (TVL)** in bridged assets. For L1s with significant DeFi activity or cross-chain bridges, this can represent millions or even billions of dollars.
+
+## OpSec Hacks: A Growing Threat
+
+**OpSec (Operational Security) hacks have been on a recent streak**. Just in recent years:
+
+- **ByBit lost $1.4 billion** in February 2025 because of a Safe multisig front-end exploit
+- **Swissborg lost $41.5 million** in September 2025 because of a Kiln (staking) API exploit
+
+As AI auditing tools strengthen the robustness of smart contracts, the primary remaining attack vector becomes OpSec exploits: infrastructure hacks (front-end, DNS, API), social engineering attacks, and supply chain attacks.
+
+If **the biggest players in Web3 can be breached** (Kiln was the biggest staking provider in crypto before being hacked), everyone is at risk: the blockchain service providers, the L1 teams, etc.
+
+## The Nakamoto Coefficient
+
+The **Nakamoto coefficient** is the minimum number of entities (validators, operators, etc.) that would need to collude to control more than 50% of the network.
+
+For small L1s with only a few validators, the Nakamoto coefficient is often **1 or 2**, meaning:
+- A single point of failure (SPOF) exists
+- If one validator is compromised, the entire network could be at risk
+- If two validators collude, they could control the network
+
+**To minimize risk, you need a Nakamoto coefficient of at least 2**, meaning at least 3 different entities control the network. Of course, the higher the Nakamoto coefficient, the more you reduce risk. And you also improve the other properties of the chain: liveness, censorship resistance, and credible neutrality.
+
+<Callout type="info">
+**Decentralized ≠ Permissionless**
+
+Reaching an acceptable decentralization level **doesn't require being permissionless**: onboarding 2 trustworthy partners to your chain and giving them 20% of the network weight each already eliminates the SPOF.
+</Callout>
+
+## The Other Attack Vector: Validator Set Control
+
+When we talk about **the validator set**, there are **the hardware operators**, but there is also the **selection mechanism**: how are validators selected to secure the network?
+
+On Avalanche, since the Etna (a.k.a. Avalanche9000) upgrade, an **L1 validator set is managed through smart contracts** (the Validator Manager contracts). A lot of different security models can be implemented: Proof of Authority, Proof of Stake, etc. Suzaku offers a way to transition from one to the other.
+
+Like any smart contract, the security ultimately comes down to: **who has admin rights?** (in PoA, who can add/remove validators at will) And **who has upgrade rights?** (can change the security model and reshape the validator set). If both those accounts are **EOAs (Externally Owned Accounts)**, you've found yourself a **SPOF** again.
+
+**Critical validator set management functions** must be either **secured by multiple parties** (multisig, governance) or immutable.
+
+## The First Steps Toward Decentralization
+
+For the average project, it is **nearly impossible to start as an L1 network distributed** among many participants. But as we've seen, the **first steps toward decentralization** go a long way in drastically reducing risks.
+
+Suzaku enables **progressive decentralization**, allowing L1s to:
+1. Start with a small, trusted validator set (PoA)
+2. Gradually open to permissionless validators (PoS)
+3. Increase the weight of permissionless validators over time
+4. Eventually reach full decentralization
+
+This approach allows L1s to **eliminate single points of failure** while maintaining control during the early stages of growth.
+
+## Learn More
+
+For a deeper dive into L1 decentralization risks and best practices, read our full article: [Why L1 Decentralization Matters (More than You Think)](https://www.suzaku.network/post/why-l1-decentralization-matters-more-than-you-think)
+

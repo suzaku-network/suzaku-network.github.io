@@ -1,0 +1,126 @@
+# L1 Auditor
+
+Suzaku L1 Auditor is a tool that helps L1 teams **audit the security of their network** through the lens of decentralization.
+
+Go to **[auditor.suzaku.network](https://auditor.suzaku.network)** now to audit any Avalanche L1.
+
+## L1 Stages
+
+L1s are classified into 4 stages based on their decentralization progress:
+
+- **Stage 0: Insufficient decentralization** with negative impact on bridged TVL security, liveness and censorship resistance
+- **Stage 1: Minimal decentralization** that eliminates single points of failure for bridged TVL and liveness
+- **Stage 2: Good decentralization** that ensures bridged TVL security, liveness and censorship resistance
+- **Stage 3: TBD**
+
+Those stages are subject to change. They are currently based on a **proposal made by the Suzaku team in an ongoing discussion** in the ACP (Avalanche Community Proposal) forum: [Nuttymoon comment in discussion #249](https://github.com/avalanche-foundation/ACPs/discussions/249#discussioncomment-15015386).
+
+## Decentralization Metrics
+
+The following metrics are used to determine the stage of each L1:
+
+### Stage 1
+
+#### Validator set management is not controlled by a single EOA
+
+> **Category:** Bridged TVL Security
+
+A breach of a single EOA could lead to validator set changes and potential loss of funds bridged to the L1. This can be enforced by setting up multisignature wallet ownership or governance-based security.
+
+<details>
+<summary>**Methodology used**</summary>
+
+We analyze onchain data to determine the ultimate ownership of the `ValidatorManager` contract of the L1.
+
+</details>
+
+#### Each operator controls strictly less than 67% of the L1 total weight
+
+> **Category:** Bridged TVL Security
+
+A single operator's breach could lead to a loss of all funds bridged to the L1.
+
+<details>
+<summary>**Methodology used**</summary>
+
+- **For non-Suzaku-secured L1s**  
+  We look at the ownership of each validator on the P-Chain: if a single P-Chain address controls multiple validators, we know that they belong to the same operator. But if validators are controlled by different P-Chain addresses, we cannot be sure that they belong to different operators.
+- **For Suzaku-secured L1s**  
+  We use the operator registry of the protocol. We can attribute ownership of all validators with certainty.
+
+</details>
+
+#### The L1 has at least 5 validators
+
+> **Category:** Liveness
+
+Below this threshold, any single validator failure would halt the chain.
+
+<details>
+<summary>**Methodology used**</summary>
+
+We analyze onchain data to determine the number of validators on the L1.
+
+</details>
+
+### Stage 2
+
+#### No more than 20% of the L1 total weight is controlled by a single operator
+
+> **Category:** Liveness
+
+A single operator failure would halt the chain.
+
+<details>
+<summary>**Methodology used**</summary>
+
+- **For non-Suzaku-secured L1s**  
+  We look at the ownership of each validator on the P-Chain: if a single P-Chain address controls multiple validators, we know that they belong to the same operator. But if validators are controlled by different P-Chain addresses, we cannot be sure that they belong to different operators.
+- **For Suzaku-secured L1s**  
+  We use the operator registry of the protocol. We can attribute ownership of all validators with certainty.
+
+</details>
+
+#### No more than 20% of the L1 total weight is hosted on a single data center
+
+> **Category:** Liveness
+
+Concentration in a single data center creates a critical infrastructure failure point.
+
+<details>
+<summary>**Methodology used**</summary>
+
+We use the IP addresses of the validators to determine the data center they are hosted in.
+
+</details>
+
+#### All validators are hosted in OFAC-compliant jurisdictions
+
+> **Category:** Liveness
+
+Validators in sanctioned jurisdictions expose the L1 to compliance risk and potential forced censorship of transactions.
+
+<details>
+<summary>**Methodology used**</summary>
+
+We use the IP addresses of the validators to determine the jurisdiction they are hosted in.
+
+</details>
+
+#### The L1 has multiple RPC endpoints operated by different entities
+
+> **Category:** Censorship Resistance
+
+**Not implemented yet**
+
+A single operator's outage could lead to censorship of user transactions.
+
+#### Validator ownership of more than 67% of the L1 total weight is verified at the social layer
+
+> **Category:** Verifiability
+
+**Not implemented yet**
+
+### Stage 3
+
+The L1 Auditor doesn't yet support this stage.

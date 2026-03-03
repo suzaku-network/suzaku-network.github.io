@@ -1,0 +1,28 @@
+---
+import { Icon } from "astro-icon/components";
+import { SOCIAL_LINKS } from "@/data/navigation";
+
+interface Props {
+  iconClass?: string;
+  linkClass?: string;
+}
+
+const {
+  iconClass = "w-5 h-5",
+  linkClass = "text-white/30 hover:text-white/70 transition-colors",
+} = Astro.props;
+---
+
+{
+  SOCIAL_LINKS.map((link) => (
+    <a
+      href={link.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={link.label}
+      class={linkClass}
+    >
+      <Icon name={link.icon} class={iconClass} />
+    </a>
+  ))
+}

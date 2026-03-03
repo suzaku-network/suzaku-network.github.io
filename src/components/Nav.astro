@@ -1,0 +1,126 @@
+---
+import { Icon } from "astro-icon/components";
+import SocialLinks from "@/components/SocialLinks.astro";
+import { NAV_LINKS } from "@/data/navigation";
+---
+
+<nav id="main-nav" class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
+  <div class="max-w-4xl w-full">
+    <!-- Pill bar -->
+    <div
+      class="flex items-center justify-between bg-suzaku-black/90 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3"
+    >
+      <a href="#" aria-label="Back to top">
+        <img
+          src="/brand/suzaku-logo-color-white-horizontal.svg"
+          alt="Suzaku"
+          class="h-7"
+        />
+      </a>
+
+      <!-- Desktop: section links -->
+      <div class="hidden md:flex items-center gap-7">
+        {
+          NAV_LINKS.map((link) => (
+            <a
+              href={link.href}
+              class="type-caption text-white/50 hover:text-white transition-colors"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+
+      <!-- Desktop: socials + CTA -->
+      <div class="hidden md:flex items-center gap-4">
+        <SocialLinks iconClass="w-4 h-4" />
+        <div class="w-px h-4 bg-white/10"></div>
+        <a
+          href="https://forms.gle/US695J3BYoy8tztu9"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="type-btn-sm text-suzaku-black bg-suzaku-gradient px-4 py-1.5 rounded hover:opacity-90 transition-opacity"
+        >
+          Get in touch →
+        </a>
+      </div>
+
+      <!-- Mobile: burger button -->
+      <button
+        id="burger-btn"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+        class="md:hidden text-white/60 hover:text-white transition-colors p-1"
+      >
+        <Icon id="icon-open" name="lucide:menu" class="w-6 h-6" />
+        <Icon id="icon-close" name="lucide:x" class="w-6 h-6 hidden" />
+      </button>
+    </div>
+
+    <!-- Mobile dropdown -->
+    <div
+      id="mobile-menu"
+      class="hidden mt-2 bg-suzaku-black/95 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-5 flex-col gap-4"
+    >
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            class="mobile-nav-link type-body text-white/60 hover:text-white transition-colors py-1"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <div class="border-t border-white/10 pt-4 flex items-center gap-5">
+        <SocialLinks iconClass="w-5 h-5" />
+        <a
+          href="https://forms.gle/US695J3BYoy8tztu9"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="ml-auto type-btn-sm text-suzaku-black bg-suzaku-gradient px-4 py-1.5 rounded hover:opacity-90 transition-opacity"
+        >
+          Get in touch →
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const btn = document.getElementById("burger-btn") as HTMLButtonElement;
+  const menu = document.getElementById("mobile-menu") as HTMLDivElement;
+  const iconOpen = document.getElementById("icon-open") as HTMLElement;
+  const iconClose = document.getElementById("icon-close") as HTMLElement;
+
+  function openMenu() {
+    menu.classList.remove("hidden");
+    menu.classList.add("flex");
+    iconOpen.classList.add("hidden");
+    iconClose.classList.remove("hidden");
+    btn.setAttribute("aria-expanded", "true");
+  }
+
+  function closeMenu() {
+    menu.classList.add("hidden");
+    menu.classList.remove("flex");
+    iconOpen.classList.remove("hidden");
+    iconClose.classList.add("hidden");
+    btn.setAttribute("aria-expanded", "false");
+  }
+
+  btn.addEventListener("click", () => {
+    const isOpen = btn.getAttribute("aria-expanded") === "true";
+    isOpen ? closeMenu() : openMenu();
+  });
+
+  document.querySelectorAll(".mobile-nav-link").forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("click", (e) => {
+    const nav = document.getElementById("main-nav");
+    if (nav && !nav.contains(e.target as Node)) closeMenu();
+  });
+</script>

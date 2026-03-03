@@ -1,0 +1,25 @@
+import { Callout } from "nextra/components";
+
+# LST-as-a-Service
+
+The Suzaku Protocol is flexible enough to be used as a **Liquid Staking Token (LST)-as-a-Service** framework for Avalanche L1s.
+
+## How does it work?
+
+Let's take the example of an L1 that wants to allow a partner to issue an LST of their native token \$TOKEN using the Suzaku Protocol.
+
+1. The **L1 team** uses Suzaku Protocol's [`DefaultCollateralFactory`](/suzaku-protocol/deployments#mainnet-avalanche-c-chain) to create a new collateral based on the \$TOKEN used for the L1.
+
+<Callout type="info">
+If the L1 native token is not deployed on the C-Chain, the L1 team can use **[Avalanche Interchain Messaging](https://github.com/ava-labs/icm-contracts) (ICM)** to bridge the native token of their L1 to an ERC-20 token on the C-Chain.
+</Callout>
+
+2. The **LST issuer** creates a **Vault** accepting the new collateral and issues an ERC-20 token representing [**stakers**](/suzaku-protocol#stakers)' positions in the Vault, thus creating an \$sTOKEN LST (name is arbitrary). The LST issuer becomes a [**Curator**](/suzaku-protocol#curators) of the Suzaku protocol.
+
+3. The **LST issuer** registers as an [**Operator**](/suzaku-protocol#operators) and **opts-in** to the L1 and their own **Vault**.
+
+4. The **LST issuer** (or a **third-party provider** acting as an **Operator**) is now a validator of the L1. Rewards emitted by the L1 can be distributed to the stakers of the LST or value-accrued by the LST.
+
+<Callout type="info">
+**Collaterals**, **Vaults**, [**Operators**](/suzaku-protocol#operators) are core components of the Suzaku Protocol. See the [Protocol Specifications](/suzaku-protocol/protocol-specs#core-contracts) for more details.
+</Callout>

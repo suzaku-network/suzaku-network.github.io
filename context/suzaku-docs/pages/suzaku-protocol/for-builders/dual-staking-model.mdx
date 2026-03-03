@@ -1,0 +1,70 @@
+import { Callout } from "nextra/components";
+
+# Dual Staking Model
+
+<Callout type="info">
+**Restaking is optional.** L1s can enable restaking from the beginning or add it at any time as an enhancement to increase and stabilize cryptoeconomic security.
+</Callout>
+
+The Suzaku Protocol allows Avalanche L1s to implement a **dual staking** model for validator nodes, requiring [**Operators**](/suzaku-protocol#operators) to:
+
+- Stake the L1 native token
+- (Re)stake a whitelisted collateral
+
+**Important:** The weight of each validator is determined **only by the native token stake**. The restaked collateral acts as an **additional requirement** to join the network, providing extra security but not contributing to validator weight.
+
+## When is Dual Staking Useful?
+
+Dual staking (restaking) is an **optional feature** that can be useful for L1s in specific situations. L1s can enable restaking from the beginning or add it at any point during their lifecycle.
+
+Launching a new Proof-of-Stake L1 is **hard**. To launch and decentralize its chain, the L1 developer must:
+
+1. Ensure the L1 is secure enough to **protect bridged assets**
+2. **Incentivize stakers** (and delegators) to buy the L1 token and stake it with validators
+
+### Cryptoeconomic security problematics
+
+If only relying on its native token for security, an L1 is subject to the **early death spiral risk**:
+
+- L1 token price drops → **security weakens**
+- Users panic and leave the chain → **TVL drops**
+- L1 token price drops lower, etc.
+
+![Death Spiral](/img/suzaku-protocol/death-spiral-risk.png)
+
+### Staker incentives problematics
+
+The L1 native token, often an new and volatile market asset can be a **risk for holders**. As a result, a new L1 must offer high APY rates to attract stakers, often in the range of 15-20%, which leads to high selling pressure.
+
+In a "dual-staking" security setup, the L1 team can **complement its native L1 token** with a **blue-chip restaked token** in its validator requirements.
+
+Blue-chip token holders secure **multiple L1s simultaneously**, allowing lower APYs per L1, e.g. 1-1.5%.
+
+To elaborate on that: AVAX liquid-stakers earn 5.5-7% APY, increasing this yield by 4-6% is already **significant** for them.
+
+## How does Dual Staking work in Suzaku?
+
+L1s that want to enable restaking use the **`AvalancheL1Middleware`** contract (see [Progressive Decentralization](/suzaku-protocol/for-builders/progressive-decentralization)).
+
+This smart contract allows the L1 team to:
+
+1. Define a **Primary Asset** (the L1 native token) and its minimum and maximum stake required per validator
+   - The **validator weight** is determined solely by the amount of primary asset (native token) staked
+2. (Optionally) Define a **Secondary Asset** (e.g. a whitelisted collateral such as \$sAVAX) and its minimum stake required per validator
+   - Secondary assets act as an **additional requirement** to join the network but do not contribute to validator weight
+3. (Optionally) Define more **Secondary Assets** and their minimum stake required
+
+If secondary assets are defined, an **Operator** must stake at least the minimum amount of each secondary asset **in addition to** the primary asset to become a validator of the L1. However, only the primary asset stake determines the validator's weight in the network.
+
+<Callout type="info">
+  If more than one secondary asset is defined, an **Operator** has to stake the
+  minimum amount of each secondary asset to become a validator.
+</Callout>
+
+### How to choose the Secondary Asset?
+
+**Liquid staking tokens (LSTs)** (e.g. \$sAVAX or \$stAVAX) are a good fit for most L1s since their stakers are already familiar with the concept of staking and are already earning rewards. Using an LST as a secondary asset effectively implements **restaking** as a security model for the L1.
+
+**Stablecoins** (e.g. \$USDC) are a good fit for L1s that want a very stable cryptoeconomic security, uncorrelated from the cryptocurrency market movements.
+
+**Bitcoin-aligned** L1s can use **wrapped Bitcoin** (e.g. \$BTC.b) as a secondary asset. Bitcoin has 2 great properties: its holders have low requirements in terms of APY, and it is less volatile than other cryptocurrencies while still reflecting the overall market movements.
