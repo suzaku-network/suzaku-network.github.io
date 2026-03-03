@@ -1,0 +1,3 @@
+[submodule "suzaku-docs"]
+	path = suzaku-docs
+	url = git@github.com:suzaku-network/suzaku-docs.git
