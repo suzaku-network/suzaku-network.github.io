@@ -1,144 +1,256 @@
 ---
+import NewsCard from "@/components/NewsCard.astro";
+
+const ARTICLE_URL = "https://suzaku.network/blog/why-l1-decentralization-matters-more-than-you-think";
+const ARTICLE_LABEL = "Why L1 Decentralization Matters (More Than You Think)";
+
+const cards = [
+  {
+    tags: ["Bridged TVL"],
+    headline: "Hackers Drain All L1 TVL After Key Compromise",
+    body: "If a single entity controls more than 67% of your L1's total weight, accessing their keys allows to bridge out all the TVL of your chain.",
+  },
+  {
+    tags: ["Liveness"],
+    headline: "Operator Outage Causes L1 Halt for 6 Hours",
+    body: "More than 20% of your network going offline will cause your chain to halt, and temporarily prevent all transactions from being processed.",
+  },
+  {
+    tags: ["Censorship"],
+    headline: "AWS Blocks Access to Funds After Legal Order",
+    body: "Cloud providers are private actors that can be coerced by regulators, and they can block access to funds after a legal order.",
+  },
+  {
+    tags: ["Hacks"],
+    headline: "ByBit: $1.4B. Swissborg: $41.5M. Nobody is safe.",
+    body: "As smart contract security improves, attackers look for OpSec failures. Any centralized setup will eventually be breached, whether it's your team or your service providers.",
+  },
+];
 ---
 
-<section id="risks" class="py-24 px-6 border-t border-white/10">
-  <div class="max-w-5xl mx-auto">
-    <p class="type-label text-suzaku-green/80 mb-4">The risks</p>
-    <h2 class="type-heading mb-4">What's really at stake</h2>
-    <p class="type-subheading text-white/40 mb-16 max-w-2xl">
-      Centralized validator sets carry invisible risks. Until a hack, an
-      outage, or a legal order makes them very real.
-    </p>
+<!--
+  Outer wrapper: 700vh = 100vh sticky frame + 600vh of scroll budget.
+  The phase timeline distributes those 600vh proportionally across all
+  type/erase/hold phases.
+  Card data lives in data-cards so Astro always interpolates it (unlike
+  <script type="application/json"> whose content is NOT template-evaluated).
+-->
+<div
+  id="risks"
+  class="h-[700vh]"
+  data-cards={JSON.stringify(cards.map(c => ({ tags: c.tags, headline: c.headline, body: c.body })))}
+>
+  <div class="sticky top-0 h-screen flex items-center overflow-hidden">
+    <section class="w-full px-6">
+      <div class="max-w-5xl mx-auto">
 
-    <!-- Risk carousel -->
-    <div id="risk-carousel" class="mb-8">
-      <!-- Progress bars -->
-      <div class="flex gap-2 mb-6">
-        <button
-          class="risk-tab flex-1 h-1 rounded-full bg-white/10 overflow-hidden cursor-pointer"
-          data-index="0"
-          aria-label="Bridged TVL theft"
-        >
-          <div class="risk-fill h-full w-0 bg-suzaku-gradient rounded-full"></div>
-        </button>
-        <button
-          class="risk-tab flex-1 h-1 rounded-full bg-white/10 overflow-hidden cursor-pointer"
-          data-index="1"
-          aria-label="Liveness failure"
-        >
-          <div class="risk-fill h-full w-0 bg-suzaku-gradient rounded-full"></div>
-        </button>
-        <button
-          class="risk-tab flex-1 h-1 rounded-full bg-white/10 overflow-hidden cursor-pointer"
-          data-index="2"
-          aria-label="Censorship & capture"
-        >
-          <div class="risk-fill h-full w-0 bg-suzaku-gradient rounded-full"></div>
-        </button>
+        <p class="type-label text-suzaku-green/80 mb-3">The risks</p>
+        <h2 class="type-heading mb-3">What's really at stake</h2>
+        <p class="type-subheading text-white/40 mb-8 max-w-2xl">
+          Centralized validator sets carry invisible risks.<br />Until a hack, an
+          outage, or a legal order...
+        </p>
+
+        <!-- Single persistent card — text is written/erased by scroll-driven JS -->
+        <NewsCard
+          articleUrl={ARTICLE_URL}
+          articleLabel={ARTICLE_LABEL}
+        />
+
       </div>
-
-      <!-- Tiles -->
-      <div class="relative">
-        <div
-          class="risk-tile border border-suzaku-green rounded-lg p-8 bg-white/[0.02]"
-          data-tile="0"
-        >
-          <div class="type-card-title text-suzaku-green mb-4">Bridged TVL theft</div>
-          <p class="type-body text-white/50">
-            If enough validators are controlled by a single party, an attacker
-            can drain every asset bridged onto your chain. With a low Nakamoto
-            coefficient, that threshold is dangerously easy to reach.
-          </p>
-        </div>
-        <div
-          class="risk-tile hidden border border-white/10 rounded-lg p-8 bg-white/[0.02]"
-          data-tile="1"
-        >
-          <div class="type-card-title text-suzaku-green mb-4">Liveness failure</div>
-          <p class="type-body text-white/50">
-            A small validator set is a single point of failure. One outage, one
-            compromised machine, one provider going down. Your chain halts.
-            Decentralization is your uptime guarantee.
-          </p>
-        </div>
-        <div
-          class="risk-tile hidden border border-white/10 rounded-lg p-8 bg-white/[0.02]"
-          data-tile="2"
-        >
-          <div class="type-card-title text-suzaku-green mb-4">Censorship &amp; capture</div>
-          <p class="type-body text-white/50">
-            Concentrated validator ownership can be coerced by regulators,
-            attackers, or internal disputes. A single point of control is a
-            single point of failure for your entire chain.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="p-6 border border-suzaku-teal/20 rounded-lg bg-suzaku-teal/[0.04]">
-      <p class="type-body text-white/60">
-        <span class="text-suzaku-green font-extrabold">OpSec exploits are on a streak.</span>
-        ByBit lost $1.4B in February 2025. Swissborg lost $41.5M in September
-        2025. As smart contract security improves, infrastructure becomes the
-        primary attack vector. Your L1's service providers are not immune.
-      </p>
-    </div>
+    </section>
   </div>
-</section>
-
-<style>
-  @keyframes fillBar {
-    from { width: 0% }
-    to   { width: 100% }
-  }
-  .risk-fill.animating {
-    animation: fillBar 5s linear forwards;
-  }
-</style>
+</div>
 
 <script>
-  const DURATION = 5000;
+  // ── Types ──────────────────────────────────────────────────────────────────
+  type FieldName = "tags" | "headline" | "body";
+  type PhaseDir  = "forward" | "reverse" | "hold";
 
-  const tiles = document.querySelectorAll<HTMLElement>(".risk-tile");
-  const tabs  = document.querySelectorAll<HTMLElement>(".risk-tab");
-  const fills = document.querySelectorAll<HTMLElement>(".risk-fill");
-
-  let current = 0;
-  let timer: ReturnType<typeof setTimeout> | null = null;
-
-  function activate(index: number) {
-    tiles.forEach((t, i) => {
-      t.classList.toggle("hidden", i !== index);
-      t.classList.toggle("border-suzaku-green", i === index);
-      t.classList.toggle("border-white/10", i !== index);
-    });
-    fills.forEach((f) => {
-      f.classList.remove("animating");
-      void (f as HTMLElement).offsetWidth;
-    });
-    fills[index].classList.add("animating");
-    current = index;
-
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => activate((current + 1) % tiles.length), DURATION);
+  interface CardData {
+    tags: string[];
+    headline: string;
+    body: string;
   }
 
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      activate(Number(tab.dataset.index));
-    });
-  });
+  // A FieldAnim describes one field animated within a phase.
+  // Multiple FieldAnims in the same Phase animate concurrently (same sub-progress).
+  interface FieldAnim {
+    field: FieldName;
+    dir:   PhaseDir;
+    text:  string;
+  }
 
-  const carousel = document.getElementById("risk-carousel");
-  carousel?.addEventListener("mouseenter", () => {
-    if (timer) clearTimeout(timer);
-    fills[current].style.animationPlayState = "paused";
-  });
-  carousel?.addEventListener("mouseleave", () => {
-    fills[current].style.animationPlayState = "running";
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => activate((current + 1) % tiles.length), DURATION);
-  });
+  interface Phase {
+    anims:  FieldAnim[]; // one or more fields driven by the same sub-progress
+    weight: number;      // relative scroll budget (0 = instant / weight-less)
+  }
 
-  activate(0);
+  // ── Load card data ─────────────────────────────────────────────────────────
+  const outer = document.getElementById("risks") as HTMLElement;
+  const cardsData: CardData[] = JSON.parse(outer.dataset.cards ?? "[]");
+
+  // ── Build phase timeline ───────────────────────────────────────────────────
+  // Card 0           : type tags → type headline → type body → hold
+  // Transition N→N+1 : erase headline (animated)
+  //                    erase body instantly   (weight 0)
+  //                    erase tags instantly   (weight 0)
+  //                    type tags + headline concurrently → type body → hold
+  // Last card        : same transition in, then type tags+headline → type body
+  //                    (no hold, no erase out)
+  function buildTimeline(cards: CardData[]): Phase[] {
+    const phases: Phase[] = [];
+
+    for (let i = 0; i < cards.length; i++) {
+      const card    = cards[i];
+      const tagText = card.tags.join(" · ");
+
+      if (i > 0) {
+        const prev     = cards[i - 1];
+        const prevTags = prev.tags.join(" · ");
+
+        // Erase headline (scroll-animated)
+        phases.push({ anims: [{ field: "headline", dir: "reverse", text: prev.headline }], weight: 4 });
+        // Erase body and tags instantly — weight 0 means sub is always 1
+        // The phase-finder skips them (same cumWeight as next phase), but they
+        // remain in the timeline so backward field-state lookups treat them as
+        // completed reverse phases → empty string.
+        phases.push({ anims: [{ field: "body", dir: "reverse", text: prev.body     }], weight: 0 });
+        phases.push({ anims: [{ field: "tags", dir: "reverse", text: prevTags      }], weight: 0 });
+
+        // Type new tags and headline concurrently (same sub-progress drives both)
+        phases.push({
+          anims: [
+            { field: "tags",     dir: "forward", text: tagText       },
+            { field: "headline", dir: "forward", text: card.headline },
+          ],
+          weight: 4,
+        });
+      } else {
+        // Card 0: same as transitions — tags and headline type concurrently
+        phases.push({
+          anims: [
+            { field: "tags",     dir: "forward", text: tagText       },
+            { field: "headline", dir: "forward", text: card.headline },
+          ],
+          weight: 4,
+        });
+      }
+
+      // Type body
+      phases.push({ anims: [{ field: "body", dir: "forward", text: card.body }], weight: 5 });
+
+      // Hold so the reader can finish the body (all cards except the last)
+      if (i < cards.length - 1) {
+        phases.push({ anims: [{ field: "body", dir: "hold", text: card.body }], weight: 2 });
+      }
+    }
+
+    return phases;
+  }
+
+  const phases      = buildTimeline(cardsData);
+  const totalWeight = phases.reduce((s, p) => s + p.weight, 0);
+
+  // cumWeights[i] = sum of weights of phases 0..i-1
+  const cumWeights: number[] = [];
+  let cum = 0;
+  for (const p of phases) {
+    cumWeights.push(cum);
+    cum += p.weight;
+  }
+
+  // ── DOM refs ───────────────────────────────────────────────────────────────
+  const fieldEls: Record<FieldName, HTMLElement> = {
+    tags:     document.getElementById("card-tags")     as HTMLElement,
+    headline: document.getElementById("card-headline") as HTMLElement,
+    body:     document.getElementById("card-body")     as HTMLElement,
+  };
+
+  const cursorEls: Record<FieldName, HTMLElement> = {
+    tags:     document.getElementById("tags-cursor")     as HTMLElement,
+    headline: document.getElementById("headline-cursor") as HTMLElement,
+    body:     document.getElementById("body-cursor")     as HTMLElement,
+  };
+
+  // ── Scroll driver ──────────────────────────────────────────────────────────
+  function updateFromScroll() {
+    const rect     = outer.getBoundingClientRect();
+    const vh       = window.innerHeight;
+    const scrolled = Math.max(0, Math.min(outer.offsetHeight - vh, -rect.top));
+    const progress = scrolled / (outer.offsetHeight - vh);
+
+    const sw = progress * totalWeight;
+
+    // Find current phase: last phase whose cumWeight ≤ sw.
+    // Weight-0 phases are skipped here (their cumWeight equals the next phase),
+    // so they are always treated as already-completed in the backward state scan.
+    let phaseIdx = 0;
+    for (let i = phases.length - 1; i >= 0; i--) {
+      if (sw >= cumWeights[i]) {
+        phaseIdx = i;
+        break;
+      }
+    }
+
+    const phase     = phases[phaseIdx];
+    const phaseEndW = phaseIdx + 1 < phases.length ? cumWeights[phaseIdx + 1] : totalWeight;
+    const phaseW    = phaseEndW - cumWeights[phaseIdx];
+    const sub       = phaseW > 0 ? Math.min(1, (sw - cumWeights[phaseIdx]) / phaseW) : 1;
+
+    // ── Render each text field ───────────────────────────────────────────────
+    const fields: FieldName[] = ["tags", "headline", "body"];
+
+    for (const field of fields) {
+      // Check if the current phase animates this field
+      const curAnim = phase.anims.find(a => a.field === field);
+
+      let text = "";
+
+      if (curAnim) {
+        // Currently animating — apply sub-progress
+        const len = curAnim.text.length;
+        if (curAnim.dir === "forward") {
+          text = curAnim.text.slice(0, Math.floor(sub * len));
+        } else if (curAnim.dir === "reverse") {
+          text = curAnim.text.slice(0, Math.floor((1 - sub) * len));
+        } else {
+          text = curAnim.text; // hold: static
+        }
+      } else {
+        // Scan backwards for the most recent completed phase that touched this field
+        let pastAnim: FieldAnim | null = null;
+        for (let i = phaseIdx - 1; i >= 0; i--) {
+          const a = phases[i].anims.find(x => x.field === field);
+          if (a) { pastAnim = a; break; }
+        }
+        if (pastAnim) {
+          text = (pastAnim.dir === "forward" || pastAnim.dir === "hold") ? pastAnim.text : "";
+        }
+      }
+
+      fieldEls[field].textContent = text;
+    }
+
+    // ── Cursor: show on the last anim's field in the current phase ────────────
+    // For single phases this is that field; for concurrent type phases this is
+    // "headline" (last in the anims array), keeping one cursor visible.
+    const cursorField = phase.anims[phase.anims.length - 1].field;
+    for (const field of fields) {
+      cursorEls[field].classList.toggle("hidden", field !== cursorField);
+    }
+  }
+
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        updateFromScroll();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  updateFromScroll();
 </script>

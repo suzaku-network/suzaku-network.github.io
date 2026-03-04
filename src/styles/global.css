@@ -1,7 +1,7 @@
 /* ─── Typography scale ─────────────────────────────────────────── */
 /* Matches original Tailwind responsive breakpoints (sm: 640px, md: 768px) */
 
-/* Hero headline — one per page (text-4xl → sm:text-6xl → md:text-8xl) */
+/* Hero headline: one per page (text-4xl, sm:text-6xl, md:text-8xl) */
 .type-display {
   font-size: 2.25rem;
   font-weight: 600;
@@ -62,7 +62,7 @@
   font-weight: 800;
 }
 
-/* Small CTA buttons — nav (text-base font-extrabold) */
+/* Small CTA buttons for nav (text-base font-extrabold) */
 .type-btn-sm {
   font-size: 1rem;
   font-weight: 800;

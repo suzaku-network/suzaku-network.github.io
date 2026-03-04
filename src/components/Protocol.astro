@@ -1,5 +1,45 @@
 ---
 import Card from "@/components/Card.astro";
+
+const SUZ_CONTRACT = "avax:0x451532F1C9eb7E4Dc2d493dB52b682C0Acf6F5EF";
+const SUZ_TOTAL_SUPPLY = 100_000_000;
+
+function formatUsd(value: number): string {
+  return `$${Math.round(value).toLocaleString("en-US")}`;
+}
+
+function formatPrice(value: number): string {
+  if (value < 0.01) return `$${value.toFixed(5)}`;
+  return `$${value.toFixed(4)}`;
+}
+
+let tvl: string = "—";
+let suzPrice: string = "—";
+let fdv: string = "—";
+
+try {
+  const [tvlRes, priceRes] = await Promise.all([
+    fetch("https://dune.suzaku.network/tvl"),
+    fetch(`https://llama.suzaku.network/${SUZ_CONTRACT}`),
+  ]);
+
+  if (tvlRes.ok) {
+    const tvlJson = await tvlRes.json();
+    const rows = tvlJson?.result?.rows;
+    if (rows?.length) {
+      tvl = formatUsd(rows[rows.length - 1].total_tvl_usd);
+    }
+  }
+
+  if (priceRes.ok) {
+    const priceJson = await priceRes.json();
+    const price = priceJson?.coins?.[SUZ_CONTRACT]?.price;
+    if (price != null) {
+      suzPrice = formatPrice(price);
+      fdv = formatUsd(price * SUZ_TOTAL_SUPPLY);
+    }
+  }
+} catch (_) {}
 ---
 
 <section id="protocol" class="py-24 px-6 border-t border-white/10">
@@ -11,6 +51,33 @@ import Card from "@/components/Card.astro";
       shared security model. L1s move from PoA to PoS at their own pace. No
       contract migration. No disruption.
     </p>
+
+    <!-- Live stats + dApp CTA -->
+    <div class="flex flex-wrap items-center gap-8 mb-16">
+      <div>
+        <p class="type-label text-white/50 mb-1">Protocol TVL</p>
+        <p class="font-extrabold text-2xl bg-suzaku-gradient bg-clip-text text-transparent">{tvl}</p>
+      </div>
+      <div class="w-px bg-white/10 self-stretch hidden sm:block"></div>
+      <div>
+        <p class="type-label text-white/50 mb-1">SUZ price</p>
+        <p class="font-extrabold text-2xl bg-suzaku-gradient bg-clip-text text-transparent">{suzPrice}</p>
+      </div>
+      <div class="w-px bg-white/10 self-stretch hidden sm:block"></div>
+      <div>
+        <p class="type-label text-white/50 mb-1">FDV</p>
+        <p class="font-extrabold text-2xl bg-suzaku-gradient bg-clip-text text-transparent">{fdv}</p>
+      </div>
+      <div class="w-px bg-white/10 self-stretch hidden sm:block"></div>
+      <a
+        href="https://app.suzaku.network"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="type-btn inline-block text-suzaku-black bg-suzaku-gradient px-8 py-3 rounded hover:opacity-90 transition-opacity"
+      >
+        Open the staking dApp →
+      </a>
+    </div>
 
     <!-- Phases -->
     <p class="type-label text-white/50 mb-6">Decentralization phases</p>
