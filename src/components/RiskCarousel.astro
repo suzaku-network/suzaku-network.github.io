@@ -9,21 +9,25 @@ const cards = [
     tags: ["Bridged TVL"],
     headline: "Hackers Drain All L1 TVL After Key Compromise",
     body: "If a single entity controls more than 67% of your L1's total weight, accessing their keys allows to bridge out all the TVL of your chain.",
+    image: "/news/l1-tvl-drained-1200x400.png",
   },
   {
     tags: ["Liveness"],
     headline: "Operator Outage Causes L1 Halt for 6 Hours",
     body: "More than 20% of your network going offline will cause your chain to halt, and temporarily prevent all transactions from being processed.",
+    image: "/news/l1-halted-1200x400.png",
   },
   {
     tags: ["Censorship"],
     headline: "AWS Blocks Access to Funds After Legal Order",
     body: "Cloud providers are private actors that can be coerced by regulators, and they can block access to funds after a legal order.",
+    image: "/news/judgment-hammer-1200x400.png",
   },
   {
     tags: ["Hacks"],
     headline: "ByBit: $1.4B. Swissborg: $41.5M. Nobody is safe.",
     body: "As smart contract security improves, attackers look for OpSec failures. Any centralized setup will eventually be breached, whether it's your team or your service providers.",
+    image: "/news/hacks-rekt-2025-1200x400.png",
   },
 ];
 ---
@@ -38,7 +42,7 @@ const cards = [
 <div
   id="risks"
   class="h-[700vh]"
-  data-cards={JSON.stringify(cards.map(c => ({ tags: c.tags, headline: c.headline, body: c.body })))}
+  data-cards={JSON.stringify(cards.map(c => ({ tags: c.tags, headline: c.headline, body: c.body, image: c.image })))}
 >
   <div class="sticky top-0 h-screen flex items-center overflow-hidden">
     <section class="w-full px-6">
@@ -71,6 +75,7 @@ const cards = [
     tags: string[];
     headline: string;
     body: string;
+    image: string; // path relative to public/, empty string = no image
   }
 
   // A FieldAnim describes one field animated within a phase.
@@ -82,8 +87,9 @@ const cards = [
   }
 
   interface Phase {
-    anims:  FieldAnim[]; // one or more fields driven by the same sub-progress
-    weight: number;      // relative scroll budget (0 = instant / weight-less)
+    anims:   FieldAnim[]; // one or more fields driven by the same sub-progress
+    weight:  number;      // relative scroll budget (0 = instant / weight-less)
+    cardIdx: number;      // which card this phase belongs to (drives image updates)
   }
 
   // ── Load card data ─────────────────────────────────────────────────────────
@@ -109,40 +115,39 @@ const cards = [
         const prev     = cards[i - 1];
         const prevTags = prev.tags.join(" · ");
 
-        // Erase headline (scroll-animated)
-        phases.push({ anims: [{ field: "headline", dir: "reverse", text: prev.headline }], weight: 4 });
-        // Erase body and tags instantly — weight 0 means sub is always 1
-        // The phase-finder skips them (same cumWeight as next phase), but they
-        // remain in the timeline so backward field-state lookups treat them as
-        // completed reverse phases → empty string.
-        phases.push({ anims: [{ field: "body", dir: "reverse", text: prev.body     }], weight: 0 });
-        phases.push({ anims: [{ field: "tags", dir: "reverse", text: prevTags      }], weight: 0 });
+        // Erase headline (scroll-animated) — still showing the old card's image
+        phases.push({ anims: [{ field: "headline", dir: "reverse", text: prev.headline }], weight: 4, cardIdx: i - 1 });
+        // Erase body and tags instantly (weight 0) — image switches here alongside text
+        phases.push({ anims: [{ field: "body", dir: "reverse", text: prev.body     }], weight: 0, cardIdx: i });
+        phases.push({ anims: [{ field: "tags", dir: "reverse", text: prevTags      }], weight: 0, cardIdx: i });
 
-        // Type new tags and headline concurrently (same sub-progress drives both)
+        // Type new tags and headline concurrently
         phases.push({
           anims: [
             { field: "tags",     dir: "forward", text: tagText       },
             { field: "headline", dir: "forward", text: card.headline },
           ],
           weight: 4,
+          cardIdx: i,
         });
       } else {
-        // Card 0: same as transitions — tags and headline type concurrently
+        // Card 0: tags and headline type concurrently
         phases.push({
           anims: [
             { field: "tags",     dir: "forward", text: tagText       },
             { field: "headline", dir: "forward", text: card.headline },
           ],
           weight: 4,
+          cardIdx: i,
         });
       }
 
       // Type body
-      phases.push({ anims: [{ field: "body", dir: "forward", text: card.body }], weight: 5 });
+      phases.push({ anims: [{ field: "body", dir: "forward", text: card.body }], weight: 5, cardIdx: i });
 
       // Hold so the reader can finish the body (all cards except the last)
       if (i < cards.length - 1) {
-        phases.push({ anims: [{ field: "body", dir: "hold", text: card.body }], weight: 2 });
+        phases.push({ anims: [{ field: "body", dir: "hold", text: card.body }], weight: 2, cardIdx: i });
       }
     }
 
@@ -172,6 +177,8 @@ const cards = [
     headline: document.getElementById("headline-cursor") as HTMLElement,
     body:     document.getElementById("body-cursor")     as HTMLElement,
   };
+
+  const imgEl = document.getElementById("card-image") as HTMLImageElement;
 
   // ── Scroll driver ──────────────────────────────────────────────────────────
   function updateFromScroll() {
@@ -231,6 +238,11 @@ const cards = [
 
       fieldEls[field].textContent = text;
     }
+
+    // ── Image: switch to the current card's image ────────────────────────────
+    const imgSrc = cardsData[phase.cardIdx]?.image ?? "";
+    if (imgEl.src !== imgSrc) imgEl.src = imgSrc; // avoid redundant assignments
+    imgEl.classList.toggle("hidden", !imgSrc);
 
     // ── Cursor: show on the last anim's field in the current phase ────────────
     // For single phases this is that field; for concurrent type phases this is

@@ -17,16 +17,28 @@ const { articleUrl, articleLabel = "Why Decentralization Matters" } = Astro.prop
 -->
 <div class="risk-tile border border-suzaku-green rounded-lg overflow-hidden flex flex-col max-w-3xl mx-auto">
 
-  <!-- Image placeholder — fixed height -->
-  <div class="news-photo relative h-44">
+  <!-- Image area — fixed height -->
+  <div class="news-photo relative aspect-[3/1]">
+    <!-- Crosshatch placeholder; covered by the img when a real image is set -->
     <span class="photo-label absolute bottom-2 left-3 select-none">Image</span>
+
+    <!--
+      src and visibility are driven by JS (updateFromScroll sets it per card).
+      Starts hidden so the crosshatch shows on cards with no image.
+    -->
+    <img
+      id="card-image"
+      src=""
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover hidden"
+    />
 
     {articleUrl && (
       <a
         href={articleUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="article-link absolute top-3 right-3"
+        class="article-link absolute top-3 right-3 z-10"
       >
         <p class="article-link-eyebrow">Read our blog article</p>
         <p class="article-link-title">{articleLabel}&nbsp;→</p>
@@ -37,11 +49,11 @@ const { articleUrl, articleLabel = "Why Decentralization Matters" } = Astro.prop
   <!-- Text — auto height, body capped at 3 lines -->
   <div class="px-7 py-5 flex flex-col border-t border-white/10 gap-2">
 
-    <p class="news-tag">
+    <p class="news-tag overflow-hidden">
       <span id="card-tags"></span><span class="tw-cursor hidden" id="tags-cursor">|</span>
     </p>
 
-    <h3 class="news-headline">
+    <h3 class="news-headline overflow-hidden">
       <span id="card-headline"></span><span class="tw-cursor hidden" id="headline-cursor">|</span>
     </h3>
 
@@ -83,7 +95,8 @@ const { articleUrl, articleLabel = "Why Decentralization Matters" } = Astro.prop
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: rgba(67, 246, 171, 0.65);
-    min-height: 1.4em; /* prevents layout jump when text is erased */
+    /* Fixed height so the row never shifts when text is empty or partially typed */
+    height: 1.4em;
   }
 
   .news-headline {
