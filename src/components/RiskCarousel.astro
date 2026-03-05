@@ -1,49 +1,27 @@
 ---
-import NewsCard from "@/components/NewsCard.astro";
+import snarkdown from "snarkdown";
+import { riskCards } from "@/data/riskCards";
 
-const ARTICLE_URL = "https://suzaku.network/blog/why-l1-decentralization-matters-more-than-you-think";
-const ARTICLE_LABEL = "Why L1 Decentralization Matters (More Than You Think)";
-
-const cards = [
-  {
-    tags: ["Bridged TVL"],
-    headline: "Hackers Drain All L1 TVL After Key Compromise",
-    body: "If a single entity **controls more than 67%** of your L1, accessing their keys allows to **bridge out all the TVL** of your chain.",
-    image: "/news/l1-tvl-drained-1200x400.png",
-  },
-  {
-    tags: ["Liveness"],
-    headline: "Operator Outage Causes L1 Halt for 6 Hours",
-    body: "**More than 20%** of your network going offline will cause your chain to **halt**, and temporarily prevent all transactions from being processed.",
-    image: "/news/l1-halted-1200x400.png",
-  },
-  {
-    tags: ["Censorship"],
-    headline: "AWS Blocks Access to Funds After Legal Order",
-    body: "Cloud providers are private actors that can be **coerced by regulators**, and they can **block access to funds** after a legal order.",
-    image: "/news/judgment-hammer-1200x400.png",
-  },
-  {
-    tags: ["Hacks"],
-    headline: "ByBit lost $1.4B, Swissborg lost $41.5M...",
-    body: "... both due to an **OpSec failure of their service providers**. Any centralized setup **WILL be breached**. The only barrier is decentralization.",
-    image: "/news/hacks-rekt-2025-1200x400.png",
-  },
-];
+const renderedCards = riskCards.map(c => ({
+  ...c,
+  bodyHtml: snarkdown(c.body),
+  tagText:  c.tags.join(" · "),
+}));
 ---
 
 <!--
-  Outer wrapper: 700vh = 100vh sticky frame + 600vh of scroll budget.
-  The phase timeline distributes those 600vh proportionally across all
-  type/erase/hold phases.
-  Card data lives in data-cards so Astro always interpolates it (unlike
-  <script type="application/json"> whose content is NOT template-evaluated).
+  900vh total = 100vh sticky viewport + 800vh scroll budget.
+  The scroll budget is divided into N hold segments + (N-1) transition segments
+  (weights: hold=2, transition=2). For N=4: 4×2 + 3×2 = 14 units → ~57vh/unit.
+    hold       ≈ 114vh  (card rests at front before transitioning)
+    transition ≈ 114vh  (card slides out, next card comes forward)
+
+  Each card's animation is driven by k = i - scrollProgress where scrollProgress ∈ [0, N-1]:
+    k = 0          → card is at the front (active)
+    k > 0          → card is in the stack, offset to the right
+    k < 0          → card is exiting to the left
 -->
-<div
-  id="risks"
-  class="h-[700vh]"
-  data-cards={JSON.stringify(cards.map(c => ({ tags: c.tags, headline: c.headline, body: c.body, image: c.image })))}
->
+<div id="risks" class="h-[1100vh]">
   <div class="sticky top-0 h-screen flex items-center overflow-hidden">
     <section class="w-full px-6">
       <div class="max-w-3xl mx-auto">
@@ -55,11 +33,47 @@ const cards = [
           outage, or a legal order...
         </p>
 
-        <!-- Single persistent card — text is written/erased by scroll-driven JS -->
-        <NewsCard
-          articleUrl={ARTICLE_URL}
-          articleLabel={ARTICLE_LABEL}
-        />
+        <!--
+          All cards share grid-area 1/1 so they stack in the same cell.
+          The container height = tallest card; no absolute positioning needed.
+        -->
+        <div id="card-stack" style="display: grid;">
+          {renderedCards.map((card, i) => (
+            <div
+              class="risk-card bg-suzaku-black border border-suzaku-green rounded-lg overflow-hidden flex flex-col"
+              data-index={i}
+              style="grid-area: 1 / 1; will-change: transform, opacity;"
+            >
+              <!-- Image area -->
+              <div class="news-photo relative aspect-[3/1]">
+                <img
+                  src={card.image}
+                  alt={card.headline}
+                  class="absolute inset-0 w-full h-full object-cover"
+                />
+                <a
+                  href={card.articleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="article-link absolute top-3 right-3 z-10"
+                >
+                  <p class="article-link-eyebrow">Read our blog article</p>
+                  <p class="article-link-title">{card.articleLabel}&nbsp;↗</p>
+                </a>
+              </div>
+
+              <!-- Text area -->
+              <div class="px-7 py-5 flex flex-col border-t border-white/10 gap-2">
+                <p class="news-tag">{card.tagText}</p>
+                <h3 class="news-headline">{card.headline}</h3>
+                <div class="h-px bg-white/10"></div>
+                <div class="h-[5.5rem] overflow-hidden">
+                  <p class="text-lg text-white/50 leading-relaxed" set:html={card.bodyHtml} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
       </div>
     </section>
@@ -67,253 +81,166 @@ const cards = [
 </div>
 
 <script>
-  // ── Types ──────────────────────────────────────────────────────────────────
-  type FieldName = "tags" | "headline" | "body";
-  type PhaseDir  = "forward" | "reverse" | "hold";
-
-  interface CardData {
-    tags: string[];
-    headline: string;
-    body: string;
-    image: string; // path relative to public/, empty string = no image
-  }
-
-  // A FieldAnim describes one field animated within a phase.
-  // Multiple FieldAnims in the same Phase animate concurrently (same sub-progress).
-  interface FieldAnim {
-    field: FieldName;
-    dir:   PhaseDir;
-    text:  string;
-  }
-
-  interface Phase {
-    anims:   FieldAnim[]; // one or more fields driven by the same sub-progress
-    weight:  number;      // relative scroll budget (0 = instant / weight-less)
-    cardIdx: number;      // which card this phase belongs to (drives image updates)
-  }
-
-  // ── Markdown helpers (body only) ──────────────────────────────────────────
-  import snarkdown from "snarkdown";
-
-  /** Number of visible (non-marker) characters in a markdown string. */
-  function visibleLen(text: string): number {
-    return text.replace(/\*\*/g, "").length;
-  }
-
-  /**
-   * Slice `text` to `visChars` visible characters, then render to HTML.
-   * snarkdown closes any open **bold** span, so partial slices are safe.
-   */
-  function partialMarkdownHtml(text: string, visChars: number): string {
-    let vis = 0, raw = 0;
-    while (raw < text.length && vis < visChars) {
-      if (text[raw] === "*" && text[raw + 1] === "*") { raw += 2; }
-      else { vis++; raw++; }
-    }
-    return snarkdown(text.slice(0, raw));
-  }
-
-  // ── Load card data ─────────────────────────────────────────────────────────
   const outer = document.getElementById("risks") as HTMLElement;
-  const cardsData: CardData[] = JSON.parse(outer.dataset.cards ?? "[]");
+  const stack = document.getElementById("card-stack") as HTMLElement;
+  const cardEls = Array.from(stack.querySelectorAll<HTMLElement>(".risk-card"));
+  const N = cardEls.length;
 
-  // ── Build phase timeline ───────────────────────────────────────────────────
-  // Card 0           : type tags → type headline → type body → hold
-  // Transition N→N+1 : erase headline (animated)
-  //                    erase body instantly   (weight 0)
-  //                    erase tags instantly   (weight 0)
-  //                    type tags + headline concurrently → type body → hold
-  // Last card        : same transition in, then type tags+headline → type body
-  //                    (no hold, no erase out)
-  function buildTimeline(cards: CardData[]): Phase[] {
-    const phases: Phase[] = [];
+  // ── Piecewise scroll mapping ───────────────────────────────────────────────
+  // Timeline per card: [hold] then [transition to next] (last card: hold only).
+  // HOLD_W and TRANS_W are relative scroll-budget weights.
+  const HOLD_W  = 3; // scroll budget weight while card rests at front
+  const TRANS_W = 2; // scroll budget weight while card transitions out
+  const totalW  = N * HOLD_W + (N - 1) * TRANS_W;
 
-    for (let i = 0; i < cards.length; i++) {
-      const card    = cards[i];
-      const tagText = card.tags.join(" · ");
-
-      if (i > 0) {
-        const prev     = cards[i - 1];
-        const prevTags = prev.tags.join(" · ");
-
-        // Erase headline (scroll-animated) — still showing the old card's image
-        phases.push({ anims: [{ field: "headline", dir: "reverse", text: prev.headline }], weight: 4, cardIdx: i - 1 });
-        // Erase body and tags instantly (weight 0) — image switches here alongside text
-        phases.push({ anims: [{ field: "body", dir: "reverse", text: prev.body     }], weight: 0, cardIdx: i });
-        phases.push({ anims: [{ field: "tags", dir: "reverse", text: prevTags      }], weight: 0, cardIdx: i });
-
-        // Type new tags and headline concurrently
-        phases.push({
-          anims: [
-            { field: "tags",     dir: "forward", text: tagText       },
-            { field: "headline", dir: "forward", text: card.headline },
-          ],
-          weight: 4,
-          cardIdx: i,
-        });
-      } else {
-        // Card 0: tags and headline type concurrently
-        phases.push({
-          anims: [
-            { field: "tags",     dir: "forward", text: tagText       },
-            { field: "headline", dir: "forward", text: card.headline },
-          ],
-          weight: 4,
-          cardIdx: i,
-        });
-      }
-
-      // Type body
-      phases.push({ anims: [{ field: "body", dir: "forward", text: card.body }], weight: 5, cardIdx: i });
-
-      // Hold so the reader can finish the body (all cards except the last)
-      if (i < cards.length - 1) {
-        phases.push({ anims: [{ field: "body", dir: "hold", text: card.body }], weight: 2, cardIdx: i });
-      }
-    }
-
-    return phases;
-  }
-
-  const phases      = buildTimeline(cardsData);
-  const totalWeight = phases.reduce((s, p) => s + p.weight, 0);
-
-  // cumWeights[i] = sum of weights of phases 0..i-1
-  const cumWeights: number[] = [];
+  interface Seg { r0: number; r1: number; m0: number; m1: number; }
+  const segs: Seg[] = [];
   let cum = 0;
-  for (const p of phases) {
-    cumWeights.push(cum);
-    cum += p.weight;
+  for (let i = 0; i < N; i++) {
+    // Hold: scrollProgress stays flat at i
+    segs.push({ r0: cum / totalW, r1: (cum + HOLD_W) / totalW, m0: i, m1: i });
+    cum += HOLD_W;
+    if (i < N - 1) {
+      // Transition: scrollProgress moves from i to i+1
+      segs.push({ r0: cum / totalW, r1: (cum + TRANS_W) / totalW, m0: i, m1: i + 1 });
+      cum += TRANS_W;
+    }
   }
 
-  // ── DOM refs ───────────────────────────────────────────────────────────────
-  const fieldEls: Record<FieldName, HTMLElement> = {
-    tags:     document.getElementById("card-tags")     as HTMLElement,
-    headline: document.getElementById("card-headline") as HTMLElement,
-    body:     document.getElementById("card-body")     as HTMLElement,
-  };
-
-  const cursorEls: Record<FieldName, HTMLElement> = {
-    tags:     document.getElementById("tags-cursor")     as HTMLElement,
-    headline: document.getElementById("headline-cursor") as HTMLElement,
-    body:     document.getElementById("body-cursor")     as HTMLElement,
-  };
-
-  const imgEl = document.getElementById("card-image") as HTMLImageElement;
-
-  // ── Scroll driver ──────────────────────────────────────────────────────────
-  function updateFromScroll() {
-    const rect     = outer.getBoundingClientRect();
-    const vh       = window.innerHeight;
-    const scrolled = Math.max(0, Math.min(outer.offsetHeight - vh, -rect.top));
-    const progress = scrolled / (outer.offsetHeight - vh);
-
-    const sw = progress * totalWeight;
-
-    // Find current phase: last phase whose cumWeight ≤ sw.
-    // Weight-0 phases are skipped here (their cumWeight equals the next phase),
-    // so they are always treated as already-completed in the backward state scan.
-    let phaseIdx = 0;
-    for (let i = phases.length - 1; i >= 0; i--) {
-      if (sw >= cumWeights[i]) {
-        phaseIdx = i;
-        break;
+  function remapProgress(raw: number): number {
+    for (const s of segs) {
+      if (raw <= s.r1) {
+        if (s.r1 === s.r0) return s.m0;
+        return s.m0 + ((raw - s.r0) / (s.r1 - s.r0)) * (s.m1 - s.m0);
       }
     }
+    return N - 1;
+  }
 
-    const phase     = phases[phaseIdx];
-    const phaseEndW = phaseIdx + 1 < phases.length ? cumWeights[phaseIdx + 1] : totalWeight;
-    const phaseW    = phaseEndW - cumWeights[phaseIdx];
-    const sub       = phaseW > 0 ? Math.min(1, (sw - cumWeights[phaseIdx]) / phaseW) : 1;
+  function update() {
+    const rect      = outer.getBoundingClientRect();
+    const vh        = window.innerHeight;
+    const scrolled  = Math.max(0, Math.min(outer.offsetHeight - vh, -rect.top));
+    const rawProgress = (outer.offsetHeight - vh) > 0
+      ? scrolled / (outer.offsetHeight - vh)
+      : 0;
+    // scrollProgress ∈ [0, N-1] with flat hold plateaus at each integer
+    const scrollProgress = remapProgress(rawProgress);
 
-    // ── Render each text field ───────────────────────────────────────────────
-    const fields: FieldName[] = ["tags", "headline", "body"];
+    cardEls.forEach((card, i) => {
+      // k < 0 → exiting left  |  k = 0 → front  |  k > 0 → stacked right
+      const k = i - scrollProgress;
 
-    for (const field of fields) {
-      const curAnim = phase.anims.find(a => a.field === field);
+      let x: number, y: number, scl: number, opacity: number, zIdx: number;
 
-      if (field === "body") {
-        // Body supports markdown (e.g. **bold**) — operate on visible char counts
-        if (curAnim) {
-          const totalVis = visibleLen(curAnim.text);
-          let visChars: number;
-          if (curAnim.dir === "forward") {
-            visChars = Math.floor(sub * totalVis);
-          } else if (curAnim.dir === "reverse") {
-            visChars = Math.floor((1 - sub) * totalVis);
-          } else {
-            visChars = totalVis;
-          }
-          fieldEls[field].innerHTML = partialMarkdownHtml(curAnim.text, visChars);
-        } else {
-          let pastAnim: FieldAnim | null = null;
-          for (let i = phaseIdx - 1; i >= 0; i--) {
-            const a = phases[i].anims.find(x => x.field === field);
-            if (a) { pastAnim = a; break; }
-          }
-          if (pastAnim && (pastAnim.dir === "forward" || pastAnim.dir === "hold")) {
-            fieldEls[field].innerHTML = partialMarkdownHtml(pastAnim.text, visibleLen(pastAnim.text));
-          } else {
-            fieldEls[field].innerHTML = "";
-          }
-        }
+      if (k < 0) {
+        // Slide out to the left and fade
+        const t = Math.min(1, -k);
+        x       = -110 * t;
+        y       = 0;
+        scl     = 1 - 0.12 * t;
+        opacity = Math.max(0, 1 - t * 2.5);
+        // Stay on top while still visible, go behind once fully faded
+        zIdx    = opacity > 0 ? 15 : 0;
       } else {
-        // Plain text fields
-        let text = "";
-
-        if (curAnim) {
-          const len = curAnim.text.length;
-          if (curAnim.dir === "forward") {
-            text = curAnim.text.slice(0, Math.floor(sub * len));
-          } else if (curAnim.dir === "reverse") {
-            text = curAnim.text.slice(0, Math.floor((1 - sub) * len));
-          } else {
-            text = curAnim.text;
-          }
-        } else {
-          let pastAnim: FieldAnim | null = null;
-          for (let i = phaseIdx - 1; i >= 0; i--) {
-            const a = phases[i].anims.find(x => x.field === field);
-            if (a) { pastAnim = a; break; }
-          }
-          if (pastAnim) {
-            text = (pastAnim.dir === "forward" || pastAnim.dir === "hold") ? pastAnim.text : "";
-          }
-        }
-
-        fieldEls[field].textContent = text;
+        // In the stack: offset right + scale proportional to k
+        const clamped = Math.min(k, 3);
+        x       = clamped * 4;    // shift 4% right per stack position
+        y       = clamped * 0.5;  // drift 0.5% down per stack position
+        scl     = 1 - clamped * 0.05;
+        opacity = 1;
+        zIdx    = 10 - Math.floor(k);
       }
-    }
 
-    // ── Image: opacity tied to headline phase, src tied to cardIdx ───────────
-    const imgSrc = cardsData[phase.cardIdx]?.image ?? "";
-    if (imgEl.getAttribute("src") !== imgSrc) imgEl.src = imgSrc;
-
-    const headlineAnim = phase.anims.find(a => a.field === "headline");
-    let imgOpacity = 1;
-    if (headlineAnim?.dir === "forward")  imgOpacity = sub;       // fade in as title types
-    if (headlineAnim?.dir === "reverse")  imgOpacity = 1 - sub;   // fade out as title erases
-    imgEl.style.opacity = imgSrc ? String(imgOpacity) : "0";
-
-    // ── Cursor: show on the last anim's field in the current phase ────────────
-    // For single phases this is that field; for concurrent type phases this is
-    // "headline" (last in the anims array), keeping one cursor visible.
-    const cursorField = phase.anims[phase.anims.length - 1].field;
-    for (const field of fields) {
-      cursorEls[field].classList.toggle("hidden", field !== cursorField);
-    }
+      card.style.transform = `translateX(${x}%) translateY(${y}%) scale(${scl})`;
+      card.style.opacity   = String(Math.max(0, Math.min(1, opacity)));
+      card.style.zIndex    = String(Math.max(0, zIdx));
+    });
   }
 
   let ticking = false;
   window.addEventListener("scroll", () => {
     if (!ticking) {
       requestAnimationFrame(() => {
-        updateFromScroll();
+        update();
         ticking = false;
       });
       ticking = true;
     }
   }, { passive: true });
 
-  updateFromScroll();
+  update();
 </script>
+
+<style>
+  .news-photo {
+    background-color: rgba(255, 255, 255, 0.025);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.018) 3px,
+      rgba(255, 255, 255, 0.018) 4px
+    );
+  }
+
+  .news-tag {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(67, 246, 171, 0.65);
+    height: 1.4em;
+  }
+
+  .news-headline {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.15;
+    text-transform: uppercase;
+    color: white;
+    letter-spacing: 0.02em;
+  }
+
+  .article-link {
+    background-color: rgba(16, 16, 16, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    padding: 8px 12px;
+    backdrop-filter: blur(8px);
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.15s ease;
+    max-width: 300px;
+  }
+
+  .article-link:hover {
+    border-color: rgba(67, 246, 171, 0.4);
+  }
+
+  .article-link-eyebrow {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 5px;
+  }
+
+  .article-link-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: rgba(67, 246, 171, 0.85);
+    line-height: 1.3;
+  }
+
+  .article-link:hover .article-link-title {
+    color: rgba(67, 246, 171, 1);
+  }
+
+  /* Bold text in card body (rendered by snarkdown as <strong>) */
+  .risk-card strong {
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.85);
+  }
+</style>
