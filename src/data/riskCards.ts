@@ -12,7 +12,8 @@ export interface RiskCard {
 }
 
 const DEFAULT_ARTICLE_URL = "/blog/why-l1-decentralization-matters";
-const DEFAULT_ARTICLE_LABEL = "Why L1 Decentralization Matters (More Than You Think)";
+const DEFAULT_ARTICLE_LABEL =
+  "Why L1 Decentralization Matters (More Than You Think)";
 
 export const riskCards: RiskCard[] = [
   {
@@ -41,8 +42,8 @@ export const riskCards: RiskCard[] = [
   },
   {
     tags: ["Hacks"],
-    headline: "ByBit lost $1.4B, Swissborg lost $41.5M...",
-    body: "... both due to an **OpSec failure of their service providers**. Any centralized setup **WILL be breached**. The only barrier is decentralization.",
+    headline: "ByBit lost $1.4B, Swissborg lost $41.5M…",
+    body: "… both due to an **OpSec failure of their service providers**. Any centralized setup **WILL be breached**. The only barrier is decentralization.",
     image: "/news/hacks-rekt-2025-1200x400.png",
     articleUrl: DEFAULT_ARTICLE_URL,
     articleLabel: DEFAULT_ARTICLE_LABEL,

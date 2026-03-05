@@ -19,22 +19,21 @@ import SocialLinks from "@/components/SocialLinks.astro";
 
       <!-- Desktop: page links -->
       <div class="hidden md:flex items-center gap-7">
-        <a href="/" class="type-caption text-white/50 hover:text-white transition-colors">Home</a>
-        <a href="/blog" class="type-caption text-white/50 hover:text-white transition-colors">Blog</a>
-      </div>
-
-      <!-- Desktop: socials + CTA -->
-      <div class="hidden md:flex items-center gap-4">
-        <SocialLinks iconClass="w-4 h-4" />
-        <div class="w-px h-4 bg-white/10"></div>
+        <a href="/" class="text-lg text-white/50 hover:text-white transition-colors">Home</a>
+        <a href="/blog" class="text-lg text-white/50 hover:text-white transition-colors">Blog</a>
         <a
           href="https://forms.gle/US695J3BYoy8tztu9"
           target="_blank"
           rel="noopener noreferrer"
-          class="type-btn-sm text-suzaku-black bg-suzaku-gradient px-4 py-1.5 rounded hover:opacity-90 transition-opacity"
+          class="text-lg text-white/50 border border-white/10 px-4 py-1.5 rounded hover:text-white hover:border-suzaku-green transition-colors"
         >
           Get in touch ↗
         </a>
+      </div>
+
+      <!-- Desktop: socials -->
+      <div class="hidden md:flex items-center gap-4">
+        <SocialLinks iconClass="w-4 h-4" />
       </div>
 
       <!-- Mobile: burger button -->
@@ -62,7 +61,7 @@ import SocialLinks from "@/components/SocialLinks.astro";
           href="https://forms.gle/US695J3BYoy8tztu9"
           target="_blank"
           rel="noopener noreferrer"
-          class="ml-auto type-btn-sm text-suzaku-black bg-suzaku-gradient px-4 py-1.5 rounded hover:opacity-90 transition-opacity"
+          class="ml-auto type-btn-sm text-white border border-white/10 px-4 py-1.5 rounded hover:border-suzaku-green transition-colors"
         >
           Get in touch ↗
         </a>
