@@ -7,6 +7,7 @@ description: "Background knowledge about Suzaku — product details, blog articl
 Suzaku is the **Decentralization Hub for Avalanche L1s**. The protocol helps L1 networks securely scale and decentralize their validator sets through liquid staking, progressive decentralization, and advanced cryptoeconomic security models (staking, restaking, dual staking). Built by the Ash team.
 
 - **dApp:** https://app.suzaku.network
+- **LinkedIn:** https://www.linkedin.com/company/suzaku
 - **Token:** SUZ (total supply: 100M). Staked form: sSUZ.
 - **Key products:** BalancerValidatorManager (progressive decentralization), L1 LSTs (liquid staking tokens for Avalanche L1s), Suzaku Points (incentive program).
 - **Integrations:** Dexalot (sALOT), Yield Yak, Blackhole, SwissBorg, Colony.

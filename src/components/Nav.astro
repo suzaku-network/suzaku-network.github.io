@@ -1,7 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
 import SocialLinks from "@/components/SocialLinks.astro";
-import { NAV_LINKS } from "@/data/navigation";
 ---
 
 <nav id="main-nav" class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
@@ -10,7 +9,7 @@ import { NAV_LINKS } from "@/data/navigation";
     <div
       class="flex items-center justify-between bg-suzaku-black/90 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3"
     >
-      <a href="#" aria-label="Back to top">
+      <a href="/" aria-label="Back to home">
         <img
           src="/brand/suzaku-logo-color-white-horizontal.svg"
           alt="Suzaku"
@@ -18,18 +17,10 @@ import { NAV_LINKS } from "@/data/navigation";
         />
       </a>
 
-      <!-- Desktop: section links -->
+      <!-- Desktop: page links -->
       <div class="hidden md:flex items-center gap-7">
-        {
-          NAV_LINKS.map((link) => (
-            <a
-              href={link.href}
-              class="type-caption text-white/50 hover:text-white transition-colors"
-            >
-              {link.label}
-            </a>
-          ))
-        }
+        <a href="/" class="type-caption text-white/50 hover:text-white transition-colors">Home</a>
+        <a href="/blog" class="type-caption text-white/50 hover:text-white transition-colors">Blog</a>
       </div>
 
       <!-- Desktop: socials + CTA -->
@@ -42,7 +33,7 @@ import { NAV_LINKS } from "@/data/navigation";
           rel="noopener noreferrer"
           class="type-btn-sm text-suzaku-black bg-suzaku-gradient px-4 py-1.5 rounded hover:opacity-90 transition-opacity"
         >
-          Get in touch →
+          Get in touch ↗
         </a>
       </div>
 
@@ -63,16 +54,8 @@ import { NAV_LINKS } from "@/data/navigation";
       id="mobile-menu"
       class="hidden mt-2 bg-suzaku-black/95 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-5 flex-col gap-4"
     >
-      {
-        NAV_LINKS.map((link) => (
-          <a
-            href={link.href}
-            class="mobile-nav-link type-body text-white/60 hover:text-white transition-colors py-1"
-          >
-            {link.label}
-          </a>
-        ))
-      }
+      <a href="/" class="type-body text-white/60 hover:text-white transition-colors py-1">Home</a>
+      <a href="/blog" class="type-body text-white/60 hover:text-white transition-colors py-1">Blog</a>
       <div class="border-t border-white/10 pt-4 flex items-center gap-5">
         <SocialLinks iconClass="w-5 h-5" />
         <a
@@ -81,7 +64,7 @@ import { NAV_LINKS } from "@/data/navigation";
           rel="noopener noreferrer"
           class="ml-auto type-btn-sm text-suzaku-black bg-suzaku-gradient px-4 py-1.5 rounded hover:opacity-90 transition-opacity"
         >
-          Get in touch →
+          Get in touch ↗
         </a>
       </div>
     </div>

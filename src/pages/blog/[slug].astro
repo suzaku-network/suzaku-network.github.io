@@ -1,0 +1,208 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Nav from "@/components/Nav.astro";
+import Footer from "@/components/Footer.astro";
+import { authors } from "@/data/authors";
+import { Icon } from "astro-icon/components";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const author = authors[post.data.author];
+
+const formattedDate = post.data.date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Layout
+  title={`${post.data.title} | Suzaku Blog`}
+  description={post.data.description}
+  image={post.data.image}
+>
+  <Nav />
+
+  <main class="min-h-screen pt-32 pb-24 px-6">
+    <article class="max-w-3xl mx-auto">
+      <!-- Back link -->
+      <a
+        href="/blog"
+        class="inline-flex items-center gap-2 type-caption text-white/40 hover:text-white transition-colors mb-10"
+      >
+        <Icon name="lucide:arrow-left" class="w-4 h-4" />
+        All articles
+      </a>
+
+      <!-- Tags -->
+      {
+        post.data.tags && post.data.tags.length > 0 && (
+          <p class="type-caption font-extrabold tracking-widest uppercase text-suzaku-green/80 text-xs mb-5">
+            {post.data.tags.join(" · ")}
+          </p>
+        )
+      }
+
+      <!-- Title -->
+      <h1 class="type-heading text-white mb-6">{post.data.title}</h1>
+
+      <!-- Author row -->
+      <div class="flex items-center gap-4 mb-10 pb-8 border-b border-white/10">
+        {
+          author?.avatar ? (
+            <img
+              src={author.avatar}
+              alt={author.name}
+              class="w-11 h-11 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div class="w-11 h-11 rounded-full bg-suzaku-teal/20 shrink-0 flex items-center justify-center">
+              <span class="text-suzaku-teal font-extrabold">
+                {author?.name?.[0] ?? "?"}
+              </span>
+            </div>
+          )
+        }
+        <div class="flex flex-col gap-0.5 min-w-0">
+          {
+            author && (
+              <div class="flex items-center gap-3">
+                <span class="type-caption text-white font-semibold">
+                  {author.name}
+                </span>
+                {author.x && (
+                  <a
+                    href={author.x}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${author.name} on X`}
+                    class="text-white/30 hover:text-white transition-colors"
+                  >
+                    <Icon name="simple-icons:x" class="w-3.5 h-3.5" />
+                  </a>
+                )}
+                {author.linkedin && (
+                  <a
+                    href={author.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${author.name} on LinkedIn`}
+                    class="text-white/30 hover:text-white transition-colors"
+                  >
+                    <Icon name="simple-icons:linkedin" class="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
+            )
+          }
+          <span class="type-caption text-white/40 text-sm">{formattedDate}</span>
+        </div>
+      </div>
+
+      <!-- Hero image (16:9) -->
+      <div class="aspect-video rounded-lg overflow-hidden mb-12 border border-white/10">
+        <img
+          src={post.data.image}
+          alt={post.data.imageAlt}
+          class="w-full h-full object-cover"
+        />
+      </div>
+
+      <!-- Prose content -->
+      <div
+        class="prose prose-invert prose-suzaku max-w-none"
+      >
+        <Content />
+      </div>
+
+      <!-- Footer nav -->
+      <div class="mt-16 pt-8 border-t border-white/10">
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-2 type-caption text-white/40 hover:text-white transition-colors"
+        >
+          <Icon name="lucide:arrow-left" class="w-4 h-4" />
+          Back to all articles
+        </a>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .prose-suzaku :global(h1),
+  .prose-suzaku :global(h2),
+  .prose-suzaku :global(h3),
+  .prose-suzaku :global(h4) {
+    font-family: "Inconsolata", monospace;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .prose-suzaku :global(p),
+  .prose-suzaku :global(li),
+  .prose-suzaku :global(blockquote) {
+    color: rgba(255, 255, 255, 0.80);
+  }
+
+  .prose-suzaku :global(blockquote) {
+    border-left-color: #00a4af;
+    background: rgba(0, 164, 175, 0.05);
+    padding: 0.75rem 1.25rem;
+    border-radius: 0 0.375rem 0.375rem 0;
+  }
+
+  .prose-suzaku :global(a) {
+    color: #ffffff;
+    text-decoration: underline;
+  }
+
+  .prose-suzaku :global(a:hover) {
+    color: #43f6ab;
+  }
+
+  .prose-suzaku :global(hr) {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .prose-suzaku :global(img) {
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .prose-suzaku :global(figure.figure-caption) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .prose-suzaku :global(figure.figure-caption img) {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .prose-suzaku :global(figcaption) {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-align: center;
+    font-style: italic;
+  }
+</style>

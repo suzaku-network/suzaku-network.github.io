@@ -1,8 +1,9 @@
 export const NAV_LINKS = [
-  { label: "The Risks", href: "#risks" },
-  { label: "Get Started", href: "#journey" },
-  { label: "The Protocol", href: "#protocol" },
-  { label: "About Us", href: "#about" },
+  { label: "The Risks", href: "/#risks" },
+  { label: "Get Started", href: "/#journey" },
+  { label: "The Protocol", href: "/#protocol" },
+  { label: "About Us", href: "/#about" },
+  { label: "Blog", href: "/blog" },
 ] as const;
 
 export const SOCIAL_LINKS = [
@@ -20,6 +21,11 @@ export const SOCIAL_LINKS = [
     label: "GitHub",
     href: "https://github.com/suzaku-network",
     icon: "simple-icons:github",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/suzaku",
+    icon: "simple-icons:linkedin",
   },
 ] as const;
 

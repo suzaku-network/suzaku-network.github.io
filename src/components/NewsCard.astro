@@ -30,7 +30,8 @@ const { articleUrl, articleLabel = "Why Decentralization Matters" } = Astro.prop
       id="card-image"
       src=""
       alt=""
-      class="absolute inset-0 w-full h-full object-cover hidden"
+      class="absolute inset-0 w-full h-full object-cover"
+      style="opacity: 0"
     />
 
     {articleUrl && (
@@ -41,7 +42,7 @@ const { articleUrl, articleLabel = "Why Decentralization Matters" } = Astro.prop
         class="article-link absolute top-3 right-3 z-10"
       >
         <p class="article-link-eyebrow">Read our blog article</p>
-        <p class="article-link-title">{articleLabel}&nbsp;→</p>
+        <p class="article-link-title">{articleLabel}&nbsp;↗</p>
       </a>
     )}
   </div>
@@ -142,6 +143,12 @@ const { articleUrl, articleLabel = "Why Decentralization Matters" } = Astro.prop
 
   .article-link:hover .article-link-title {
     color: rgba(67, 246, 171, 1);
+  }
+
+  /* Bold spans inside the body typewriter */
+  .body-bold {
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.85);
   }
 
   /* Cursor blinks while visible; Tailwind's `hidden` class (display:none) suppresses it */

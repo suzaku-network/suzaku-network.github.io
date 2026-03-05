@@ -8,25 +8,25 @@ const cards = [
   {
     tags: ["Bridged TVL"],
     headline: "Hackers Drain All L1 TVL After Key Compromise",
-    body: "If a single entity controls more than 67% of your L1's total weight, accessing their keys allows to bridge out all the TVL of your chain.",
+    body: "If a single entity **controls more than 67%** of your L1, accessing their keys allows to **bridge out all the TVL** of your chain.",
     image: "/news/l1-tvl-drained-1200x400.png",
   },
   {
     tags: ["Liveness"],
     headline: "Operator Outage Causes L1 Halt for 6 Hours",
-    body: "More than 20% of your network going offline will cause your chain to halt, and temporarily prevent all transactions from being processed.",
+    body: "**More than 20%** of your network going offline will cause your chain to **halt**, and temporarily prevent all transactions from being processed.",
     image: "/news/l1-halted-1200x400.png",
   },
   {
     tags: ["Censorship"],
     headline: "AWS Blocks Access to Funds After Legal Order",
-    body: "Cloud providers are private actors that can be coerced by regulators, and they can block access to funds after a legal order.",
+    body: "Cloud providers are private actors that can be **coerced by regulators**, and they can **block access to funds** after a legal order.",
     image: "/news/judgment-hammer-1200x400.png",
   },
   {
     tags: ["Hacks"],
-    headline: "ByBit: $1.4B. Swissborg: $41.5M. Nobody is safe.",
-    body: "As smart contract security improves, attackers look for OpSec failures. Any centralized setup will eventually be breached, whether it's your team or your service providers.",
+    headline: "ByBit lost $1.4B, Swissborg lost $41.5M...",
+    body: "... both due to an **OpSec failure of their service providers**. Any centralized setup **WILL be breached**. The only barrier is decentralization.",
     image: "/news/hacks-rekt-2025-1200x400.png",
   },
 ];
@@ -46,11 +46,11 @@ const cards = [
 >
   <div class="sticky top-0 h-screen flex items-center overflow-hidden">
     <section class="w-full px-6">
-      <div class="max-w-5xl mx-auto">
+      <div class="max-w-3xl mx-auto">
 
         <p class="type-label text-suzaku-green/80 mb-3">The risks</p>
         <h2 class="type-heading mb-3">What's really at stake</h2>
-        <p class="type-subheading text-white/40 mb-8 max-w-2xl">
+        <p class="type-subheading text-white/40 mb-8">
           Centralized validator sets carry invisible risks.<br />Until a hack, an
           outage, or a legal order...
         </p>
@@ -90,6 +90,27 @@ const cards = [
     anims:   FieldAnim[]; // one or more fields driven by the same sub-progress
     weight:  number;      // relative scroll budget (0 = instant / weight-less)
     cardIdx: number;      // which card this phase belongs to (drives image updates)
+  }
+
+  // ── Markdown helpers (body only) ──────────────────────────────────────────
+  import snarkdown from "snarkdown";
+
+  /** Number of visible (non-marker) characters in a markdown string. */
+  function visibleLen(text: string): number {
+    return text.replace(/\*\*/g, "").length;
+  }
+
+  /**
+   * Slice `text` to `visChars` visible characters, then render to HTML.
+   * snarkdown closes any open **bold** span, so partial slices are safe.
+   */
+  function partialMarkdownHtml(text: string, visChars: number): string {
+    let vis = 0, raw = 0;
+    while (raw < text.length && vis < visChars) {
+      if (text[raw] === "*" && text[raw + 1] === "*") { raw += 2; }
+      else { vis++; raw++; }
+    }
+    return snarkdown(text.slice(0, raw));
   }
 
   // ── Load card data ─────────────────────────────────────────────────────────
@@ -209,40 +230,70 @@ const cards = [
     const fields: FieldName[] = ["tags", "headline", "body"];
 
     for (const field of fields) {
-      // Check if the current phase animates this field
       const curAnim = phase.anims.find(a => a.field === field);
 
-      let text = "";
-
-      if (curAnim) {
-        // Currently animating — apply sub-progress
-        const len = curAnim.text.length;
-        if (curAnim.dir === "forward") {
-          text = curAnim.text.slice(0, Math.floor(sub * len));
-        } else if (curAnim.dir === "reverse") {
-          text = curAnim.text.slice(0, Math.floor((1 - sub) * len));
+      if (field === "body") {
+        // Body supports markdown (e.g. **bold**) — operate on visible char counts
+        if (curAnim) {
+          const totalVis = visibleLen(curAnim.text);
+          let visChars: number;
+          if (curAnim.dir === "forward") {
+            visChars = Math.floor(sub * totalVis);
+          } else if (curAnim.dir === "reverse") {
+            visChars = Math.floor((1 - sub) * totalVis);
+          } else {
+            visChars = totalVis;
+          }
+          fieldEls[field].innerHTML = partialMarkdownHtml(curAnim.text, visChars);
         } else {
-          text = curAnim.text; // hold: static
+          let pastAnim: FieldAnim | null = null;
+          for (let i = phaseIdx - 1; i >= 0; i--) {
+            const a = phases[i].anims.find(x => x.field === field);
+            if (a) { pastAnim = a; break; }
+          }
+          if (pastAnim && (pastAnim.dir === "forward" || pastAnim.dir === "hold")) {
+            fieldEls[field].innerHTML = partialMarkdownHtml(pastAnim.text, visibleLen(pastAnim.text));
+          } else {
+            fieldEls[field].innerHTML = "";
+          }
         }
       } else {
-        // Scan backwards for the most recent completed phase that touched this field
-        let pastAnim: FieldAnim | null = null;
-        for (let i = phaseIdx - 1; i >= 0; i--) {
-          const a = phases[i].anims.find(x => x.field === field);
-          if (a) { pastAnim = a; break; }
-        }
-        if (pastAnim) {
-          text = (pastAnim.dir === "forward" || pastAnim.dir === "hold") ? pastAnim.text : "";
-        }
-      }
+        // Plain text fields
+        let text = "";
 
-      fieldEls[field].textContent = text;
+        if (curAnim) {
+          const len = curAnim.text.length;
+          if (curAnim.dir === "forward") {
+            text = curAnim.text.slice(0, Math.floor(sub * len));
+          } else if (curAnim.dir === "reverse") {
+            text = curAnim.text.slice(0, Math.floor((1 - sub) * len));
+          } else {
+            text = curAnim.text;
+          }
+        } else {
+          let pastAnim: FieldAnim | null = null;
+          for (let i = phaseIdx - 1; i >= 0; i--) {
+            const a = phases[i].anims.find(x => x.field === field);
+            if (a) { pastAnim = a; break; }
+          }
+          if (pastAnim) {
+            text = (pastAnim.dir === "forward" || pastAnim.dir === "hold") ? pastAnim.text : "";
+          }
+        }
+
+        fieldEls[field].textContent = text;
+      }
     }
 
-    // ── Image: switch to the current card's image ────────────────────────────
+    // ── Image: opacity tied to headline phase, src tied to cardIdx ───────────
     const imgSrc = cardsData[phase.cardIdx]?.image ?? "";
-    if (imgEl.src !== imgSrc) imgEl.src = imgSrc; // avoid redundant assignments
-    imgEl.classList.toggle("hidden", !imgSrc);
+    if (imgEl.getAttribute("src") !== imgSrc) imgEl.src = imgSrc;
+
+    const headlineAnim = phase.anims.find(a => a.field === "headline");
+    let imgOpacity = 1;
+    if (headlineAnim?.dir === "forward")  imgOpacity = sub;       // fade in as title types
+    if (headlineAnim?.dir === "reverse")  imgOpacity = 1 - sub;   // fade out as title erases
+    imgEl.style.opacity = imgSrc ? String(imgOpacity) : "0";
 
     // ── Cursor: show on the last anim's field in the current phase ────────────
     // For single phases this is that field; for concurrent type phases this is
