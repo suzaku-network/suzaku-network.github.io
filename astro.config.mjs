@@ -42,4 +42,5 @@ export default defineConfig({
   markdown: {
     rehypePlugins: [rehypeFigureCaption],
   },
+  site: "https://suzaku-network.github.io",
 });
