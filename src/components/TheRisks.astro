@@ -22,7 +22,7 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
     k < 0          → card is exiting to the left
 -->
 <Section id="the-risks" class="h-[500vh]">
-  <div class="sticky top-0 h-screen flex items-center overflow-hidden">
+  <div class="sticky top-0 h-dvh flex items-center overflow-hidden">
     <div class="w-full px-6 mt-0 lg:mt-16">
       <div class="max-w-3xl mx-auto">
 
@@ -63,7 +63,7 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
               </div>
 
               <!-- Text area -->
-              <div class="px-4 py-4 sm:px-7 sm:py-5 flex flex-col border-t border-white/10 gap-2">
+              <div class="px-3 py-3 sm:px-7 sm:py-5 flex flex-col border-t border-white/10 gap-2">
                 <p class="news-tag">{card.tagText}</p>
                 <h3 class="news-headline">{card.headline}</h3>
                 <div class="h-px bg-white/10"></div>
@@ -206,7 +206,7 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
   }
 
   .news-tag {
-    font-size: 14px;
+    font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -214,8 +214,12 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
     height: 1.4em;
   }
 
+  @media (min-width: 640px) {
+    .news-tag { font-size: 14px; }
+  }
+
   .news-headline {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 600;
     line-height: 1.15;
     text-transform: uppercase;
@@ -268,7 +272,7 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
   }
 
   .card-body {
-    font-size: 1rem;
+    font-size: 0.8rem;
   }
 
   @media (min-width: 640px) {
@@ -277,6 +281,13 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
 
   @media (min-width: 768px) {
     .card-body { font-size: 1.25rem; }
+  }
+
+  @media (max-width: 639px) {
+    #card-stack {
+      transform: scale(0.9);
+      transform-origin: top center;
+    }
   }
 
   /* Bold text in card body (rendered by snarkdown as <strong>) */

@@ -24,8 +24,8 @@ const gridAreas: Record<string, string> = {
   segments (TRANS_W=2). snap[i] evenly spaced, Lenis animates each in 0.8s.
   The graph reveals nodes (1) → (2) → (3A + 3B simultaneously) as the user scrolls.
 -->
-<Section id="take-action" class="h-[300vh] pb-[80vh] lg:pb-0">
-  <div class="sticky top-0 h-screen pt-20 lg:pt-0 lg:flex lg:items-center lg:overflow-hidden">
+<Section id="take-action" class="lg:h-[300vh]">
+  <div class="lg:sticky lg:top-0 lg:h-screen pt-20 lg:pt-0 lg:flex lg:items-center lg:overflow-hidden">
     <div class="w-full px-6 mt-6 lg:mt-16">
       <div class="max-w-5xl mx-auto">
 
@@ -169,7 +169,7 @@ const gridAreas: Record<string, string> = {
 </Section>
 
 <script>
-  import lenis from '@/utils/lenis';
+  import lenis, { registerVirtualScrollInterceptor } from '@/utils/lenis';
   import { initStepScroll } from '@/utils/stepScroll';
   import { SNAP_DURATION_MS } from '@/utils/sectionSnap';
 
@@ -309,80 +309,150 @@ const gridAreas: Record<string, string> = {
     });
   }
 
-  // ── Mobile/iPad animation (scroll-driven within sticky) ──────────────────────
-  // Same scroll-progress model as desktop: phase is derived from the outer
-  // element's scroll budget (h-[200vh] minus one viewport).
-
-  function applyMobile(phase: number) {
-    const mn1 = document.getElementById("m-node-1") as HTMLElement;
-    if (mn1) { mn1.style.opacity = "1"; mn1.style.transform = "scale(1)"; }
-
-    const mEdges = document.querySelectorAll<HTMLElement>(".mobile-edge");
-
-    // Offsets mirror desktop: 3A and 3B share offset 1 so they animate together.
-    const mobileReveals: [string, number][] = [
-      ["m-node-2",  0],
-      ["m-node-3a", 1],
-      ["m-node-3b", 1],
-    ];
-
-    mobileReveals.forEach(([nodeId, offset], i) => {
-      const t = Math.min(1, Math.max(0, phase - offset) * 2);
-      const edgeT = Math.max(0, Math.min(1, t / 0.6));
-      const nodeT = Math.max(0, Math.min(1, (t - 0.4) / 0.6));
-
-      if (mEdges[i]) mEdges[i].style.clipPath = `inset(0 0 ${(1 - edgeT) * 100}% 0)`;
-      const node = document.getElementById(nodeId) as HTMLElement;
-      if (node) {
-        node.style.opacity = String(nodeT);
-        node.style.transform = `scale(${0.88 + 0.12 * nodeT})`;
-      }
-    });
-  }
-
-  // ── Shared update loop ────────────────────────────────────────────────────────
+  // ── Desktop update loop (scroll-driven) ─────────────────────────────────────
   function update() {
+    if (window.innerWidth < 1024) return;
     const vh = window.innerHeight;
-    if (window.innerWidth >= 1024) {
-      // Desktop: scroll-driven within the sticky 600vh outer div
-      const rect = outer.getBoundingClientRect();
-      const scrolled = Math.max(0, Math.min(outer.offsetHeight - vh, -rect.top));
-      const rawProgress = (outer.offsetHeight - vh) > 0 ? scrolled / (outer.offsetHeight - vh) : 0;
-      applyDesktop(remap(rawProgress));
-    } else {
-      // Mobile/iPad: scroll-driven within the sticky container
-      const rect = outer.getBoundingClientRect();
-      const scrolled = Math.max(0, Math.min(outer.offsetHeight - vh, -rect.top));
-      const rawProgress = (outer.offsetHeight - vh) > 0 ? scrolled / (outer.offsetHeight - vh) : 0;
-      applyMobile(remap(rawProgress));
-    }
+    const rect = outer.getBoundingClientRect();
+    const scrolled = Math.max(0, Math.min(outer.offsetHeight - vh, -rect.top));
+    const rawProgress = (outer.offsetHeight - vh) > 0 ? scrolled / (outer.offsetHeight - vh) : 0;
+    applyDesktop(remap(rawProgress));
   }
 
   function init() {
     if (window.innerWidth >= 1024) {
-      // rAF ensures Tailwind's responsive classes (hidden lg:block) are applied
-      // before we measure ring positions with getBoundingClientRect().
       requestAnimationFrame(() => { layoutEdges(); update(); });
-    } else {
-      requestAnimationFrame(() => update());
     }
   }
 
   let isResetting = false;
-
-  // Use lenis.on('scroll') so update() fires synchronously in Lenis's rAF loop,
-  // after setScroll() has already updated window.scrollY. This ensures
-  // getBoundingClientRect() reads the current frame's scroll position with no lag.
-  // Guard with isResetting so the backward animation is suppressed during re-entry.
   lenis.on('scroll', () => { if (!isResetting) update(); });
 
-  // ── Step-scroll snapping (desktop only) ──────────────────────────────────────
-  // On mobile/tablet the section has natural height (no sticky), so step-scroll
-  // is not needed and would interfere with normal scrolling.
+  // ── Mobile: discrete event-driven step interceptor ────────────────────────────
+  //
+  // The section has natural (non-sticky) height on mobile, so lenis.scrollTo
+  // actually moves the viewport.
+  //
+  // Step 0 → 1: reveal node 2 in-place, no scroll (CSS transition handles it)
+  // Step 1 → 2: reveal 3A+3B, scroll so the graph top sits just below the navbar
+  // Step 2 → exit: pass through → sectionSnap snaps to TheProtocol
+
+  let mobileStep = 0;
+  let mobileLocked = false;
+  let mobilePrevInZone = false;
+  let cleanupMobileInterceptor: (() => void) | null = null;
+
+  // "In zone" when the section top is near (or above) the viewport top and the
+  // section bottom is still visible — works for non-sticky natural-height sections.
+  function isMobileInZone(): boolean {
+    const r = outer.getBoundingClientRect();
+    return r.top <= 5 && r.bottom > 50;
+  }
+
+  // Target scrollY that places #graph-area-mobile just below the navbar (pt-20 = 80px).
+  function getMobileGraphScrollY(): number {
+    const graph = document.getElementById('graph-area-mobile');
+    if (!graph) return window.scrollY;
+    return graph.getBoundingClientRect().top + window.scrollY - 80;
+  }
+
+  // Apply a discrete step state; CSS transitions handle the animation.
+  function applyMobileStep(step: number) {
+    const mn1 = document.getElementById('m-node-1') as HTMLElement;
+    if (mn1) { mn1.style.opacity = '1'; mn1.style.transform = 'scale(1)'; }
+
+    const mEdges = document.querySelectorAll<HTMLElement>('.mobile-edge');
+    const show2 = step >= 1;
+    const show3 = step >= 2;
+
+    const n2 = document.getElementById('m-node-2') as HTMLElement;
+    if (n2) { n2.style.opacity = show2 ? '1' : '0'; n2.style.transform = `scale(${show2 ? 1 : 0.88})`; }
+    if (mEdges[0]) mEdges[0].style.clipPath = `inset(0 0 ${show2 ? 0 : 100}% 0)`;
+
+    const n3a = document.getElementById('m-node-3a') as HTMLElement;
+    const n3b = document.getElementById('m-node-3b') as HTMLElement;
+    if (n3a) { n3a.style.opacity = show3 ? '1' : '0'; n3a.style.transform = `scale(${show3 ? 1 : 0.88})`; }
+    if (n3b) { n3b.style.opacity = show3 ? '1' : '0'; n3b.style.transform = `scale(${show3 ? 1 : 0.88})`; }
+    if (mEdges[1]) mEdges[1].style.clipPath = `inset(0 0 ${show3 ? 0 : 100}% 0)`;
+    if (mEdges[2]) mEdges[2].style.clipPath = `inset(0 0 ${show3 ? 0 : 100}% 0)`;
+  }
+
+  function initMobileInterceptor(): () => void {
+    mobileStep = 0;
+    mobileLocked = false;
+    mobilePrevInZone = false;
+
+    // Reset state whenever the user enters the section from either direction.
+    const onScrollEntry = () => {
+      if (window.innerWidth >= 1024) return;
+      const inZone = isMobileInZone();
+      if (inZone && !mobilePrevInZone) {
+        mobileStep = 0;
+        applyMobileStep(0);
+      }
+      mobilePrevInZone = inZone;
+    };
+    const unsubEntry = lenis.on('scroll', onScrollEntry);
+
+    const interceptor = (deltaY: number): boolean => {
+      if (window.innerWidth >= 1024) return false;
+      if (!isMobileInZone()) return false;
+      if (mobileLocked) return true;
+
+      const dir = deltaY > 0 ? 1 : -1;
+
+      // At section boundaries, pass through so sectionSnap handles the exit.
+      if (dir < 0 && mobileStep === 0) return false;
+      if (dir > 0 && mobileStep === 2) return false;
+
+      mobileLocked = true;
+
+      if (dir > 0) {
+        mobileStep++;
+        applyMobileStep(mobileStep);
+
+        if (mobileStep === 1) {
+          // No scroll — pure in-place reveal via CSS transition.
+          setTimeout(() => { mobileLocked = false; }, 500);
+        } else {
+          // Reveal 3A+3B and scroll to show the full graph.
+          lenis.scrollTo(getMobileGraphScrollY(), {
+            lock: true, force: true, duration: 0.8,
+            easing: (t) => 1 - Math.pow(1 - t, 3),
+            onComplete: () => { mobileLocked = false; },
+          });
+        }
+      } else {
+        mobileStep--;
+        applyMobileStep(mobileStep);
+
+        const outerTop = outer.getBoundingClientRect().top + window.scrollY;
+        if (Math.abs(window.scrollY - outerTop) < 5) {
+          // Already at section top (reversing the no-scroll step 0→1).
+          setTimeout(() => { mobileLocked = false; }, 500);
+        } else {
+          lenis.scrollTo(outerTop, {
+            lock: true, force: true, duration: 0.8,
+            easing: (t) => 1 - Math.pow(1 - t, 3),
+            onComplete: () => { mobileLocked = false; },
+          });
+        }
+      }
+
+      return true;
+    };
+
+    const unregister = registerVirtualScrollInterceptor(interceptor);
+    return () => { unsubEntry(); unregister(); };
+  }
+
+  // ── Desktop step-scroll ───────────────────────────────────────────────────────
   let cleanupStepScroll: (() => void) | null = null;
 
-  function syncStepScroll() {
-    if (window.innerWidth >= 1024) {
+  function syncInterceptors() {
+    const isDesktop = window.innerWidth >= 1024;
+
+    if (isDesktop) {
       if (!cleanupStepScroll) {
         cleanupStepScroll = initStepScroll({
           outerEl: outer,
@@ -394,10 +464,17 @@ const gridAreas: Record<string, string> = {
           onResetEnd: () => { isResetting = false; },
         });
       }
+      if (cleanupMobileInterceptor) {
+        cleanupMobileInterceptor();
+        cleanupMobileInterceptor = null;
+      }
     } else {
       if (cleanupStepScroll) {
         cleanupStepScroll();
         cleanupStepScroll = null;
+      }
+      if (!cleanupMobileInterceptor) {
+        cleanupMobileInterceptor = initMobileInterceptor();
       }
     }
   }
@@ -405,10 +482,10 @@ const gridAreas: Record<string, string> = {
   window.addEventListener("resize", () => {
     if (window.innerWidth >= 1024) layoutEdges();
     update();
-    syncStepScroll();
+    syncInterceptors();
   });
 
-  syncStepScroll();
+  syncInterceptors();
   init();
 </script>
 
@@ -484,9 +561,11 @@ const gridAreas: Record<string, string> = {
 
   /* ── Mobile timeline graph ── */
 
-  /* Mobile nodes 2, 3A, 3B start hidden; scroll JS reveals them */
+  /* Mobile nodes 2, 3A, 3B start hidden; step interceptor reveals them */
   #m-node-2, #m-node-3a, #m-node-3b {
     opacity: 0;
+    transform: scale(0.88);
+    transition: opacity 0.5s ease, transform 0.5s ease;
   }
 
   .m-graph-node {
@@ -545,5 +624,6 @@ const gridAreas: Record<string, string> = {
     background: linear-gradient(to bottom, #00A4AF, #43F6AB);
     clip-path: inset(0 0 100% 0);
     will-change: clip-path;
+    transition: clip-path 0.5s ease;
   }
 </style>

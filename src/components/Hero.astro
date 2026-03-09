@@ -4,7 +4,7 @@ import ButtonTalk from "@/components/ButtonTalk.astro";
 import Section from "@/components/Section.astro";
 ---
 
-<Section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-[68px]">
+<Section id="hero" class="min-h-dvh flex flex-col items-center justify-center text-center px-6 pt-[68px]">
   <p class="type-label text-suzaku-green/80 mb-8">For L1 builders</p>
   <h1 class="type-display max-w-4xl mb-8">
     Your L1's decentralization<br />doesn't matter.<br />
@@ -16,8 +16,8 @@ import Section from "@/components/Section.astro";
     A centralized validator set is a silent liability.<br />One attack, one outage,
     one legal order.<br />All the value of your chain is at risk.
   </p>
-  <div class="flex flex-col sm:flex-row gap-4">
-    <ButtonAudit class="type-btn px-8 py-3" />
-    <ButtonTalk class="type-btn px-8 py-3" />
+  <div class="flex flex-row gap-3 sm:gap-4">
+    <ButtonAudit class="text-[0.85rem] sm:text-xl font-extrabold px-5 py-2 sm:px-8 sm:py-3" />
+    <ButtonTalk class="text-[0.85rem] sm:text-xl font-extrabold px-5 py-2 sm:px-8 sm:py-3" />
   </div>
 </Section>
