@@ -1,0 +1,549 @@
+---
+import { journeyNodes } from "@/data/journeyNodes";
+import ButtonAudit from "@/components/ButtonAudit.astro";
+import ButtonTalk from "@/components/ButtonTalk.astro";
+import Section from "@/components/Section.astro";
+
+/**
+ * Grid area for each desktop node.
+ * Nodes 1 & 2 span both rows (vertically centred at the midline).
+ * Nodes 3A & 3B each own one row (fork above / below the midline).
+ */
+const gridAreas: Record<string, string> = {
+  "node-1":  "1 / 1 / 3 / 2",
+  "node-2":  "1 / 2 / 3 / 3",
+  "node-3a": "1 / 3 / 2 / 4",
+  "node-3b": "2 / 3 / 3 / 4",
+};
+---
+
+<!--
+  Desktop (≥1024px): 300vh total = 100vh sticky viewport + 200vh scroll budget.
+  Mobile/iPad (<1024px): natural height, no sticky freeze.
+  HOLD_W=0: no idle hold phases. Scroll budget is split into (N-1)=2 pure transition
+  segments (TRANS_W=2). snap[i] evenly spaced, Lenis animates each in 0.8s.
+  The graph reveals nodes (1) → (2) → (3A + 3B simultaneously) as the user scrolls.
+-->
+<Section id="take-action" class="h-[300vh] pb-[80vh] lg:pb-0">
+  <div class="sticky top-0 h-screen pt-20 lg:pt-0 lg:flex lg:items-center lg:overflow-hidden">
+    <div class="w-full px-6 mt-6 lg:mt-16">
+      <div class="max-w-5xl mx-auto">
+
+        <p class="type-label text-suzaku-green/80 mb-2 lg:mb-4">Take Action</p>
+        <h2 class="type-heading mb-2 lg:mb-4">
+          Three steps to decentralization
+        </h2>
+        <p class="type-subheading text-white/40 mb-4 lg:mb-6">
+          You don't need to go fully permissionless from day one.<br />Every step
+          forward reduces your exposure.
+        </p>
+
+        <!-- ── Desktop graph ── -->
+        <div id="graph-area" class="hidden lg:block relative">
+          <!-- SVG edge layer -->
+          <svg
+            id="graph-edges"
+            class="absolute inset-0 w-full h-full pointer-events-none z-0"
+            fill="none"
+          >
+            <defs>
+              <!--
+                gradientUnits="userSpaceOnUse" avoids the zero-bounding-box bug:
+                when two rings sit at exactly the same Y (equal text lengths), the
+                path is a perfectly horizontal line with zero-height bbox. The default
+                objectBoundingBox mode treats that as a degenerate bbox and Chrome/Safari
+                silently drop the stroke. userSpaceOnUse anchors coordinates to the SVG
+                viewport instead, so the gradient always renders regardless of path angle.
+                x1/x2 are updated dynamically per-edge in layoutEdges().
+              -->
+              <linearGradient id="eg12" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1200" y2="0">
+                <stop offset="0%" stop-color="#00A4AF" />
+                <stop offset="100%" stop-color="#43F6AB" />
+              </linearGradient>
+              <linearGradient id="eg23a" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1200" y2="0">
+                <stop offset="0%" stop-color="#00A4AF" />
+                <stop offset="100%" stop-color="#43F6AB" />
+              </linearGradient>
+              <linearGradient id="eg23b" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1200" y2="0">
+                <stop offset="0%" stop-color="#00A4AF" />
+                <stop offset="100%" stop-color="#43F6AB" />
+              </linearGradient>
+            </defs>
+            <path id="edge-1-2"  stroke="url(#eg12)"  stroke-width="4" />
+            <path id="edge-2-3a" stroke="url(#eg23a)" stroke-width="4" />
+            <path id="edge-2-3b" stroke="url(#eg23b)" stroke-width="4" />
+          </svg>
+
+          <!-- Node grid (rendered from journeyNodes data) -->
+          <div class="graph-grid relative z-10">
+            {journeyNodes.map((node) => (
+              <div
+                id={node.id}
+                class="graph-node"
+                style={`grid-area: ${gridAreas[node.id]};`}
+              >
+                <div class="flex flex-col items-center text-center">
+                  <div class="node-ring" data-circle>
+                    <div class="node-inner">{node.label}</div>
+                  </div>
+                  <h3 class="node-title mt-5 mb-2">
+                    {node.title}
+                    {node.subtitle && (
+                      <><br /><span class="text-suzaku-green/70">{node.subtitle}</span></>
+                    )}
+                  </h3>
+                  <p class="node-desc">{node.description}</p>
+                  {node.button === "audit" && <ButtonAudit class="type-btn-sm px-5 py-2 mt-4" />}
+                  {node.button === "talk" && <ButtonTalk class="type-btn-sm px-5 py-2 mt-4" />}
+                  {(node.trustedBy || node.logos) && (
+                    <div class="mt-4">
+                      {node.trustedBy && (
+                        <p class="text-white/30 text-xs font-extrabold tracking-widest uppercase mb-2">{node.trustedBy}</p>
+                      )}
+                      {node.logos && (
+                        <div class="flex items-center gap-4 opacity-50">
+                          {node.logos.map((logo) => (
+                            <img src={logo.src} alt={logo.alt} class="h-5" />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- ── Mobile graph (timeline layout, scroll-animated) ── -->
+        <!--
+          Timeline: ring anchors the left column, text sits to the right.
+          Edges use a fixed margin-left = ring_center so alignment is
+          independent of container width.
+        -->
+        <div id="graph-area-mobile" class="lg:hidden max-w-sm">
+          {journeyNodes.map((node, i) => (
+            <>
+              <div id={`m-${node.id}`} class="m-graph-node">
+                <div class="m-ring-col">
+                  <div class="node-ring" data-circle>
+                    <div class="node-inner">{node.label}</div>
+                  </div>
+                  {i < journeyNodes.length - 1 && <div class="mobile-edge" />}
+                </div>
+                <div class="m-text-col">
+                  <div class="m-title-row">
+                    <h3 class="m-node-title">
+                      {node.title}
+                      {node.subtitle && (
+                        <span class="text-suzaku-green/70"> {node.subtitle}</span>
+                      )}
+                    </h3>
+                    {node.button === "audit" && <ButtonAudit class="type-btn-sm px-3 py-1 shrink-0" />}
+                    {node.button === "talk" && <ButtonTalk class="type-btn-sm px-3 py-1 shrink-0" />}
+                  </div>
+                  <p class="m-node-desc">{node.description}</p>
+                  {(node.trustedBy || node.logos) && (
+                    <div class="mt-2">
+                      {node.trustedBy && (
+                        <p class="text-white/30 text-xs font-extrabold tracking-widest uppercase mb-1.5">{node.trustedBy}</p>
+                      )}
+                      {node.logos && (
+                        <div class="flex items-center gap-3 opacity-50">
+                          {node.logos.map((logo) => (
+                            <img src={logo.src} alt={logo.alt} class="h-4" />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  import lenis from '@/utils/lenis';
+  import { initStepScroll } from '@/utils/stepScroll';
+  import { SNAP_DURATION_MS } from '@/utils/sectionSnap';
+
+  // ── SVG edge computation ─────────────────────────────────────────────────────
+  const graphArea = document.getElementById("graph-area") as HTMLElement;
+  const outer = document.getElementById("take-action") as HTMLElement;
+
+  function circleCenter(id: string) {
+    const el = document.getElementById(id)!.querySelector("[data-circle]") as HTMLElement;
+    const ar = graphArea.getBoundingClientRect();
+    const cr = el.getBoundingClientRect();
+    return {
+      x: cr.left + cr.width / 2 - ar.left,
+      y: cr.top + cr.height / 2 - ar.top,
+    };
+  }
+
+  const edgePairs: { pathId: string; fromId: string; toId: string; gradId: string }[] = [
+    { pathId: "edge-1-2",  fromId: "node-1",  toId: "node-2",  gradId: "eg12"  },
+    { pathId: "edge-2-3a", fromId: "node-2",  toId: "node-3a", gradId: "eg23a" },
+    { pathId: "edge-2-3b", fromId: "node-2",  toId: "node-3b", gradId: "eg23b" },
+  ];
+
+  const R = 47; // ring radius (90/2 = 45) + 2px gap
+
+  function layoutEdges() {
+    if (!graphArea) return;
+    const svg = document.getElementById("graph-edges") as SVGSVGElement | null;
+    edgePairs.forEach(({ pathId, fromId, toId, gradId }) => {
+      const from = circleCenter(fromId);
+      const to = circleCenter(toId);
+      const path = document.getElementById(pathId) as SVGPathElement | null;
+      if (!path) return;
+
+      const dy = to.y - from.y;
+      // Use a straight line for visually horizontal edges (rings within 20px vertically).
+      // This covers natural variation caused by different text lengths in flex-centered nodes.
+      const straight = Math.abs(dy) < 20;
+
+      let d: string;
+      const sx = from.x + R;
+      const sy = from.y;
+      const ex = to.x - R;
+      const ey = to.y;
+      if (straight) {
+        d = `M ${sx} ${sy} L ${ex} ${ey}`;
+      } else {
+        // Cap cpx to 40% of the actual horizontal gap between endpoints.
+        // Using dx * 0.45 can push control points past each other when dx is large
+        // relative to the gap, inverting the curve and sending it off-screen.
+        const cpx = Math.max(0, (ex - sx) * 0.4);
+        d = `M ${sx} ${sy} C ${sx + cpx} ${sy}, ${ex - cpx} ${ey}, ${ex} ${ey}`;
+      }
+
+      path.setAttribute("d", d);
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = String(len);
+      path.style.strokeDashoffset = String(len);
+
+      // Pin gradient x1/x2 to the actual edge endpoints in the SVG's coordinate system
+      // (which matches graphArea's coordinate space, same origin as circleCenter uses).
+      // This avoids the zero-bounding-box bug: when dy≈0 the path has zero-height bbox,
+      // and objectBoundingBox gradients become degenerate (invisible) in Chrome/Safari.
+      if (svg) {
+        const grad = svg.querySelector(`#${gradId}`) as SVGLinearGradientElement | null;
+        if (grad) {
+          grad.setAttribute("x1", String(sx));
+          grad.setAttribute("x2", String(ex));
+          grad.setAttribute("y1", String(sy));
+          grad.setAttribute("y2", String(ey));
+        }
+      }
+    });
+  }
+
+  // ── Piecewise scroll mapping ─────────────────────────────────────────────────
+  // 3 hold phases + 2 transitions → phase ∈ [0, 2]
+  const N = 3;
+  const HOLD_W = 0; // no idle hold — 100% of scroll budget drives animation
+  const TRANS_W = 2;
+  const totalW = N * HOLD_W + (N - 1) * TRANS_W;
+
+  interface Seg { r0: number; r1: number; m0: number; m1: number }
+  const segs: Seg[] = [];
+  let cum = 0;
+  for (let i = 0; i < N; i++) {
+    segs.push({ r0: cum / totalW, r1: (cum + HOLD_W) / totalW, m0: i, m1: i });
+    cum += HOLD_W;
+    if (i < N - 1) {
+      segs.push({ r0: cum / totalW, r1: (cum + TRANS_W) / totalW, m0: i, m1: i + 1 });
+      cum += TRANS_W;
+    }
+  }
+
+  function remap(raw: number): number {
+    for (const s of segs) {
+      if (raw <= s.r1) {
+        if (s.r1 === s.r0) return s.m0;
+        return s.m0 + ((raw - s.r0) / (s.r1 - s.r0)) * (s.m1 - s.m0);
+      }
+    }
+    return N - 1;
+  }
+
+  // ── Desktop animation ────────────────────────────────────────────────────────
+  // [edgeId, nodeId, phaseOffset] — 3A and 3B share offset 1 so they animate simultaneously.
+  const reveals: [string, string, number][] = [
+    ["edge-1-2",  "node-2",  0],
+    ["edge-2-3a", "node-3a", 1],
+    ["edge-2-3b", "node-3b", 1],
+  ];
+
+  function applyDesktop(phase: number) {
+    const n1 = document.getElementById("node-1") as HTMLElement;
+    n1.style.opacity = "1";
+    n1.style.transform = "scale(1)";
+
+    // Lazily re-run layoutEdges if paths were measured before CSS was applied
+    // (e.g. first rAF fired but element was still display:none, giving zero rects).
+    const firstPath = document.getElementById("edge-1-2") as SVGPathElement | null;
+    if (firstPath && !firstPath.getAttribute("d")) {
+      layoutEdges();
+    }
+
+    reveals.forEach(([edgeId, nodeId, offset]) => {
+      const t = Math.max(0, Math.min(1, phase - offset));
+      const path = document.getElementById(edgeId) as SVGPathElement | null;
+      if (path) {
+        const len = parseFloat(path.style.strokeDasharray) || path.getTotalLength();
+        path.style.strokeDashoffset = String(len * (1 - t));
+      }
+      const node = document.getElementById(nodeId) as HTMLElement;
+      if (node) {
+        node.style.opacity = String(t);
+        node.style.transform = `scale(${0.85 + 0.15 * t})`;
+      }
+    });
+  }
+
+  // ── Mobile/iPad animation (scroll-driven within sticky) ──────────────────────
+  // Same scroll-progress model as desktop: phase is derived from the outer
+  // element's scroll budget (h-[200vh] minus one viewport).
+
+  function applyMobile(phase: number) {
+    const mn1 = document.getElementById("m-node-1") as HTMLElement;
+    if (mn1) { mn1.style.opacity = "1"; mn1.style.transform = "scale(1)"; }
+
+    const mEdges = document.querySelectorAll<HTMLElement>(".mobile-edge");
+
+    // Offsets mirror desktop: 3A and 3B share offset 1 so they animate together.
+    const mobileReveals: [string, number][] = [
+      ["m-node-2",  0],
+      ["m-node-3a", 1],
+      ["m-node-3b", 1],
+    ];
+
+    mobileReveals.forEach(([nodeId, offset], i) => {
+      const t = Math.min(1, Math.max(0, phase - offset) * 2);
+      const edgeT = Math.max(0, Math.min(1, t / 0.6));
+      const nodeT = Math.max(0, Math.min(1, (t - 0.4) / 0.6));
+
+      if (mEdges[i]) mEdges[i].style.clipPath = `inset(0 0 ${(1 - edgeT) * 100}% 0)`;
+      const node = document.getElementById(nodeId) as HTMLElement;
+      if (node) {
+        node.style.opacity = String(nodeT);
+        node.style.transform = `scale(${0.88 + 0.12 * nodeT})`;
+      }
+    });
+  }
+
+  // ── Shared update loop ────────────────────────────────────────────────────────
+  function update() {
+    const vh = window.innerHeight;
+    if (window.innerWidth >= 1024) {
+      // Desktop: scroll-driven within the sticky 600vh outer div
+      const rect = outer.getBoundingClientRect();
+      const scrolled = Math.max(0, Math.min(outer.offsetHeight - vh, -rect.top));
+      const rawProgress = (outer.offsetHeight - vh) > 0 ? scrolled / (outer.offsetHeight - vh) : 0;
+      applyDesktop(remap(rawProgress));
+    } else {
+      // Mobile/iPad: scroll-driven within the sticky container
+      const rect = outer.getBoundingClientRect();
+      const scrolled = Math.max(0, Math.min(outer.offsetHeight - vh, -rect.top));
+      const rawProgress = (outer.offsetHeight - vh) > 0 ? scrolled / (outer.offsetHeight - vh) : 0;
+      applyMobile(remap(rawProgress));
+    }
+  }
+
+  function init() {
+    if (window.innerWidth >= 1024) {
+      // rAF ensures Tailwind's responsive classes (hidden lg:block) are applied
+      // before we measure ring positions with getBoundingClientRect().
+      requestAnimationFrame(() => { layoutEdges(); update(); });
+    } else {
+      requestAnimationFrame(() => update());
+    }
+  }
+
+  let isResetting = false;
+
+  // Use lenis.on('scroll') so update() fires synchronously in Lenis's rAF loop,
+  // after setScroll() has already updated window.scrollY. This ensures
+  // getBoundingClientRect() reads the current frame's scroll position with no lag.
+  // Guard with isResetting so the backward animation is suppressed during re-entry.
+  lenis.on('scroll', () => { if (!isResetting) update(); });
+
+  // ── Step-scroll snapping (desktop only) ──────────────────────────────────────
+  // On mobile/tablet the section has natural height (no sticky), so step-scroll
+  // is not needed and would interfere with normal scrolling.
+  let cleanupStepScroll: (() => void) | null = null;
+
+  function syncStepScroll() {
+    if (window.innerWidth >= 1024) {
+      if (!cleanupStepScroll) {
+        cleanupStepScroll = initStepScroll({
+          outerEl: outer,
+          stepCount: N,
+          holdWeight: HOLD_W,
+          transWeight: TRANS_W,
+          onLeave: () => { isResetting = true; applyDesktop(0); },
+          resetDelay: SNAP_DURATION_MS,
+          onResetEnd: () => { isResetting = false; },
+        });
+      }
+    } else {
+      if (cleanupStepScroll) {
+        cleanupStepScroll();
+        cleanupStepScroll = null;
+      }
+    }
+  }
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 1024) layoutEdges();
+    update();
+    syncStepScroll();
+  });
+
+  syncStepScroll();
+  init();
+</script>
+
+<style>
+  /* ── Desktop grid ── */
+  .graph-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.15fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1.5rem 2rem;
+    min-height: 420px;
+  }
+
+  .graph-node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: transform, opacity;
+  }
+
+  /* Desktop nodes 2, 3A, 3B start hidden; scroll JS reveals them */
+  #node-2, #node-3a, #node-3b {
+    opacity: 0;
+  }
+
+  /* ── Shared node ring ── */
+  .node-ring {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #00A4AF, #43F6AB);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 1023px) {
+    .node-ring {
+      width: 52px;
+      height: 52px;
+      padding: 2px;
+    }
+    .node-inner {
+      font-size: 0.9rem;
+    }
+  }
+
+  .node-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #101010;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.75rem;
+    color: white;
+  }
+
+  .node-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1.2;
+  }
+
+  .node-desc {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 1.125rem;
+    line-height: 1.55;
+    max-width: 260px;
+  }
+
+  /* ── Mobile timeline graph ── */
+
+  /* Mobile nodes 2, 3A, 3B start hidden; scroll JS reveals them */
+  #m-node-2, #m-node-3a, #m-node-3b {
+    opacity: 0;
+  }
+
+  .m-graph-node {
+    display: flex;
+    flex-direction: row;
+    /* align-items: stretch (default) lets .m-ring-col fill the full row height
+       so the edge inside it can connect ring-to-ring regardless of text length. */
+    gap: 0.75rem;
+    will-change: transform, opacity;
+  }
+
+  .m-ring-col {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .m-text-col {
+    padding-top: 8px;
+    padding-bottom: 14px;
+  }
+
+  .m-title-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 3px;
+  }
+
+  .m-node-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1.3;
+  }
+
+  .m-node-desc {
+    font-size: 0.9375rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.45;
+  }
+
+  /*
+    Vertical edge: lives inside .m-ring-col (flex column, align-items center).
+    flex: 1 fills all remaining height in the row after the ring, so the bar
+    always spans exactly ring-bottom to the next row's ring-top.
+    clip-path reveals top-to-bottom as JS sets inset(0 0 X% 0) where X goes 100→0.
+  */
+  .mobile-edge {
+    width: 3px;
+    flex: 1;
+    min-height: 8px;
+    background: linear-gradient(to bottom, #00A4AF, #43F6AB);
+    clip-path: inset(0 0 100% 0);
+    will-change: clip-path;
+  }
+</style>

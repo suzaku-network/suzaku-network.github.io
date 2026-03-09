@@ -1,8 +1,9 @@
 ---
 import snarkdown from "snarkdown";
 import { riskCards } from "@/data/riskCards";
+import Section from "@/components/Section.astro";
 
-const renderedCards = riskCards.map(c => ({
+const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
   ...c,
   bodyHtml: snarkdown(c.body),
   tagText:  c.tags.join(" · "),
@@ -10,20 +11,19 @@ const renderedCards = riskCards.map(c => ({
 ---
 
 <!--
-  900vh total = 100vh sticky viewport + 800vh scroll budget.
-  The scroll budget is divided into N hold segments + (N-1) transition segments
-  (weights: hold=2, transition=2). For N=4: 4×2 + 3×2 = 14 units → ~57vh/unit.
-    hold       ≈ 114vh  (card rests at front before transitioning)
-    transition ≈ 114vh  (card slides out, next card comes forward)
+  500vh total = 100vh sticky viewport + 400vh scroll budget.
+  HOLD_W=0: no idle hold phases. Scroll budget is split into (N-1)=3 pure transition
+  segments. snap[i] = outerTop + i/(N-1) * budget, evenly spaced.
+    transition ≈ 133vh per step (Lenis animates this in 0.8s with ease-out cubic)
 
   Each card's animation is driven by k = i - scrollProgress where scrollProgress ∈ [0, N-1]:
     k = 0          → card is at the front (active)
     k > 0          → card is in the stack, offset to the right
     k < 0          → card is exiting to the left
 -->
-<div id="risks" class="h-[950vh]">
+<Section id="the-risks" class="h-[500vh]">
   <div class="sticky top-0 h-screen flex items-center overflow-hidden">
-    <section class="w-full px-6 mt-16">
+    <div class="w-full px-6 mt-0 lg:mt-16">
       <div class="max-w-3xl mx-auto">
 
         <p class="type-label text-suzaku-green/80 mb-2 sm:mb-3 text-sm sm:text-xl">The risks</p>
@@ -76,12 +76,16 @@ const renderedCards = riskCards.map(c => ({
         </div>
 
       </div>
-    </section>
+    </div>
   </div>
-</div>
+</Section>
 
 <script>
-  const outer = document.getElementById("risks") as HTMLElement;
+  import lenis from '@/utils/lenis';
+  import { initStepScroll } from '@/utils/stepScroll';
+  import { SNAP_DURATION_MS } from '@/utils/sectionSnap';
+
+  const outer = document.getElementById("the-risks") as HTMLElement;
   const stack = document.getElementById("card-stack") as HTMLElement;
   const cardEls = Array.from(stack.querySelectorAll<HTMLElement>(".risk-card"));
   const N = cardEls.length;
@@ -89,7 +93,7 @@ const renderedCards = riskCards.map(c => ({
   // ── Piecewise scroll mapping ───────────────────────────────────────────────
   // Timeline per card: [hold] then [transition to next] (last card: hold only).
   // HOLD_W and TRANS_W are relative scroll-budget weights.
-  const HOLD_W  = 3; // scroll budget weight while card rests at front
+  const HOLD_W  = 0; // no idle hold — 100% of scroll budget drives animation
   const TRANS_W = 1; // scroll budget weight while card transitions out
   const totalW  = N * HOLD_W + (N - 1) * TRANS_W;
 
@@ -158,16 +162,33 @@ const renderedCards = riskCards.map(c => ({
     });
   }
 
-  let ticking = false;
-  window.addEventListener("scroll", () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        update();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
+  let isResetting = false;
+
+  function resetCards() {
+    isResetting = true;
+    cardEls.forEach((card, i) => {
+      const clamped = Math.min(i, 3);
+      card.style.transform = `translateX(${clamped * 4}%) translateY(${clamped * 0.5}%) scale(${1 - clamped * 0.05})`;
+      card.style.opacity = '1';
+      card.style.zIndex = String(10 - i);
+    });
+  }
+
+  // Use lenis.on('scroll') so update() fires synchronously in Lenis's rAF loop,
+  // after setScroll() has already updated window.scrollY. This ensures
+  // getBoundingClientRect() reads the current frame's scroll position with no lag.
+  // Guard with isResetting so the backward animation is suppressed during re-entry.
+  lenis.on('scroll', () => { if (!isResetting) update(); });
+
+  initStepScroll({
+    outerEl: outer,
+    stepCount: N,
+    holdWeight: HOLD_W,
+    transWeight: TRANS_W,
+    onLeave: resetCards,
+    resetDelay: SNAP_DURATION_MS,
+    onResetEnd: () => { isResetting = false; },
+  });
 
   update();
 </script>
@@ -251,11 +272,11 @@ const renderedCards = riskCards.map(c => ({
   }
 
   @media (min-width: 640px) {
-    .card-body { font-size: 1.25rem; }
+    .card-body { font-size: 1rem; }
   }
 
   @media (min-width: 768px) {
-    .card-body { font-size: 1.5rem; }
+    .card-body { font-size: 1.25rem; }
   }
 
   /* Bold text in card body (rendered by snarkdown as <strong>) */

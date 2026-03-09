@@ -1,5 +1,6 @@
 ---
 import Card from "@/components/Card.astro";
+import Section from "@/components/Section.astro";
 
 const SUZ_CONTRACT = "avax:0x451532F1C9eb7E4Dc2d493dB52b682C0Acf6F5EF";
 const SUZ_TOTAL_SUPPLY = 100_000_000;
@@ -42,7 +43,7 @@ try {
 } catch (_) {}
 ---
 
-<section id="protocol" class="py-24 px-6 border-t border-white/10">
+<Section id="the-protocol" class="py-24 px-6">
   <div class="max-w-5xl mx-auto">
     <p class="type-label text-suzaku-green/80 mb-4">The protocol</p>
     <h2 class="type-heading mb-4">Progressive decentralization, built in.</h2>
@@ -173,4 +174,4 @@ try {
       </div>
     </div>
   </div>
-</section>
+</Section>

@@ -1,3 +1,6 @@
+/* Lenis smooth-scroll: sets scroll-behavior: auto and overflow: hidden when locked */
+@import 'lenis/dist/lenis.css';
+
 /* ─── Typography scale ─────────────────────────────────────────── */
 /* Matches original Tailwind responsive breakpoints (sm: 640px, md: 768px) */
 

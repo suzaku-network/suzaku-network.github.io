@@ -9,6 +9,8 @@ export interface RiskCard {
   articleUrl: string;
   /** Label displayed in the article overlay */
   articleLabel: string;
+  /** Set to true to exclude this card from rendering */
+  hidden?: boolean;
 }
 
 const DEFAULT_ARTICLE_URL = "/blog/why-l1-decentralization-matters";
@@ -39,6 +41,7 @@ export const riskCards: RiskCard[] = [
     image: "/news/judgment-hammer-1200x400.png",
     articleUrl: DEFAULT_ARTICLE_URL,
     articleLabel: DEFAULT_ARTICLE_LABEL,
+    hidden: true,
   },
   {
     tags: ["Hacks"],

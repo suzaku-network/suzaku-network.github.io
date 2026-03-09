@@ -1,10 +1,11 @@
 ---
 import { Icon } from "astro-icon/components";
 import SocialLinks from "@/components/SocialLinks.astro";
+import { NAV_LINKS } from "@/data/navigation";
 ---
 
 <nav id="main-nav" class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
-  <div class="max-w-4xl w-full">
+  <div class="max-w-5xl w-full">
     <!-- Pill bar -->
     <div
       class="flex items-center justify-between bg-suzaku-black/90 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3"
@@ -17,15 +18,21 @@ import SocialLinks from "@/components/SocialLinks.astro";
         />
       </a>
 
-      <!-- Desktop: page links -->
-      <div class="hidden md:flex items-center gap-7">
-        <a href="/" class="text-lg text-white/50 hover:text-white transition-colors">Home</a>
-        <a href="/blog" class="text-lg text-white/50 hover:text-white transition-colors">Blog</a>
+      <!-- Desktop: section + page links -->
+      <div class="hidden md:flex items-center gap-6">
+        {NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            class="nav-link text-base text-white/50 hover:text-white transition-colors"
+          >
+            {link.label}
+          </a>
+        ))}
         <a
           href="https://forms.gle/US695J3BYoy8tztu9"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-lg text-white/50 border border-white/10 px-4 py-1.5 rounded hover:text-white hover:border-suzaku-green transition-colors"
+          class="text-base text-white/50 border border-white/10 px-4 py-1.5 rounded hover:text-white hover:border-suzaku-green transition-colors"
         >
           Get in touch ↗
         </a>
@@ -53,8 +60,14 @@ import SocialLinks from "@/components/SocialLinks.astro";
       id="mobile-menu"
       class="hidden mt-2 bg-suzaku-black/95 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-5 flex-col gap-4"
     >
-      <a href="/" class="type-body text-white/60 hover:text-white transition-colors py-1">Home</a>
-      <a href="/blog" class="type-body text-white/60 hover:text-white transition-colors py-1">Blog</a>
+      {NAV_LINKS.map((link) => (
+        <a
+          href={link.href}
+          class="mobile-nav-link nav-link type-body text-white/60 hover:text-white transition-colors py-1"
+        >
+          {link.label}
+        </a>
+      ))}
       <div class="border-t border-white/10 pt-4 flex items-center gap-5">
         <SocialLinks iconClass="w-5 h-5" />
         <a
@@ -71,6 +84,8 @@ import SocialLinks from "@/components/SocialLinks.astro";
 </nav>
 
 <script>
+  import lenis from "@/utils/lenis";
+
   const btn = document.getElementById("burger-btn") as HTMLButtonElement;
   const menu = document.getElementById("mobile-menu") as HTMLDivElement;
   const iconOpen = document.getElementById("icon-open") as HTMLElement;
@@ -97,12 +112,28 @@ import SocialLinks from "@/components/SocialLinks.astro";
     isOpen ? closeMenu() : openMenu();
   });
 
-  document.querySelectorAll(".mobile-nav-link").forEach((link) => {
-    link.addEventListener("click", closeMenu);
-  });
-
   document.addEventListener("click", (e) => {
     const nav = document.getElementById("main-nav");
     if (nav && !nav.contains(e.target as Node)) closeMenu();
+  });
+
+  // Smooth-scroll to section anchors via Lenis
+  document.querySelectorAll<HTMLAnchorElement>("a.nav-link").forEach((anchor) => {
+    anchor.addEventListener("click", (e) => {
+      const href = anchor.getAttribute("href") ?? "";
+      const url = new URL(href, window.location.href);
+
+      // Only intercept same-page hash links (e.g. /#the-risks when on /)
+      if (url.pathname !== window.location.pathname) return;
+      if (!url.hash) return;
+
+      e.preventDefault();
+      closeMenu();
+      lenis.scrollTo(url.hash, {
+        offset: -80,
+        duration: 1.4,
+        easing: (t: number) => 1 - Math.pow(1 - t, 4),
+      });
+    });
   });
 </script>

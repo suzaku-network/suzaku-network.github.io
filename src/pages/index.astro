@@ -2,8 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import Nav from "@/components/Nav.astro";
 import Hero from "@/components/Hero.astro";
-import RiskCarousel from "@/components/RiskCarousel.astro";
-import JourneySteps from "@/components/JourneySteps.astro";
+import TheRisks from "@/components/TheRisks.astro";
+import TakeAction from "@/components/TakeAction.astro";
 import Protocol from "@/components/Protocol.astro";
 import About from "@/components/About.astro";
 import FinalCta from "@/components/FinalCta.astro";
@@ -12,13 +12,19 @@ import Footer from "@/components/Footer.astro";
 
 <Layout>
   <Nav />
-  <main class="pt-16">
+  <main>
     <Hero />
-    <RiskCarousel />
-    <JourneySteps />
+    <TheRisks />
+    <TakeAction />
     <Protocol />
     <About />
     <FinalCta />
   </main>
   <Footer />
 </Layout>
+
+<script>
+  import { initSectionSnap } from '@/utils/sectionSnap';
+
+  initSectionSnap();
+</script>

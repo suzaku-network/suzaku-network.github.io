@@ -1,0 +1,24 @@
+---
+import { sections } from "@/data/sections";
+
+interface Props {
+  id: string;
+  class?: string;
+}
+
+const { id, class: className } = Astro.props;
+const config = sections.find((s) => s.id === id);
+---
+
+<section
+  id={id}
+  class={className}
+  data-scrollable-desktop={String(config?.desktop.scrollable ?? true)}
+  data-scrollable-mobile={String(config?.mobile.scrollable ?? true)}
+  data-snapback-desktop={config?.desktop.snapBackTo ?? "top"}
+  data-snapback-mobile={config?.mobile.snapBackTo ?? "top"}
+  data-reset-desktop={String(config?.desktop.reset ?? false)}
+  data-reset-mobile={String(config?.mobile.reset ?? false)}
+>
+  <slot />
+</section>
