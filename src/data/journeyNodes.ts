@@ -18,7 +18,7 @@ export const journeyNodes: JourneyNode[] = [
     label: "1",
     title: "Audit",
     description:
-      "Start with our L1 Auditor tool. See what risks your L1 is exposed to and what weak points to prioritize.",
+      "Start with our **L1 Auditor tool**. See what risks your L1 is exposed to and what **weak points to prioritize**.",
     button: "audit",
   },
   {
@@ -26,7 +26,7 @@ export const journeyNodes: JourneyNode[] = [
     label: "2",
     title: "Plan",
     description:
-      "Our team will help you design a progressive decentralization plan tailored to your constraints and objectives.",
+      "Our team will help you design a **progressive decentralization plan** tailored to your constraints and objectives.",
     button: "talk",
   },
   {
@@ -34,7 +34,8 @@ export const journeyNodes: JourneyNode[] = [
     label: "3A",
     title: "Implement",
     subtitle: "Permissionless",
-    description: "Leverage the Suzaku protocol to implement Proof of Stake.",
+    description:
+      "Leverage the Suzaku protocol to implement **Proof of Stake**.",
     trustedBy: "TRUSTED BY",
     logos: [
       { src: "/partners/customers/dexalot-logo.svg", alt: "Dexalot" },
@@ -47,6 +48,6 @@ export const journeyNodes: JourneyNode[] = [
     title: "Implement",
     subtitle: "Permissioned",
     description:
-      "Leverage our team's operator network to distribute your chain's validator set.",
+      "Leverage our team's operator network to **distribute your chain's validator set**.",
   },
 ];

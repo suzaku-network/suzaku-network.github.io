@@ -76,6 +76,17 @@
   font-weight: 800;
 }
 
+/* Dense card body text — compact scale for protocol/action/about cards */
+.type-card-body {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+@media (min-width: 1024px) {
+  .type-card-body {
+    font-size: 1.125rem;
+  }
+}
+
 /* Eyebrow labels (uppercase, tracked) */
 .type-label {
   font-size: 1.25rem;

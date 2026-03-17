@@ -1,0 +1,46 @@
+---
+import Card from "@/components/Card.astro";
+import LogoCarousel from "@/components/LogoCarousel.astro";
+import Section from "@/components/Section.astro";
+---
+
+<Section id="about-us" class="py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+    <p class="type-label text-suzaku-green/80 mb-4">About us</p>
+    <h2 class="type-heading mb-4">
+      4 years of L1 blockchains expertise
+    </h2>
+    <p class="type-subheading text-white/40 mb-8">
+      We've been building tooling for L1 blockchains since 2021.<br />
+      We know what breaks. We build to prevent it.
+    </p>
+
+    <!-- Expertise -->
+    <div class="grid md:grid-cols-3 gap-5 mb-10">
+      <Card>
+        <div class="type-card-title text-suzaku-green mb-3">Deep operator experience</div>
+        <p class="type-card-body text-white/50">
+          Running validators across multiple networks taught us the struggles of decentralization.
+          We know where to focus our efforts to make it work.
+        </p>
+      </Card>
+      <Card>
+        <div class="type-card-title text-suzaku-green mb-3">Co-authors of ACP-99</div>
+        <p class="type-card-body text-white/50">
+          ACP-99, written with Ava Labs, is the Avalanche standard for
+          L1 validator set management. Our BalancerValidatorManager is built
+          directly on this foundation.
+        </p>
+      </Card>
+      <Card>
+        <div class="type-card-title text-suzaku-green mb-3">Open-source infrastructure</div>
+        <p class="type-card-body text-white/50">
+          We built Ash, an open-source toolkit for L1 operations, and are maintaining Ash Wallet, the multisig infrastructure for Avalanche L1s.        </p>
+      </Card>
+    </div>
+
+    <!-- Partners & Backers carousel -->
+    <p class="type-label text-white/50 mb-4">Partners &amp; backers</p>
+    <LogoCarousel />
+  </div>
+</Section>

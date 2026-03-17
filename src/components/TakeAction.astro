@@ -1,8 +1,14 @@
 ---
+import snarkdown from "snarkdown";
 import { journeyNodes } from "@/data/journeyNodes";
 import ButtonAudit from "@/components/ButtonAudit.astro";
 import ButtonTalk from "@/components/ButtonTalk.astro";
 import Section from "@/components/Section.astro";
+
+const renderedNodes = journeyNodes.map(n => ({
+  ...n,
+  descriptionHtml: snarkdown(n.description),
+}));
 
 /**
  * Grid area for each desktop node.
@@ -76,7 +82,7 @@ const gridAreas: Record<string, string> = {
 
           <!-- Node grid (rendered from journeyNodes data) -->
           <div class="graph-grid relative z-10">
-            {journeyNodes.map((node) => (
+            {renderedNodes.map((node) => (
               <div
                 id={node.id}
                 class="graph-node"
@@ -92,7 +98,7 @@ const gridAreas: Record<string, string> = {
                       <><br /><span class="text-suzaku-green/70">{node.subtitle}</span></>
                     )}
                   </h3>
-                  <p class="node-desc">{node.description}</p>
+                  <p class="type-card-body node-desc" set:html={node.descriptionHtml} />
                   {node.button === "audit" && <ButtonAudit class="type-btn-sm px-5 py-2 mt-4" />}
                   {node.button === "talk" && <ButtonTalk class="type-btn-sm px-5 py-2 mt-4" />}
                   {(node.trustedBy || node.logos) && (
@@ -122,14 +128,14 @@ const gridAreas: Record<string, string> = {
           independent of container width.
         -->
         <div id="graph-area-mobile" class="lg:hidden max-w-sm">
-          {journeyNodes.map((node, i) => (
+          {renderedNodes.map((node, i) => (
             <>
               <div id={`m-${node.id}`} class="m-graph-node">
                 <div class="m-ring-col">
                   <div class="node-ring" data-circle>
                     <div class="node-inner">{node.label}</div>
                   </div>
-                  {i < journeyNodes.length - 1 && <div class="mobile-edge" />}
+                  {i < renderedNodes.length - 1 && <div class="mobile-edge" />}
                 </div>
                 <div class="m-text-col">
                   <div class="m-title-row">
@@ -142,7 +148,7 @@ const gridAreas: Record<string, string> = {
                     {node.button === "audit" && <ButtonAudit class="type-btn-sm px-3 py-1 shrink-0" />}
                     {node.button === "talk" && <ButtonTalk class="type-btn-sm px-3 py-1 shrink-0" />}
                   </div>
-                  <p class="m-node-desc">{node.description}</p>
+                  <p class="type-card-body m-node-desc" set:html={node.descriptionHtml} />
                   {(node.trustedBy || node.logos) && (
                     <div class="mt-2">
                       {node.trustedBy && (
@@ -210,12 +216,15 @@ const gridAreas: Record<string, string> = {
       const straight = Math.abs(dy) < 20;
 
       let d: string;
-      const sx = from.x + R;
-      const sy = from.y;
-      const ex = to.x - R;
-      const ey = to.y;
+      const inset = 8;
+      const sx = from.x + R - inset;
+      const sy = from.y + (straight ? 15 : 0);
+      const ex = to.x - R + inset;
+      const ey = to.y + (straight ? 15 : 0);
       if (straight) {
-        d = `M ${sx} ${sy} L ${ex} ${ey}`;
+        const cpx = (ex - sx) * 0.3;
+        const sag = 30;
+        d = `M ${sx} ${sy} C ${sx + cpx} ${sy + sag}, ${ex - cpx} ${ey + sag}, ${ex} ${ey}`;
       } else {
         // Cap cpx to 40% of the actual horizontal gap between endpoints.
         // Using dx * 0.45 can push control points past each other when dx is large
@@ -401,9 +410,26 @@ const gridAreas: Record<string, string> = {
 
       const dir = deltaY > 0 ? 1 : -1;
 
-      // At section boundaries, pass through so sectionSnap handles the exit.
+      // Scrolling up from step 0: pass through so sectionSnap handles the exit.
       if (dir < 0 && mobileStep === 0) return false;
-      if (dir > 0 && mobileStep === 2) return false;
+
+      // Scrolling down from step 2: snap directly to the next section.
+      // sectionSnap would only fire within 100px of the section bottom, but after
+      // step 2's scroll the viewport lands partway through the section, so we snap
+      // explicitly here instead of falling through to free-scroll.
+      if (dir > 0 && mobileStep === 2) {
+        mobileLocked = true;
+        const nextEl = document.getElementById('the-protocol');
+        const targetY = nextEl
+          ? nextEl.getBoundingClientRect().top + window.scrollY
+          : window.scrollY + window.innerHeight;
+        lenis.scrollTo(targetY, {
+          lock: true, force: true, duration: SNAP_DURATION_MS / 1000,
+          easing: (t) => 1 - Math.pow(1 - t, 4),
+          onComplete: () => { mobileLocked = false; },
+        });
+        return true;
+      }
 
       mobileLocked = true;
 
@@ -554,8 +580,6 @@ const gridAreas: Record<string, string> = {
 
   .node-desc {
     color: rgba(255, 255, 255, 0.45);
-    font-size: 1.125rem;
-    line-height: 1.55;
     max-width: 260px;
   }
 
@@ -606,9 +630,7 @@ const gridAreas: Record<string, string> = {
   }
 
   .m-node-desc {
-    font-size: 0.9375rem;
     color: rgba(255, 255, 255, 0.45);
-    line-height: 1.45;
   }
 
   /*

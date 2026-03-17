@@ -35,12 +35,12 @@
  * callback from being called during an animation, removing the risk of the
  * flag getting stuck when step-scroll overrides the animation with force:true.
  */
-import lenis, { registerVirtualScrollInterceptor } from './lenis';
-import { sections } from '@/data/sections';
+import lenis, { registerVirtualScrollInterceptor } from "./lenis";
+import { sections } from "@/data/sections";
 
 const NEAR_BOTTOM = 100; // px before section bottom triggers downward snap
-const NEAR_TOP    = 50;  // px into section top triggers upward snap
-const DESKTOP_BP  = 1024;
+const NEAR_TOP = 50; // px into section top triggers upward snap
+const DESKTOP_BP = 1024;
 
 /** Duration of the section-snap animation in milliseconds. */
 export const SNAP_DURATION_MS = 1000;
@@ -50,10 +50,16 @@ export function initSectionSnap(): () => void {
     return el.getBoundingClientRect().top + window.scrollY;
   }
 
+  // After a snap animation completes, ignore scroll events briefly to prevent
+  // residual touch momentum (finger lift) from immediately reversing the snap.
+  let cooldownUntil = 0;
+  const POST_SNAP_COOLDOWN = 400; // ms
+
   const interceptor = (deltaY: number): boolean => {
+    if (Date.now() < cooldownUntil) return true;
     const direction = deltaY > 0 ? 1 : -1;
-    const scrollY   = window.scrollY;
-    const vh        = window.innerHeight;
+    const scrollY = window.scrollY;
+    const vh = window.innerHeight;
     const isDesktop = window.innerWidth >= DESKTOP_BP;
 
     // Build per-section data, resolving breakpoint config on every event.
@@ -61,16 +67,17 @@ export function initSectionSnap(): () => void {
       .map((sec) => {
         const el = document.getElementById(sec.id);
         if (!el) return null;
-        const cfg      = isDesktop ? sec.desktop : sec.mobile;
-        const isSnap   = !cfg.scrollable;
+        const cfg = isDesktop ? sec.desktop : sec.mobile;
+        const isSnap = !cfg.scrollable;
         const outerTop = getTop(el);
-        const height   = el.offsetHeight;
+        const height = el.offsetHeight;
         // Scrollable sections with snapBackTo:'bottom' land at the section's
         // bottom when entering from below (direction < 0) so the user sees the
         // end of the content rather than the beginning.
-        const snapY = (cfg.scrollable && cfg.snapBackTo === 'bottom' && direction < 0)
-          ? outerTop + Math.max(0, height - vh)
-          : outerTop;
+        const snapY =
+          cfg.scrollable && cfg.snapBackTo === "bottom" && direction < 0
+            ? outerTop + Math.max(0, height - vh)
+            : outerTop;
         return { id: sec.id, outerTop, height, snapY, isSnap, cfg };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
@@ -78,7 +85,7 @@ export function initSectionSnap(): () => void {
     // Identify the most specific section the user is currently inside
     // (highest outerTop that is still ≤ scrollY).
     const byTop = [...items].sort((a, b) => a.outerTop - b.outerTop);
-    const current = byTop.reduce<typeof items[0] | null>(
+    const current = byTop.reduce<(typeof items)[0] | null>(
       (found, item) => (scrollY >= item.outerTop - 5 ? item : found),
       null,
     );
@@ -91,7 +98,7 @@ export function initSectionSnap(): () => void {
       if (current.height <= vh) return false;
 
       if (direction > 0) {
-        const distToBottom = (current.outerTop + current.height) - (scrollY + vh);
+        const distToBottom = current.outerTop + current.height - (scrollY + vh);
         if (distToBottom > NEAR_BOTTOM) return false;
       } else {
         const distToTop = scrollY - current.outerTop;
@@ -111,11 +118,17 @@ export function initSectionSnap(): () => void {
 
     if (direction > 0) {
       for (const p of snapPoints) {
-        if (p > scrollY + 5) { target = p; break; }
+        if (p > scrollY + 5) {
+          target = p;
+          break;
+        }
       }
     } else {
       for (let i = snapPoints.length - 1; i >= 0; i--) {
-        if (snapPoints[i] < scrollY - 5) { target = snapPoints[i]; break; }
+        if (snapPoints[i] < scrollY - 5) {
+          target = snapPoints[i];
+          break;
+        }
       }
     }
 
@@ -138,10 +151,18 @@ export function initSectionSnap(): () => void {
       ? Math.max(1.0, destSteps * 0.5)
       : SNAP_DURATION_MS / 1000;
     const easing: (t: number) => number = isBackward
-      ? (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2 // ease-in-out quad
-      : (t) => 1 - Math.pow(1 - t, 4);                                  // ease-out quart
+      ? (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2) // ease-in-out quad
+      : (t) => 1 - Math.pow(1 - t, 4); // ease-out quart
 
-    lenis.scrollTo(target, { lock: true, force: true, duration, easing });
+    lenis.scrollTo(target, {
+      lock: true,
+      force: true,
+      duration,
+      easing,
+      onComplete: () => {
+        cooldownUntil = Date.now() + POST_SNAP_COOLDOWN;
+      },
+    });
     return true;
   };
 

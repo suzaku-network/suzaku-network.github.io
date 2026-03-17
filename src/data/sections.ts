@@ -12,7 +12,8 @@ const theRisksStepCount = riskCards.filter((c) => !c.hidden).length;
  * Nodes 3A and 3B animate together in phase 3, so we deduplicate by the
  * numeric part of each node's label (parseInt strips the trailing letter).
  */
-const takeActionStepCount = new Set(journeyNodes.map((n) => parseInt(n.label))).size;
+const takeActionStepCount = new Set(journeyNodes.map((n) => parseInt(n.label)))
+  .size;
 
 export type SnapBackTo = "top" | "bottom";
 
@@ -52,31 +53,46 @@ export const sections: SectionConfig[] = [
   {
     id: "hero",
     desktop: { scrollable: false, snapBackTo: "top", reset: false },
-    mobile:  { scrollable: false, snapBackTo: "top", reset: false },
+    mobile: { scrollable: false, snapBackTo: "top", reset: false },
   },
   {
     id: "the-risks",
-    desktop: { scrollable: false, snapBackTo: "top", reset: true, stepCount: theRisksStepCount },
-    mobile:  { scrollable: false, snapBackTo: "top", reset: true, stepCount: theRisksStepCount },
+    desktop: {
+      scrollable: false,
+      snapBackTo: "top",
+      reset: true,
+      stepCount: theRisksStepCount,
+    },
+    mobile: {
+      scrollable: false,
+      snapBackTo: "top",
+      reset: true,
+      stepCount: theRisksStepCount,
+    },
   },
   {
     id: "take-action",
-    desktop: { scrollable: false, snapBackTo: "top",    reset: true,  stepCount: takeActionStepCount },
-    mobile:  { scrollable: true,  snapBackTo: "top", reset: false },
+    desktop: {
+      scrollable: false,
+      snapBackTo: "top",
+      reset: true,
+      stepCount: takeActionStepCount,
+    },
+    mobile: { scrollable: true, snapBackTo: "top", reset: false },
   },
   {
     id: "the-protocol",
-    desktop: { scrollable: true, snapBackTo: "bottom", reset: false },
-    mobile:  { scrollable: true, snapBackTo: "bottom", reset: false },
+    desktop: { scrollable: true, snapBackTo: "top", reset: false },
+    mobile:  { scrollable: true, snapBackTo: "top", reset: false },
   },
   {
     id: "about-us",
     desktop: { scrollable: true, snapBackTo: "bottom", reset: false },
-    mobile:  { scrollable: true, snapBackTo: "bottom", reset: false },
+    mobile: { scrollable: true, snapBackTo: "bottom", reset: false },
   },
   {
     id: "final-cta",
     desktop: { scrollable: false, snapBackTo: "top", reset: false },
-    mobile:  { scrollable: false, snapBackTo: "top", reset: false },
+    mobile: { scrollable: false, snapBackTo: "top", reset: false },
   },
 ];
