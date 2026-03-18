@@ -1,0 +1,213 @@
+---
+import { NAV_LINKS } from "@/data/navigation";
+
+const SECTION_LINKS = NAV_LINKS.filter((l) => l.href.startsWith("/#")).map(
+  (l) => ({ label: l.label, id: l.href.replace("/#", "") }),
+);
+---
+
+<nav
+  id="floating-side-nav"
+  aria-label="Page sections"
+  class="fixed top-28 z-50 flex flex-col gap-0.5 bg-suzaku-black/90 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-3"
+>
+  {
+    SECTION_LINKS.map((link) => (
+      <a
+        href={`/#${link.id}`}
+        data-section={link.id}
+        data-active="false"
+        class="side-nav-link flex items-center justify-end gap-2.5 group py-1.5 pr-1"
+        aria-label={`Go to ${link.label}`}
+      >
+        <span class="side-nav-label text-xs whitespace-nowrap transition-colors duration-300">
+          {link.label}
+        </span>
+        <span class="side-nav-dot w-2 h-2 rounded-full shrink-0 transition-all duration-300" />
+      </a>
+    ))
+  }
+
+  <!-- Start now -->
+  <a
+    href="/#final-cta"
+    data-section="final-cta"
+    data-active="false"
+    class="side-nav-link flex items-center justify-end gap-2.5 group py-1.5 pr-1"
+    aria-label="Go to Start now"
+  >
+    <span class="side-nav-label text-xs whitespace-nowrap transition-colors duration-300">
+      Start now
+    </span>
+    <span class="side-nav-dot w-2 h-2 rounded-full shrink-0 transition-all duration-300"></span>
+  </a>
+
+  <!-- Divider -->
+  <div class="my-1 border-t border-white/10"></div>
+
+  <!-- Back to top -->
+  <button
+    id="back-to-top-btn"
+    class="flex items-center justify-end gap-2.5 group py-1.5 pr-1 w-full"
+    aria-label="Back to top"
+  >
+    <span
+      class="text-xs text-white/30 group-hover:text-white/70 whitespace-nowrap transition-colors duration-300"
+    >
+      Back to top
+    </span>
+    <svg
+      class="w-2 h-2 shrink-0 text-white/30 group-hover:text-white/70 transition-colors duration-300"
+      fill="none"
+      viewBox="0 0 8 8"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M1 6 L4 2 L7 6"></path>
+    </svg>
+  </button>
+</nav>
+
+<style is:global>
+  /* ── Floating side nav ─────────────────────────────────────────────────────── */
+
+  /* Right edge aligned with the max-w-5xl (64rem) navbar pill */
+  #floating-side-nav {
+    right: max(1rem, calc(50% - 32rem));
+    opacity: 0;
+    transform: translateX(14px);
+    pointer-events: none;
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease;
+  }
+
+  #floating-side-nav.visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  /* ── Mobile: section nav lives in the burger menu instead ────────────── */
+  @media (max-width: 767px) {
+    #floating-side-nav {
+      display: none !important;
+    }
+  }
+
+  /* ── Nav item states ─────────────────────────────────────────────────────── */
+
+  .side-nav-dot {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .side-nav-label {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .side-nav-link:hover .side-nav-dot {
+    background-color: #00a4af;
+  }
+
+  .side-nav-link:hover .side-nav-label {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .side-nav-link[data-active="true"] .side-nav-dot {
+    background: linear-gradient(135deg, #00a4af, #43f6ab);
+    box-shadow: 0 0 6px rgba(67, 246, 171, 0.4);
+  }
+
+  .side-nav-link[data-active="true"] .side-nav-label {
+    color: #ffffff;
+  }
+</style>
+
+<script>
+  import lenis from "@/utils/lenis";
+
+  const floatNav = document.getElementById("floating-side-nav");
+
+  // ── Visibility ──────────────────────────────────────────────────────────────
+  // Lenis v1 with lock:true skips its RAF loop (and thus lenis scroll events)
+  // during snap animations. The native window scroll event is the reliable
+  // fallback — Lenis still updates window.scrollY as it animates.
+
+  function updateVisibility() {
+    floatNav?.classList.toggle("visible", window.scrollY > 100);
+  }
+
+  window.addEventListener("scroll", updateVisibility, { passive: true });
+  updateVisibility();
+
+  // ── Active section detection ─────────────────────────────────────────────────
+
+  const SECTION_IDS = [
+    "the-risks",
+    "take-action",
+    "the-protocol",
+    "about-us",
+    "final-cta",
+  ];
+
+  function getActiveSection(): string | null {
+    const midY = window.scrollY + window.innerHeight * 0.45;
+    let active: string | null = null;
+
+    for (const id of SECTION_IDS) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      if (top <= midY) active = id;
+    }
+
+    return active;
+  }
+
+  function setActive(id: string | null) {
+    document
+      .querySelectorAll<HTMLAnchorElement>(".side-nav-link")
+      .forEach((link) => {
+        link.setAttribute(
+          "data-active",
+          link.getAttribute("data-section") === id ? "true" : "false",
+        );
+      });
+  }
+
+  window.addEventListener("scroll", () => setActive(getActiveSection()), {
+    passive: true,
+  });
+  setActive(getActiveSection());
+
+  // ── Click: section links ────────────────────────────────────────────────────
+
+  document
+    .querySelectorAll<HTMLAnchorElement>(".side-nav-link")
+    .forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const id = link.getAttribute("data-section");
+        if (!id) return;
+        lenis.scrollTo(`#${id}`, {
+          lock: true,
+          force: true,
+          offset: 0,
+          duration: 1.4,
+          easing: (t: number) => 1 - Math.pow(1 - t, 4),
+        });
+      });
+    });
+
+  // ── Click: back to top ──────────────────────────────────────────────────────
+
+  document.getElementById("back-to-top-btn")?.addEventListener("click", () => {
+    lenis.scrollTo(0, {
+      lock: true,
+      force: true,
+      duration: 1.6,
+      easing: (t: number) => 1 - Math.pow(1 - t, 4),
+    });
+  });
+</script>

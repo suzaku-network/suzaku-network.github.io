@@ -1,33 +1,26 @@
 ---
-const logos = [
-  { src: "/partners/ecosystem/50-partners-logo.png", alt: "50 Partners" },
-  { src: "/partners/ecosystem/ash-logo.png", alt: "Ash" },
-  { src: "/partners/ecosystem/avalanche-logo.svg", alt: "Avalanche" },
-  { src: "/partners/ecosystem/benqi-logo.svg", alt: "BENQI" },
-  { src: "/partners/ecosystem/blackhole-logo.svg", alt: "Blackhole" },
-  { src: "/partners/ecosystem/blizzard-white.svg", alt: "Blizzard" },
-  { src: "/partners/ecosystem/codebase-logo.png", alt: "Codebase" },
-  { src: "/partners/ecosystem/swissborg-logo.svg", alt: "SwissBorg" },
-  { src: "/partners/ecosystem/yieldyak-logo.png", alt: "YieldYak" },
-];
+import { partners } from "@/data/partners";
 ---
 
 <div class="relative overflow-hidden logo-carousel-mask">
   <div id="logo-track" class="flex items-center gap-16 w-max">
-    {logos.map((logo) => (
-      <img
-        src={logo.src}
-        alt={logo.alt}
-        class="w-44 h-auto object-contain opacity-60 flex-shrink-0 brightness-0 invert"
-      />
+    {partners.map((partner) => (
+      <a href={partner.url} target="_blank" rel="noopener noreferrer" class="flex-shrink-0">
+        <img
+          src={partner.src}
+          alt={partner.alt}
+          class="w-44 h-auto object-contain opacity-60 brightness-0 invert hover:opacity-90 transition-opacity"
+        />
+      </a>
     ))}
-    {logos.map((logo) => (
-      <img
-        src={logo.src}
-        alt=""
-        aria-hidden="true"
-        class="w-44 h-auto object-contain opacity-60 flex-shrink-0 brightness-0 invert"
-      />
+    {partners.map((partner) => (
+      <a href={partner.url} target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1" class="flex-shrink-0">
+        <img
+          src={partner.src}
+          alt=""
+          class="w-44 h-auto object-contain opacity-60 brightness-0 invert hover:opacity-90 transition-opacity"
+        />
+      </a>
     ))}
   </div>
 </div>

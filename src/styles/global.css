@@ -4,7 +4,7 @@
 /* ─── Typography scale ─────────────────────────────────────────── */
 /* Matches original Tailwind responsive breakpoints (sm: 640px, md: 768px) */
 
-/* Hero headline: one per page (text-4xl, sm:text-6xl, md:text-8xl) */
+/* Hero headline: one per page (text-4xl, sm:text-6xl, md:text-7xl) */
 .type-display {
   font-size: 2.75rem;
   font-weight: 600;
@@ -17,11 +17,11 @@
 }
 @media (min-width: 768px) {
   .type-display {
-    font-size: 6rem;
+    font-size: 4.5rem;
   }
 }
 
-/* Section headings (text-3xl → sm:text-4xl → md:text-6xl) */
+/* Section headings (text-3xl → sm:text-4xl → md:text-5xl) */
 .type-heading {
   font-size: 1.875rem;
   font-weight: 600;
@@ -34,23 +34,23 @@
 }
 @media (min-width: 768px) {
   .type-heading {
-    font-size: 3.75rem;
+    font-size: 3rem;
   }
 }
 
-/* Section intro paragraphs (text-base → sm:text-xl → md:text-2xl) */
+/* Section intro paragraphs (text-base → sm:text-lg → md:text-lg) */
 .type-subheading {
   font-size: 1rem;
   line-height: 1.625;
 }
 @media (min-width: 640px) {
   .type-subheading {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
   }
 }
 @media (min-width: 768px) {
   .type-subheading {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
   }
 }
 
@@ -66,48 +66,53 @@
 }
 @media (min-width: 768px) {
   .type-body {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 }
 
-/* Card / feature titles (text-xl font-extrabold) */
+/* Card / feature titles (text-lg font-extrabold) */
 .type-card-title {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 800;
 }
 
-/* Dense card body text — compact scale for protocol/action/about cards */
+/* Card body text — matches the risk card .card-body responsive scale */
 .type-card-body {
-  font-size: 0.9375rem;
+  font-size: 0.8rem;
   line-height: 1.55;
+}
+@media (min-width: 640px) {
+  .type-card-body {
+    font-size: 1rem;
+  }
 }
 @media (min-width: 1024px) {
   .type-card-body {
-    font-size: 1.125rem;
+    font-size: 1rem;
   }
 }
 
 /* Eyebrow labels (uppercase, tracked) */
 .type-label {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: 0.25em;
   text-transform: uppercase;
 }
 
-/* Primary CTA buttons (text-xl font-extrabold) */
+/* Primary CTA buttons (text-lg font-extrabold) */
 .type-btn {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 800;
 }
 
-/* Small CTA buttons for nav (text-base font-extrabold) */
+/* Small CTA buttons for nav (text-sm font-extrabold) */
 .type-btn-sm {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 800;
 }
 
-/* Footer legal links & copyright (text-base) */
+/* Footer legal links & copyright (text-sm) */
 .type-caption {
-  font-size: 1rem;
+  font-size: 0.875rem;
 }

@@ -41,6 +41,19 @@ export interface SectionBreakpointConfig {
    * Omit (or set to 1) for sections with no internal steps.
    */
   stepCount?: number;
+  /**
+   * Controls where in the section the viewport lands when snapping to it.
+   * - `'top'` (default): section top aligns with viewport top.
+   * - `'bottom'`: section bottom aligns with viewport bottom.
+   *   Useful for short trailing sections (e.g. footer) that should anchor
+   *   to the bottom of the screen rather than the top.
+   */
+  snapAlign?: "top" | "bottom";
+  /**
+   * If `true`, this section is completely invisible to the snap system
+   * for this breakpoint. Use to enable a section only on mobile or desktop.
+   */
+  hidden?: boolean;
 }
 
 export interface SectionConfig {
@@ -87,12 +100,17 @@ export const sections: SectionConfig[] = [
   },
   {
     id: "about-us",
-    desktop: { scrollable: true, snapBackTo: "bottom", reset: false },
-    mobile: { scrollable: true, snapBackTo: "bottom", reset: false },
+    desktop: { scrollable: false, snapBackTo: "top", reset: false },
+    mobile: { scrollable: false, snapBackTo: "top", reset: false, stepCount: 3 },
   },
   {
     id: "final-cta",
     desktop: { scrollable: false, snapBackTo: "top", reset: false },
     mobile: { scrollable: false, snapBackTo: "top", reset: false },
+  },
+  {
+    id: "footer",
+    desktop: { scrollable: false, snapBackTo: "top", reset: false, hidden: true },
+    mobile: { scrollable: false, snapBackTo: "top", reset: false, snapAlign: "bottom" },
   },
 ];

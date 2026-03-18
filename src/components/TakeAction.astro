@@ -31,15 +31,15 @@ const gridAreas: Record<string, string> = {
   The graph reveals nodes (1) → (2) → (3A + 3B simultaneously) as the user scrolls.
 -->
 <Section id="take-action" class="lg:h-[300vh]">
-  <div class="lg:sticky lg:top-0 lg:h-screen pt-20 lg:pt-0 lg:flex lg:items-center lg:overflow-hidden">
+  <div class="lg:sticky lg:top-0 lg:h-screen pt-24 md:pt-20 lg:pt-0 lg:flex lg:items-center lg:overflow-hidden">
     <div class="w-full px-6 mt-6 lg:mt-16">
       <div class="max-w-5xl mx-auto">
 
         <p class="type-label text-suzaku-green/80 mb-2 lg:mb-4">Take Action</p>
         <h2 class="type-heading mb-2 lg:mb-4">
-          Three steps to decentralization
+          The steps to decentralization
         </h2>
-        <p class="type-subheading text-white/40 mb-4 lg:mb-6">
+        <p class="type-subheading text-white/70 mb-4 lg:mb-6">
           You don't need to go fully permissionless from day one.<br />Every step
           forward reduces your exposure.
         </p>
@@ -175,7 +175,7 @@ const gridAreas: Record<string, string> = {
 </Section>
 
 <script>
-  import lenis, { registerVirtualScrollInterceptor } from '@/utils/lenis';
+  import lenis, { registerVirtualScrollInterceptor, isPassingThrough } from '@/utils/lenis';
   import { initStepScroll } from '@/utils/stepScroll';
   import { SNAP_DURATION_MS } from '@/utils/sectionSnap';
 
@@ -335,7 +335,10 @@ const gridAreas: Record<string, string> = {
   }
 
   let isResetting = false;
-  lenis.on('scroll', () => { if (!isResetting) update(); });
+  lenis.on('scroll', () => {
+    if (isResetting || isPassingThrough(outer)) return;
+    update();
+  });
 
   // ── Mobile: discrete event-driven step interceptor ────────────────────────────
   //
@@ -358,11 +361,11 @@ const gridAreas: Record<string, string> = {
     return r.top <= 5 && r.bottom > 50;
   }
 
-  // Target scrollY that places #graph-area-mobile just below the navbar (pt-20 = 80px).
   function getMobileGraphScrollY(): number {
     const graph = document.getElementById('graph-area-mobile');
     if (!graph) return window.scrollY;
-    return graph.getBoundingClientRect().top + window.scrollY - 80;
+    const clearance = 80;
+    return graph.getBoundingClientRect().top + window.scrollY - clearance;
   }
 
   // Apply a discrete step state; CSS transitions handle the animation.
@@ -572,7 +575,7 @@ const gridAreas: Record<string, string> = {
   }
 
   .node-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: white;
     line-height: 1.2;

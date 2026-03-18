@@ -15,6 +15,12 @@ import Lenis from "lenis";
 type VirtualScrollInterceptor = (deltaY: number) => boolean;
 const interceptors: VirtualScrollInterceptor[] = [];
 
+// Track when Lenis yields to native overscroll (pull-to-refresh at the top,
+// or overscroll bounce at the bottom). After yielding, suppress events briefly
+// so the rubber-band bounce-back doesn't trigger a forward section snap.
+let overscrollCooldownUntil = 0;
+const OVERSCROLL_COOLDOWN = 400; // ms
+
 const lenis = new Lenis({
   autoRaf: true,
   lerp: 0.3,
@@ -23,6 +29,21 @@ const lenis = new Lenis({
     // Without this guard, deltaY=0 is interpreted as direction=-1 by the
     // interceptors, causing a spurious backward snap on every mobile tap.
     if (data.deltaX === 0 && data.deltaY === 0) return true;
+
+    // At the very top scrolling up (or very bottom scrolling down): yield to
+    // the browser so native overscroll / pull-to-refresh works as expected.
+    const atTop = window.scrollY <= 0 && data.deltaY < 0;
+    const atBottom =
+      window.scrollY >= document.documentElement.scrollHeight - window.innerHeight - 1 &&
+      data.deltaY > 0;
+    if (atTop || atBottom) {
+      overscrollCooldownUntil = Date.now() + OVERSCROLL_COOLDOWN;
+      return false;
+    }
+
+    // Suppress events briefly after overscroll so bounce-back momentum
+    // doesn't trigger a forward snap.
+    if (Date.now() < overscrollCooldownUntil) return false;
 
     for (const fn of interceptors) {
       if (fn(data.deltaY)) {
@@ -58,3 +79,35 @@ export function registerVirtualScrollInterceptor(
     if (idx !== -1) interceptors.splice(idx, 1);
   };
 }
+
+/**
+ * The actual destination of the current scrollTo animation. Lenis updates
+ * `targetScroll` to the *current interpolated position* on each frame (not
+ * the final destination), so we read the real target from the internal
+ * Animate instance instead.
+ */
+function getScrollDestination(): number | null {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const anim = (lenis as any).animate;
+  if (!anim || !anim.isRunning) return null;
+  return anim.to as number;
+}
+
+/**
+ * Returns true when a locked scrollTo animation is in flight and its
+ * destination falls outside the given section's scroll range. Components use
+ * this to suppress their scroll-driven update() during pass-throughs (e.g.
+ * nav jumps that skip over the section without stopping).
+ */
+export function isPassingThrough(sectionEl: HTMLElement): boolean {
+  if (!lenis.isLocked) return false;
+  const dest = getScrollDestination();
+  if (dest === null) return false;
+  const outerTop = sectionEl.getBoundingClientRect().top + window.scrollY;
+  const vh = window.innerHeight;
+  const scrollBudget = Math.max(0, sectionEl.offsetHeight - vh);
+  return dest < outerTop - 5 || dest > outerTop + scrollBudget + 5;
+}
+
+/** Exported for stepScroll's entry-snap logic. */
+export { getScrollDestination };

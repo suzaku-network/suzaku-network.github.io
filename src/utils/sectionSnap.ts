@@ -68,25 +68,29 @@ export function initSectionSnap(): () => void {
         const el = document.getElementById(sec.id);
         if (!el) return null;
         const cfg = isDesktop ? sec.desktop : sec.mobile;
+        if (cfg.hidden) return null;
         const isSnap = !cfg.scrollable;
         const outerTop = getTop(el);
         const height = el.offsetHeight;
-        // Scrollable sections with snapBackTo:'bottom' land at the section's
-        // bottom when entering from below (direction < 0) so the user sees the
-        // end of the content rather than the beginning.
         const snapY =
-          cfg.scrollable && cfg.snapBackTo === "bottom" && direction < 0
-            ? outerTop + Math.max(0, height - vh)
-            : outerTop;
+          cfg.snapAlign === "bottom"
+            ? outerTop + height - vh
+            : cfg.scrollable && cfg.snapBackTo === "bottom" && direction < 0
+              ? outerTop + Math.max(0, height - vh)
+              : outerTop;
         return { id: sec.id, outerTop, height, snapY, isSnap, cfg };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
 
-    // Identify the most specific section the user is currently inside
-    // (highest outerTop that is still ≤ scrollY).
-    const byTop = [...items].sort((a, b) => a.outerTop - b.outerTop);
+    // Identify the most specific section the user is currently inside.
+    // Use the lower of outerTop and snapY so that sections with
+    // snapAlign:'bottom' (whose snap position is above their DOM top)
+    // are correctly detected as "current" when the user is snapped there.
+    const effectiveTop = (i: (typeof items)[0]) =>
+      Math.min(i.outerTop, i.snapY);
+    const byTop = [...items].sort((a, b) => effectiveTop(a) - effectiveTop(b));
     const current = byTop.reduce<(typeof items)[0] | null>(
-      (found, item) => (scrollY >= item.outerTop - 5 ? item : found),
+      (found, item) => (scrollY >= effectiveTop(item) - 5 ? item : found),
       null,
     );
 

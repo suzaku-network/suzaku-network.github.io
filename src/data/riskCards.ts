@@ -19,6 +19,14 @@ const DEFAULT_ARTICLE_LABEL =
 
 export const riskCards: RiskCard[] = [
   {
+    tags: ["Hacks"],
+    headline: "ByBit lost $1.4B, Swissborg lost $41.5M…",
+    body: "… both due to an **OpSec failure of their service providers**. Any centralized setup **WILL be breached**. The only barrier is decentralization.",
+    image: "/news/hacks-rekt-2025-1200x400.png",
+    articleUrl: DEFAULT_ARTICLE_URL,
+    articleLabel: DEFAULT_ARTICLE_LABEL,
+  },
+  {
     tags: ["Bridged TVL"],
     headline: "Hackers Drain All L1 TVL After Key Compromise",
     body: "If a single entity **controls more than 67%** of your L1, accessing their keys allows to **bridge out all the TVL** of your chain.",
@@ -42,13 +50,5 @@ export const riskCards: RiskCard[] = [
     articleUrl: DEFAULT_ARTICLE_URL,
     articleLabel: DEFAULT_ARTICLE_LABEL,
     hidden: true,
-  },
-  {
-    tags: ["Hacks"],
-    headline: "ByBit lost $1.4B, Swissborg lost $41.5M…",
-    body: "… both due to an **OpSec failure of their service providers**. Any centralized setup **WILL be breached**. The only barrier is decentralization.",
-    image: "/news/hacks-rekt-2025-1200x400.png",
-    articleUrl: DEFAULT_ARTICLE_URL,
-    articleLabel: DEFAULT_ARTICLE_LABEL,
   },
 ];

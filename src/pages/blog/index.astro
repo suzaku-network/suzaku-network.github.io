@@ -22,7 +22,7 @@ const posts = (await getCollection("blog")).sort(
       <!-- Header -->
       <div class="mb-16">
         <h1 class="type-heading text-white">Blog</h1>
-        <p class="type-subheading text-white/50 mt-4 max-w-2xl">
+        <p class="type-subheading text-white/70 mt-4 max-w-2xl">
           Insights on Avalanche L1 decentralization, validator security, and
           cryptoeconomic design.
         </p>
@@ -31,7 +31,7 @@ const posts = (await getCollection("blog")).sort(
       <!-- Grid -->
       {
         posts.length === 0 ? (
-          <p class="type-body text-white/40">No articles published yet.</p>
+          <p class="type-body text-white/70">No articles published yet.</p>
         ) : (
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (

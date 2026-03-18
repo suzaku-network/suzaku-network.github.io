@@ -22,13 +22,13 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
     k < 0          → card is exiting to the left
 -->
 <Section id="the-risks" class="h-[500vh]">
-  <div class="sticky top-0 h-dvh flex items-center overflow-hidden">
-    <div class="w-full px-6 mt-0 lg:mt-16">
+  <div class="sticky top-0 h-dvh flex items-center pt-24 md:pt-0 overflow-hidden">
+    <div class="w-full px-6 lg:mt-16">
       <div class="max-w-3xl mx-auto">
 
-        <p class="type-label text-suzaku-green/80 mb-2 sm:mb-3 text-sm sm:text-xl">The risks</p>
+        <p class="type-label text-suzaku-green/80 mb-2 sm:mb-3 text-sm sm:text-lg">The risks</p>
         <h2 class="type-heading mb-2 sm:mb-3">What's really at stake</h2>
-        <p class="type-subheading text-white/40 mb-4 sm:mb-8 text-sm sm:text-xl">
+        <p class="type-subheading text-white/70 mb-4 sm:mb-8 text-sm sm:text-lg">
           Centralized validator sets carry invisible risks.<br />Until a hack, an
           outage, or a legal order...
         </p>
@@ -68,7 +68,7 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
                 <h3 class="news-headline">{card.headline}</h3>
                 <div class="h-px bg-white/10"></div>
                 <div class="sm:h-[5.5rem] sm:overflow-hidden">
-                  <p class="card-body text-white/50 leading-relaxed" set:html={card.bodyHtml} />
+                  <p class="card-body text-white/70 leading-relaxed" set:html={card.bodyHtml} />
                 </div>
               </div>
             </div>
@@ -81,7 +81,7 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
 </Section>
 
 <script>
-  import lenis from '@/utils/lenis';
+  import lenis, { isPassingThrough } from '@/utils/lenis';
   import { initStepScroll } from '@/utils/stepScroll';
   import { SNAP_DURATION_MS } from '@/utils/sectionSnap';
 
@@ -174,11 +174,10 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
     });
   }
 
-  // Use lenis.on('scroll') so update() fires synchronously in Lenis's rAF loop,
-  // after setScroll() has already updated window.scrollY. This ensures
-  // getBoundingClientRect() reads the current frame's scroll position with no lag.
-  // Guard with isResetting so the backward animation is suppressed during re-entry.
-  lenis.on('scroll', () => { if (!isResetting) update(); });
+  lenis.on('scroll', () => {
+    if (isResetting || isPassingThrough(outer)) return;
+    update();
+  });
 
   initStepScroll({
     outerEl: outer,
@@ -228,7 +227,7 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
   }
 
   @media (min-width: 640px) {
-    .news-headline { font-size: 3rem; }
+    .news-headline { font-size: 2.25rem; }
   }
 
   .article-link {
@@ -280,7 +279,7 @@ const renderedCards = riskCards.filter(c => !c.hidden).map(c => ({
   }
 
   @media (min-width: 768px) {
-    .card-body { font-size: 1.25rem; }
+    .card-body { font-size: 1.125rem; }
   }
 
   @media (max-width: 639px) {
