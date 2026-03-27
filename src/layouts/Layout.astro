@@ -4,15 +4,44 @@ import "@/styles/global.css";
 interface Props {
   title?: string;
   description?: string;
-  /** Absolute URL or root-relative path to OG image (e.g. a blog post hero) */
+  /** Root-relative path or absolute URL to the OG image (e.g. a blog post hero) */
   image?: string;
+  /** OG type — "website" for regular pages, "article" for blog posts */
+  type?: "website" | "article";
+  /** ISO 8601 date string for article:published_time */
+  publishedTime?: string;
+  /** Author name for article:author */
+  articleAuthor?: string;
 }
 
 const {
   title = "Suzaku | Decentralization Hub for Avalanche L1s",
   description = "Suzaku helps Avalanche L1 networks securely scale and decentralize their validator sets through liquid staking, progressive decentralization, and advanced cryptoeconomic security models.",
   image,
+  type = "website",
+  publishedTime,
+  articleAuthor,
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+const defaultOgImage = new URL("/og-default.svg", Astro.site).href;
+const ogImage = image
+  ? new URL(image, Astro.site).href
+  : defaultOgImage;
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Suzaku",
+  url: "https://suzaku.network",
+  logo: "https://suzaku.network/brand/suzaku-logo-color-white-horizontal.svg",
+  sameAs: [
+    "https://x.com/SuzakuNetwork",
+    "https://discord.gg/4XP6aqFkKX",
+    "https://github.com/suzaku-network",
+    "https://www.linkedin.com/company/suzaku",
+  ],
+};
 ---
 
 <!doctype html>
@@ -21,17 +50,36 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#101010" />
+    <link rel="canonical" href={canonicalURL} />
     <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Suzaku" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    {image && <meta property="og:image" content={image} />}
+    <meta property="og:image" content={ogImage} />
+    {type === "article" && publishedTime && (
+      <meta property="article:published_time" content={publishedTime} />
+    )}
+    {type === "article" && articleAuthor && (
+      <meta property="article:author" content={articleAuthor} />
+    )}
     <!-- Twitter Card -->
-    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@SuzakuNetwork" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {image && <meta name="twitter:image" content={image} />}
+    <meta name="twitter:image" content={ogImage} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- RSS feed -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Suzaku Blog"
+      href="/rss.xml"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -39,8 +87,16 @@ const {
       rel="stylesheet"
     />
     <title>{title}</title>
+    <!-- Organization structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   </head>
   <body class="bg-suzaku-black text-white antialiased font-sans">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-suzaku-teal focus:text-white focus:rounded focus:font-extrabold"
+    >
+      Skip to content
+    </a>
     <slot />
   </body>
 </html>

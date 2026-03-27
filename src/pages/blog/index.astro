@@ -15,9 +15,9 @@ const posts = (await getCollection("blog")).sort(
   title="Suzaku | Blog"
   description="Insights on Avalanche L1 decentralization, validator security, and cryptoeconomic design from the Suzaku team."
 >
-  <Nav />
+  <header><Nav /></header>
 
-  <main class="min-h-screen pt-32 pb-24 px-6">
+  <main id="main-content" class="min-h-screen pt-32 pb-24 px-6">
     <div class="max-w-6xl mx-auto">
       <!-- Header -->
       <div class="mb-16">

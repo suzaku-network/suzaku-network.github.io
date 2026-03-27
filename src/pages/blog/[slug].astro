@@ -24,16 +24,48 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
   month: "long",
   day: "numeric",
 });
+
+const publishedTime = post.data.date.toISOString();
+const postUrl = new URL(`/blog/${post.id}`, Astro.site).href;
+const ogImageUrl = new URL(post.data.image, Astro.site).href;
+
+const blogPostingSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  image: ogImageUrl,
+  datePublished: publishedTime,
+  url: postUrl,
+  author: {
+    "@type": "Person",
+    name: author?.name ?? "Suzaku Team",
+    ...(author?.x ? { url: author.x } : {}),
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Suzaku",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://suzaku.network/brand/suzaku-logo-color-white-horizontal.svg",
+    },
+  },
+};
 ---
 
 <Layout
   title={`${post.data.title} | Suzaku Blog`}
   description={post.data.description}
   image={post.data.image}
+  type="article"
+  publishedTime={publishedTime}
+  articleAuthor={author?.name}
 >
-  <Nav />
+  <header><Nav /></header>
 
-  <main class="min-h-screen pt-32 pb-24 px-6">
+  <script type="application/ld+json" set:html={JSON.stringify(blogPostingSchema)} />
+
+  <main id="main-content" class="min-h-screen pt-32 pb-24 px-6">
     <article class="max-w-3xl mx-auto">
       <!-- Back link -->
       <a
@@ -64,6 +96,10 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
               src={author.avatar}
               alt={author.name}
               class="w-11 h-11 rounded-full object-cover shrink-0"
+              width="44"
+              height="44"
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div class="w-11 h-11 rounded-full bg-suzaku-teal/20 shrink-0 flex items-center justify-center">
@@ -109,12 +145,17 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         </div>
       </div>
 
-      <!-- Hero image (16:9) -->
+      <!-- Hero image (16:9) — LCP element: eager + high priority -->
       <div class="aspect-video rounded-lg overflow-hidden mb-12 border border-white/10">
         <img
           src={post.data.image}
           alt={post.data.imageAlt}
           class="w-full h-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          width="896"
+          height="504"
         />
       </div>
 
