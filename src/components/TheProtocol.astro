@@ -2,6 +2,7 @@
 import snarkdown from "snarkdown";
 import Card from "@/components/Card.astro";
 import Section from "@/components/Section.astro";
+import ButtonHighlight from "@/components/ButtonHighlight.astro";
 import { decentralizationPhases, protocolParticipants, auditors } from "@/data/protocolData";
 
 const phases = decentralizationPhases.map((p) => ({ ...p, descHtml: snarkdown(p.description) }));
@@ -72,24 +73,11 @@ try {
           <p class="font-extrabold text-xl bg-suzaku-gradient bg-clip-text text-transparent">{tvl}</p>
         </div>
         <div class="w-px bg-white/10 self-stretch hidden sm:block"></div>
-        <div>
-          <p class="type-label text-white/50 mb-1">SUZ price</p>
-          <p class="font-extrabold text-xl bg-suzaku-gradient bg-clip-text text-transparent">{suzPrice}</p>
-        </div>
-        <div class="w-px bg-white/10 self-stretch hidden sm:block"></div>
-        <div>
-          <p class="type-label text-white/50 mb-1">SUZ FDV</p>
-          <p class="font-extrabold text-xl bg-suzaku-gradient bg-clip-text text-transparent">{fdv}</p>
-        </div>
-        <div class="w-px bg-white/10 self-stretch hidden sm:block"></div>
-        <a
+        <ButtonHighlight
           href="https://app.suzaku.network"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="type-btn inline-block text-suzaku-black bg-suzaku-gradient px-8 py-3 rounded hover:opacity-90 transition-opacity"
-        >
-          Open the staking dApp ↗
-        </a>
+          label="Open the staking dApp"
+          class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3"
+        />
       </div>
     </div>
 

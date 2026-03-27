@@ -1,10 +1,30 @@
 export const NAV_LINKS = [
-  { label: "The Risks", href: "/#the-risks" },
-  { label: "Take Action", href: "/#take-action" },
-  { label: "The Protocol", href: "/#the-protocol" },
-  { label: "About Us", href: "/#about-us" },
-  { label: "For builders", href: "/" },
-  { label: "Blog", href: "/blog" },
+  { label: "For L1 builders", href: "/for-builders", external: false },
+  { label: "Blog", href: "/blog", external: false },
+  {
+    label: "L1 Auditor",
+    href: "https://auditor.suzaku.network",
+    external: true,
+  },
+  {
+    label: "dApp",
+    href: "https://app.suzaku.network",
+    external: true,
+  },
+  {
+    label: "Documentation",
+    href: "https://docs.suzaku.network/",
+    external: true,
+  },
+] as const;
+
+/** Section links used only on the /for-builders page. */
+export const FOR_BUILDERS_SECTIONS = [
+  { label: "The Risks", id: "the-risks" },
+  { label: "Take Action", id: "take-action" },
+  { label: "The Protocol", id: "the-protocol" },
+  { label: "About Us", id: "about-us" },
+  { label: "Start now", id: "final-cta" },
 ] as const;
 
 export const SOCIAL_LINKS = [
@@ -27,6 +47,18 @@ export const SOCIAL_LINKS = [
     label: "LinkedIn",
     href: "https://www.linkedin.com/company/suzaku",
     icon: "simple-icons:linkedin",
+  },
+] as const;
+
+export const RESOURCE_LINKS = [
+  { label: "Blog", href: "/blog" },
+  {
+    label: "Documentation",
+    href: "https://docs.suzaku.network/",
+  },
+  {
+    label: "Branding Kit",
+    href: "https://drive.google.com/drive/folders/1WCTwyhALU7pMXfaSHnd4dadCjUjmT3yV",
   },
 ] as const;
 

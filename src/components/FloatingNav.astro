@@ -1,9 +1,5 @@
 ---
-import { NAV_LINKS } from "@/data/navigation";
-
-const SECTION_LINKS = NAV_LINKS.filter((l) => l.href.startsWith("/#")).map(
-  (l) => ({ label: l.label, id: l.href.replace("/#", "") }),
-);
+import { FOR_BUILDERS_SECTIONS } from "@/data/navigation";
 ---
 
 <nav
@@ -12,9 +8,9 @@ const SECTION_LINKS = NAV_LINKS.filter((l) => l.href.startsWith("/#")).map(
   class="fixed top-28 z-50 flex flex-col gap-0.5 bg-suzaku-black/90 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-3"
 >
   {
-    SECTION_LINKS.map((link) => (
+    FOR_BUILDERS_SECTIONS.map((link) => (
       <a
-        href={`/#${link.id}`}
+        href={`#${link.id}`}
         data-section={link.id}
         data-active="false"
         class="side-nav-link flex items-center justify-end gap-2.5 group py-1.5 pr-1"
@@ -27,20 +23,6 @@ const SECTION_LINKS = NAV_LINKS.filter((l) => l.href.startsWith("/#")).map(
       </a>
     ))
   }
-
-  <!-- Start now -->
-  <a
-    href="/#final-cta"
-    data-section="final-cta"
-    data-active="false"
-    class="side-nav-link flex items-center justify-end gap-2.5 group py-1.5 pr-1"
-    aria-label="Go to Start now"
-  >
-    <span class="side-nav-label text-xs whitespace-nowrap transition-colors duration-300">
-      Start now
-    </span>
-    <span class="side-nav-dot w-2 h-2 rounded-full shrink-0 transition-all duration-300"></span>
-  </a>
 
   <!-- Divider -->
   <div class="my-1 border-t border-white/10"></div>

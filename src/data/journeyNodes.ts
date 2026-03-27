@@ -5,8 +5,8 @@ export interface JourneyNode {
   /** Subtitle appended in a muted colour, e.g. "(permissionless)" */
   subtitle?: string;
   description: string;
-  /** Button rendered below the description. "audit" → ButtonAudit, "talk" → ButtonTalk */
-  button?: "audit" | "talk";
+  /** Button rendered below the description. "highlight" → ButtonHighlight, "standard" → ButtonStandard */
+  button?: "highlight" | "standard";
   /** Label rendered in caps above the logos, e.g. "TRUSTED BY" */
   trustedBy?: string;
   logos?: { src: string; alt: string }[];
@@ -19,7 +19,7 @@ export const journeyNodes: JourneyNode[] = [
     title: "Audit",
     description:
       "Start with our **L1 Auditor tool**. See what risks your L1 is exposed to and what **weak points to prioritize**.",
-    button: "audit",
+    button: "highlight",
   },
   {
     id: "node-2",
@@ -27,7 +27,7 @@ export const journeyNodes: JourneyNode[] = [
     title: "Plan",
     description:
       "Our team will help you design a **progressive decentralization plan** tailored to your constraints and objectives.",
-    button: "talk",
+    button: "standard",
   },
   {
     id: "node-3a",

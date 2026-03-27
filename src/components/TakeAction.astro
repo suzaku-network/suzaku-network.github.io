@@ -1,8 +1,8 @@
 ---
 import snarkdown from "snarkdown";
 import { journeyNodes } from "@/data/journeyNodes";
-import ButtonAudit from "@/components/ButtonAudit.astro";
-import ButtonTalk from "@/components/ButtonTalk.astro";
+import ButtonHighlight from "@/components/ButtonHighlight.astro";
+import ButtonStandard from "@/components/ButtonStandard.astro";
 import Section from "@/components/Section.astro";
 
 const renderedNodes = journeyNodes.map(n => ({
@@ -99,8 +99,8 @@ const gridAreas: Record<string, string> = {
                     )}
                   </h3>
                   <p class="type-card-body node-desc" set:html={node.descriptionHtml} />
-                  {node.button === "audit" && <ButtonAudit class="type-btn-sm px-5 py-2 mt-4" />}
-                  {node.button === "talk" && <ButtonTalk class="type-btn-sm px-5 py-2 mt-4" />}
+                  {node.button === "highlight" && <ButtonHighlight class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3 mt-4" />}
+                  {node.button === "standard" && <ButtonStandard class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3 mt-4" />}
                   {(node.trustedBy || node.logos) && (
                     <div class="mt-4">
                       {node.trustedBy && (
@@ -145,8 +145,8 @@ const gridAreas: Record<string, string> = {
                         <span class="text-suzaku-green/70"> {node.subtitle}</span>
                       )}
                     </h3>
-                    {node.button === "audit" && <ButtonAudit class="type-btn-sm px-3 py-1 shrink-0" />}
-                    {node.button === "talk" && <ButtonTalk class="type-btn-sm px-3 py-1 shrink-0" />}
+                    {node.button === "highlight" && <ButtonHighlight class="text-[0.85rem] font-extrabold px-5 py-2 shrink-0" />}
+                    {node.button === "standard" && <ButtonStandard class="text-[0.85rem] font-extrabold px-5 py-2 shrink-0" />}
                   </div>
                   <p class="type-card-body m-node-desc" set:html={node.descriptionHtml} />
                   {(node.trustedBy || node.logos) && (

@@ -1,0 +1,21 @@
+---
+interface Props {
+  class?: string;
+  href?: string;
+  label?: string;
+  external?: boolean;
+}
+const {
+  class: className,
+  href = "https://forms.gle/US695J3BYoy8tztu9",
+  label = "Talk to our team",
+  external = true,
+} = Astro.props;
+---
+<a
+  href={href}
+  {...external ? { target: "_blank", rel: "noopener noreferrer" } : {}}
+  class:list={["w-max inline-block whitespace-nowrap text-white border border-white/10 rounded hover:border-suzaku-green transition-colors", className]}
+>
+  {label}
+</a>

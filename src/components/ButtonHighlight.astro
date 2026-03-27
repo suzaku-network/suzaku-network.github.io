@@ -1,0 +1,21 @@
+---
+interface Props {
+  class?: string;
+  href?: string;
+  label?: string;
+  external?: boolean;
+}
+const {
+  class: className,
+  href = "https://auditor.suzaku.network",
+  label = "Audit your L1",
+  external = true,
+} = Astro.props;
+---
+<a
+  href={href}
+  {...external ? { target: "_blank", rel: "noopener noreferrer" } : {}}
+  class:list={["w-max inline-block whitespace-nowrap text-suzaku-black bg-suzaku-gradient rounded hover:opacity-90 transition-opacity", className]}
+>
+  {label}
+</a>

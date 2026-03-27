@@ -3,13 +3,13 @@ import { Icon } from "astro-icon/components";
 import SocialLinks from "@/components/SocialLinks.astro";
 import { NAV_LINKS } from "@/data/navigation";
 
-const PAGE_LINKS = NAV_LINKS.filter((l) => !l.href.startsWith("/#"));
-const SECTION_LINKS = [
-  ...NAV_LINKS.filter((l) => l.href.startsWith("/#")).map(
-    (l) => ({ label: l.label, id: l.href.replace("/#", "") }),
-  ),
-  { label: "Start now", id: "final-cta" },
-];
+interface Props {
+  sectionLinks?: readonly { label: string; id: string }[];
+}
+
+const { sectionLinks = [] } = Astro.props;
+const PAGE_LINKS = NAV_LINKS;
+const SECTION_LINKS = sectionLinks;
 ---
 
 <nav id="main-nav" class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
@@ -37,7 +37,8 @@ const SECTION_LINKS = [
         {PAGE_LINKS.map((link) => (
           <a
             href={link.href}
-            class="nav-link text-base text-white/50 hover:text-white transition-colors"
+            {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            class="nav-link text-base text-white/70 hover:text-white transition-colors"
           >
             {link.label}
           </a>
@@ -46,7 +47,7 @@ const SECTION_LINKS = [
           href="https://forms.gle/US695J3BYoy8tztu9"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-base text-white/50 border border-white/10 px-4 py-1.5 rounded hover:text-white hover:border-suzaku-green transition-colors"
+          class="text-base text-white/70 border border-white/10 px-4 py-1.5 rounded hover:text-white hover:border-suzaku-green transition-colors"
         >
           Get in touch ↗
         </a>
@@ -74,27 +75,31 @@ const SECTION_LINKS = [
       id="mobile-menu"
       class="hidden mt-2 bg-suzaku-black/95 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-4 flex-col"
     >
-      <!-- Section links -->
-      <div class="flex flex-col gap-0.5 pb-3">
-        {SECTION_LINKS.map((link) => (
-          <a
-            href={`/#${link.id}`}
-            data-section={link.id}
-            class="mobile-section-link nav-link text-sm text-white/50 hover:text-white transition-colors py-1.5 px-2.5 rounded-lg"
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
-
-      <div class="border-t border-white/10"></div>
+      <!-- Section links (only rendered on pages that pass sectionLinks) -->
+      {SECTION_LINKS.length > 0 && (
+        <>
+          <div class="flex flex-col gap-0.5 pb-3">
+            {SECTION_LINKS.map((link) => (
+              <a
+                href={`#${link.id}`}
+                data-section={link.id}
+                class="mobile-section-link nav-link text-sm text-white/70 hover:text-white transition-colors py-1.5 px-2.5 rounded-lg"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+          <div class="border-t border-white/10"></div>
+        </>
+      )}
 
       <!-- Page links -->
       <div class="flex flex-col gap-0.5 py-3">
         {PAGE_LINKS.map((link) => (
           <a
             href={link.href}
-            class="mobile-nav-link nav-link text-sm text-white/50 hover:text-white transition-colors py-1.5 px-2.5"
+            {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            class="mobile-nav-link nav-link text-sm text-white/70 hover:text-white transition-colors py-1.5 px-2.5"
           >
             {link.label}
           </a>
