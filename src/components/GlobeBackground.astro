@@ -1,0 +1,167 @@
+---
+---
+
+<div class="absolute inset-0 pointer-events-none" style="
+  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to right, transparent 0%, black 20%);
+  mask-composite: intersect;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to right, transparent 0%, black 20%);
+  -webkit-mask-composite: source-in;
+">
+  <canvas
+    id="globe-bg"
+    class="pointer-events-none select-none"
+    style="position:absolute; left:30%; top:80%; transform:translate(-50%,-50%); width:1800px; height:1800px; opacity:0;"
+  ></canvas>
+</div>
+
+<script>
+  import createGlobe from "cobe";
+
+  const canvas = document.getElementById("globe-bg") as HTMLCanvasElement;
+
+  let phi = 0.5;
+
+  const globe = createGlobe(canvas, {
+    devicePixelRatio: 2,
+    width: 1800 * 2,
+    height: 1800 * 2,
+    phi,
+    theta: 0.5,
+    dark: 1,
+    diffuse: 1.4,
+    mapSamples: 16000,
+    mapBrightness: 10,
+    baseColor: [0.07, 0.07, 0.07],
+    markerColor: [0.263, 0.965, 0.671],
+    glowColor: [0.03, 0.28, 0.3],
+    arcColor: [0.263, 0.965, 0.671],
+    arcWidth: 0.4,
+    arcHeight: 0.1,
+    markerElevation: 0.01,
+    arcs: [
+      { from: [40.7128, -74.006],    to: [51.5074, -0.1278] },    // New York → London
+      { from: [51.5074, -0.1278],    to: [48.8566, 2.3522] },     // London → Paris
+      { from: [51.5074, -0.1278],    to: [52.52, 13.405] },       // London → Berlin
+      { from: [51.5074, -0.1278],    to: [55.7558, 37.6173] },    // London → Moscow
+      { from: [51.5074, -0.1278],    to: [25.2048, 55.2708] },    // London → Dubai
+      { from: [37.7595, -122.4367],  to: [40.7128, -74.006] },    // San Francisco → New York
+      { from: [37.7595, -122.4367],  to: [35.6762, 139.6503] },   // San Francisco → Tokyo
+      { from: [37.7595, -122.4367],  to: [19.4326, -99.1332] },   // San Francisco → Mexico City
+      { from: [40.7128, -74.006],    to: [43.6532, -79.3832] },   // New York → Toronto
+      { from: [40.7128, -74.006],    to: [-23.5505, -46.6333] },  // New York → São Paulo
+      { from: [35.6762, 139.6503],   to: [37.5665, 126.978] },    // Tokyo → Seoul
+      { from: [35.6762, 139.6503],   to: [31.2304, 121.4737] },   // Tokyo → Shanghai
+      { from: [31.2304, 121.4737],   to: [39.9042, 116.4074] },   // Shanghai → Beijing
+      { from: [31.2304, 121.4737],   to: [22.3193, 114.1694] },   // Shanghai → Hong Kong
+      { from: [1.3521, 103.8198],    to: [22.3193, 114.1694] },   // Singapore → Hong Kong
+      { from: [1.3521, 103.8198],    to: [-33.8688, 151.2093] },  // Singapore → Sydney
+      { from: [1.3521, 103.8198],    to: [19.076, 72.8777] },     // Singapore → Mumbai
+      { from: [25.2048, 55.2708],    to: [19.076, 72.8777] },     // Dubai → Mumbai
+      { from: [25.2048, 55.2708],    to: [30.0444, 31.2357] },    // Dubai → Cairo
+      { from: [47.3769, 8.5417],     to: [45.4642, 9.19] },       // Zurich → Milan
+      { from: [41.8781, -87.6298],   to: [40.7128, -74.006] },    // Chicago → New York
+    ],
+    markers: [
+      { location: [37.7595, -122.4367], size: 0.02 },     // San Francisco
+      { location: [40.7128, -74.006], size: 0.02 },       // New York
+      { location: [51.5074, -0.1278], size: 0.02 },       // London
+      { location: [35.6762, 139.6503], size: 0.02 },      // Tokyo
+      { location: [1.3521, 103.8198], size: 0.02 },       // Singapore
+      { location: [48.8566, 2.3522], size: 0.02 },        // Paris
+      { location: [-33.8688, 151.2093], size: 0.01 },  // Sydney
+      { location: [22.3193, 114.1694], size: 0.01 },   // Hong Kong
+      { location: [-23.5505, -46.6333], size: 0.02 },     // São Paulo
+      { location: [19.4326, -99.1332], size: 0.01 },   // Mexico City
+      { location: [28.6139, 77.209], size: 0.01 },     // New Delhi
+      { location: [41.0082, 28.9784], size: 0.01 },    // Istanbul
+      { location: [25.2048, 55.2708], size: 0.01 },    // Dubai
+      { location: [37.5665, 126.978], size: 0.02 },       // Seoul
+      { location: [31.2304, 121.4737], size: 0.02 },      // Shanghai
+      { location: [39.9042, 116.4074], size: 0.02 },      // Beijing
+      { location: [13.7563, 100.5018], size: 0.01 },   // Bangkok
+      { location: [-6.2088, 106.8456], size: 0.01 },   // Jakarta
+      { location: [3.139, 101.6869], size: 0.015 },      // Kuala Lumpur
+      { location: [52.52, 13.405], size: 0.02 },          // Berlin
+      { location: [45.4642, 9.19], size: 0.01 },       // Milan
+      { location: [40.4168, -3.7038], size: 0.01 },    // Madrid
+      { location: [59.9139, 10.7522], size: 0.015 },     // Oslo
+      { location: [47.3769, 8.5417], size: 0.015 },      // Zurich
+      { location: [43.6532, -79.3832], size: 0.02 },      // Toronto
+      { location: [47.6062, -122.3321], size: 0.01 },  // Seattle
+      { location: [41.8781, -87.6298], size: 0.02 },      // Chicago
+      { location: [-34.6037, -58.3816], size: 0.01 },  // Buenos Aires
+      { location: [-12.0464, -77.0428], size: 0.015 },   // Lima
+      { location: [6.5244, 3.3792], size: 0.015 },       // Lagos
+      { location: [-1.2921, 36.8219], size: 0.015 },     // Nairobi
+      { location: [30.0444, 31.2357], size: 0.01 },    // Cairo
+      { location: [24.6877, 46.7219], size: 0.01 },    // Riyadh
+      { location: [19.076, 72.8777], size: 0.02 },        // Mumbai
+      { location: [43.238, 76.8512], size: 0.015 },      // Almaty
+    ],
+  });
+
+  const section = document.getElementById("globe-section");
+  let theta = 0.3;
+  let isDragging = false;
+  let hasMoved = false;
+  let startX = 0, startY = 0, lastX = 0, lastY = 0;
+
+  section?.addEventListener("mousedown", (e) => {
+    if ((e.target as Element).closest("a, button")) return;
+    startX = lastX = e.clientX;
+    startY = lastY = e.clientY;
+    isDragging = true;
+    hasMoved = false;
+  });
+  window.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    if (!hasMoved) {
+      const d = Math.hypot(e.clientX - startX, e.clientY - startY);
+      if (d < 5) return;
+      hasMoved = true;
+      if (section) section.style.cursor = "grabbing";
+    }
+    phi   += (e.clientX - lastX) * 0.004;
+    theta  = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, theta + (e.clientY - lastY) * 0.004));
+    lastX  = e.clientX;
+    lastY  = e.clientY;
+  });
+  window.addEventListener("mouseup", () => {
+    isDragging = false;
+    hasMoved = false;
+    if (section) section.style.cursor = "grab";
+  });
+
+  // Touch support
+  section?.addEventListener("touchstart", (e) => {
+    startX = lastX = e.touches[0].clientX;
+    startY = lastY = e.touches[0].clientY;
+    isDragging = true;
+    hasMoved = false;
+  }, { passive: true });
+  window.addEventListener("touchmove", (e) => {
+    if (!isDragging) return;
+    if (!hasMoved) {
+      const d = Math.hypot(e.touches[0].clientX - startX, e.touches[0].clientY - startY);
+      if (d < 5) return;
+      hasMoved = true;
+    }
+    phi   += (e.touches[0].clientX - lastX) * 0.004;
+    theta  = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, theta + (e.touches[0].clientY - lastY) * 0.004));
+    lastX  = e.touches[0].clientX;
+    lastY  = e.touches[0].clientY;
+  }, { passive: true });
+  window.addEventListener("touchend", () => { isDragging = false; hasMoved = false; });
+
+  // Cobe v2: drive the animation loop manually
+  function animate() {
+    if (!isDragging || !hasMoved) phi += 0.01;
+    globe.update({ phi, theta });
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+
+  // Fade in on first render
+  canvas.style.transition = "opacity 1.2s ease";
+  canvas.style.opacity = "0.32";
+</script>

@@ -45,7 +45,7 @@ export const HOMEPAGE_PERSONAS = [
       type: "standard" as const,
       label: "Express your interest",
       href: undefined,
-      external: false,
+      external: true,
     },
   },
 ] as const;
