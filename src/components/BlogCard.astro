@@ -1,18 +1,21 @@
 ---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
 import type { Author } from "@/data/authors";
 
 interface Props {
   title: string;
   description: string;
   date: Date;
-  image: string;
+  image: ImageMetadata;
   imageAlt: string;
   slug: string;
   author: Author | undefined;
   tags?: string[];
+  eager?: boolean;
 }
 
-const { title, description, date, image, imageAlt, slug, author, tags } =
+const { title, description, date, image, imageAlt, slug, author, tags, eager = false } =
   Astro.props;
 
 const formattedDate = date.toLocaleDateString("en-US", {
@@ -28,14 +31,14 @@ const formattedDate = date.toLocaleDateString("en-US", {
 >
   <!-- Thumbnail -->
   <div class="aspect-video overflow-hidden bg-white/5">
-    <img
+    <Image
       src={image}
       alt={imageAlt}
+      width={600}
+      height={338}
       class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-      loading="lazy"
+      loading={eager ? "eager" : "lazy"}
       decoding="async"
-      width="600"
-      height="338"
     />
   </div>
 

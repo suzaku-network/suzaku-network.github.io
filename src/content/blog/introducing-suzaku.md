@@ -2,7 +2,7 @@
 title: "Introducing Suzaku, the (Re)staking Protocol for Sovereign Networks"
 description: "We are very excited to unveil Suzaku, a (re)staking protocol dedicated to helping Avalanche L1s scale and decentralize their validator set securely"
 date: 2024-10-07
-image: /blog/articles/introducing-suzaku/suzaku-restaking-for-sovereign-networks.jpg
+image: ../../assets/blog/articles/introducing-suzaku/suzaku-restaking-for-sovereign-networks.jpg
 imageAlt: "Suzaku - (Re)staking for Sovereign Networks"
 author: suzaku-team
 tags:

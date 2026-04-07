@@ -22,7 +22,7 @@ const {
       aria-label={link.label}
       class={linkClass}
     >
-      <Icon name={link.icon} class={iconClass} />
+      <Icon name={link.icon} class={`${iconClass}${link.icon === "simple-icons:x" ? " scale-[0.8]" : ""}`} />
     </a>
   ))
 }

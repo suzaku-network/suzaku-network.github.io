@@ -2,7 +2,7 @@
 title: "The Suzaku Airdrop & Season 2 Kickoff"
 description: "Suzaku TGE is just around the corner, August 13th! Along with the TGE, participants of Season 1 will be able to claim their SUZ airdrop"
 date: 2025-08-12
-image: /blog/articles/suz-airdrop/suz-airdrop.png
+image: ../../assets/blog/articles/suz-airdrop/suz-airdrop.png
 imageAlt: "SUZ Airdrop thumbnail"
 author: suzaku-team
 tags:

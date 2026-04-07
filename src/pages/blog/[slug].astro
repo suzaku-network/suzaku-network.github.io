@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
 import Layout from "@/layouts/Layout.astro";
 import Nav from "@/components/Nav.astro";
 import Footer from "@/components/Footer.astro";
@@ -27,7 +28,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 
 const publishedTime = post.data.date.toISOString();
 const postUrl = new URL(`/blog/${post.id}`, Astro.site).href;
-const ogImageUrl = new URL(post.data.image, Astro.site).href;
+const ogImageUrl = new URL(post.data.image.src, Astro.site).href;
 
 const blogPostingSchema = {
   "@context": "https://schema.org",
@@ -56,7 +57,7 @@ const blogPostingSchema = {
 <Layout
   title={`${post.data.title} | Suzaku Blog`}
   description={post.data.description}
-  image={post.data.image}
+  image={post.data.image.src}
   type="article"
   publishedTime={publishedTime}
   articleAuthor={author?.name}
@@ -147,15 +148,15 @@ const blogPostingSchema = {
 
       <!-- Hero image (16:9) — LCP element: eager + high priority -->
       <div class="aspect-video rounded-lg overflow-hidden mb-12 border border-white/10">
-        <img
+        <Image
           src={post.data.image}
           alt={post.data.imageAlt}
+          width={896}
+          height={504}
           class="w-full h-full object-cover"
           loading="eager"
           fetchpriority="high"
           decoding="async"
-          width="896"
-          height="504"
         />
       </div>
 

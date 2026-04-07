@@ -2,7 +2,7 @@
 title: "Introducing BalancerValidatorManager: Enabling Progressive Decentralization for Avalanche L1s"
 description: ""
 date: 2025-05-19
-image: /blog/articles/balancervalidatormanager/introducing-balancervalidatormanager.png
+image: ../../assets/blog/articles/balancervalidatormanager/introducing-balancervalidatormanager.png
 imageAlt: "BalancerValidatorManager thumbnail"
 author: suzaku-team
 tags:

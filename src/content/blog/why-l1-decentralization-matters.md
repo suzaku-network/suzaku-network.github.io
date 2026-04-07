@@ -2,7 +2,7 @@
 title: "Why L1 Decentralization Matters (More Than You Think)"
 description: "The truth is, most of the time, it doesn’t. But when it is eventually put to the test, you’d better hope your network is decentralized enough, or you might lose just about everything"
 date: 2026-02-02
-image: /blog/articles/why-l1-decentralization-matters/kids-dont-care-about-decentralization.png
+image: ../../assets/blog/articles/why-l1-decentralization-matters/kids-dont-care-about-decentralization.png
 imageAlt: "Why L1 Decentralization Matters thumbnail"
 author: gauthier-leonard
 tags:

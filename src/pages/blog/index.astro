@@ -34,7 +34,7 @@ const posts = (await getCollection("blog")).sort(
           <p class="type-body text-white/70">No articles published yet.</p>
         ) : (
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
+            {posts.map((post, i) => (
               <BlogCard
                 title={post.data.title}
                 description={post.data.description}
@@ -44,6 +44,7 @@ const posts = (await getCollection("blog")).sort(
                 slug={post.id}
                 author={authors[post.data.author]}
                 tags={post.data.tags}
+                eager={i < 3}
               />
             ))}
           </div>

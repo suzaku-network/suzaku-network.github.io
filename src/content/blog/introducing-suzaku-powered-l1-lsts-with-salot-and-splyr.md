@@ -2,7 +2,7 @@
 title: "Introducing Suzaku-powered L1 LSTs with sALOT and sPLYR"
 description: "Suzaku announces the imminent deployment of the Suzaku core protocol to mainnet and the integration of the first two Avalanche L1s"
 date: 2025-10-10
-image: /blog/articles/l1-lsts/dexalot-plyr-cover-pixelized.png
+image: ../../assets/blog/articles/l1-lsts/dexalot-plyr-cover-pixelized.png
 imageAlt: "Suzaku-powered L1 LSTs thumbnail"
 author: suzaku-team
 tags:
