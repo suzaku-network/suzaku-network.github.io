@@ -1,8 +1,20 @@
 ---
 import LogoCarousel from "@/components/LogoCarousel.astro";
+
+interface Props {
+  labelAlign?: "left" | "center" | "right";
+}
+
+const { labelAlign = "left" } = Astro.props;
+
+const alignClass = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+}[labelAlign];
 ---
 
 <div>
-  <p class="type-label text-white/50 mb-4">Partners &amp; backers</p>
+  <p class={`type-label text-white/50 mb-4 ${alignClass}`}>Partners &amp; backers</p>
   <LogoCarousel />
 </div>

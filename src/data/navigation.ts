@@ -1,22 +1,36 @@
-export const NAV_LINKS = [
-  { label: "For L1 builders", href: "/for-builders", external: false },
+export const NAV_LINKS: readonly {
+  label: string;
+  href: string;
+  external: boolean;
+  button?: boolean;
+}[] = [
+  { label: "For builders", href: "/for-builders", external: false },
   { label: "Blog", href: "/blog", external: false },
   {
     label: "L1 Auditor",
     href: "https://auditor.suzaku.network",
     external: true,
+    button: true,
   },
   {
-    label: "dApp",
+    label: "App",
     href: "https://app.suzaku.network",
     external: true,
+    button: true,
   },
   {
-    label: "Documentation",
+    label: "Docs",
     href: "https://docs.suzaku.network/",
     external: true,
+    button: true,
   },
-] as const;
+  {
+    label: "Contact",
+    href: "https://forms.gle/US695J3BYoy8tztu9",
+    external: true,
+    button: true,
+  },
+];
 
 /** Section links used only on the /for-builders page. */
 export const FOR_BUILDERS_SECTIONS = [
@@ -53,7 +67,7 @@ export const SOCIAL_LINKS = [
 export const RESOURCE_LINKS = [
   { label: "Blog", href: "/blog" },
   {
-    label: "Documentation",
+    label: "Docs",
     href: "https://docs.suzaku.network/",
   },
   {

@@ -16,13 +16,13 @@ export const HOMEPAGE_PERSONAS = [
     ],
     cta: {
       type: "standard" as const,
-      label: "Open the staking dApp",
+      label: "Open the staking app",
       href: "https://app.suzaku.network",
       external: true,
     },
   },
   {
-    label: "For L1 Builders",
+    label: "For Builders",
     featured: true,
     heading: "Secure your L1",
     body: [
