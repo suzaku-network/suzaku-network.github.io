@@ -64,6 +64,28 @@ export const SOCIAL_LINKS = [
     href: "https://www.linkedin.com/company/suzaku",
     icon: "simple-icons:linkedin",
   },
+  {
+    label: "Email",
+    href: "mailto:contact@suzaku.network",
+    icon: "lucide:mail",
+  },
+] as const;
+
+export const FOOTER_COL_1 = [
+  { label: "For Builders", href: "/for-builders", external: false },
+  { label: "Blog", href: "/blog", external: false },
+  { label: "Docs", href: "https://docs.suzaku.network/", external: true },
+  {
+    label: "Branding Kit",
+    href: "https://drive.google.com/drive/folders/1WCTwyhALU7pMXfaSHnd4dadCjUjmT3yV",
+    external: true,
+  },
+] as const;
+
+export const FOOTER_COL_2 = [
+  { label: "App", href: "https://app.suzaku.network", external: true, disabled: false },
+  { label: "L1 Auditor", href: "https://auditor.suzaku.network", external: true, disabled: true },
+  { label: "Contact Form", href: "https://forms.gle/US695J3BYoy8tztu9", external: true, disabled: false },
 ] as const;
 
 export const RESOURCE_LINKS = [

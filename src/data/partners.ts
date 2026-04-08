@@ -8,7 +8,7 @@ export const partners: Partner[] = [
   {
     src: "/partners/ecosystem/50-partners-logo.png",
     alt: "50 Partners",
-    url: "https://50partners.fr",
+    url: "https://en.50partners.fr",
   },
   {
     src: "/partners/ecosystem/ash-logo.png",

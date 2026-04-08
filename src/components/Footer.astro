@@ -1,66 +1,76 @@
 ---
-import { Icon } from "astro-icon/components";
-import SocialLinks from "@/components/SocialLinks.astro";
-import { LEGAL_LINKS, RESOURCE_LINKS } from "@/data/navigation";
+import { FOOTER_COL_1, FOOTER_COL_2, LEGAL_LINKS, SOCIAL_LINKS } from "@/data/navigation";
+
+const COLUMNS = [
+  { heading: "LEARN", links: FOOTER_COL_1 },
+  { heading: "EXPLORE", links: FOOTER_COL_2 },
+  { heading: "LEGAL", links: LEGAL_LINKS },
+] as const;
 ---
 
 <footer id="footer" class="py-10 px-6 border-t border-white/10">
-  <div class="max-w-5xl mx-auto flex flex-col gap-6">
-    <!-- Top row: logo + resource links + socials -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+  <div class="max-w-5xl mx-auto flex flex-col gap-10">
+    <!-- 4-column link grid -->
+    <div class="flex justify-center">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-16 sm:gap-x-8 gap-y-8 justify-items-start sm:justify-items-center items-start w-fit sm:w-full">
+      {
+        COLUMNS.map((col) => (
+          <div class="flex flex-col gap-3">
+            <p class="type-caption font-extrabold text-white/40 tracking-widest">{col.heading}</p>
+            <ul class="flex flex-col gap-2">
+              {(col.links as readonly { label: string; href: string; external?: boolean; disabled?: boolean }[]).map((link) =>
+                link.disabled ? (
+                  <li>
+                    <span class="type-caption text-white/25 cursor-not-allowed">
+                      {link.label}
+                    </span>
+                  </li>
+                ) : (
+                  <li>
+                    <a
+                      href={link.href}
+                      {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                      class="type-caption text-white/70 hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+        ))
+      }
+      <!-- Connect column (socials) -->
+      <div class="flex flex-col gap-3">
+        <p class="type-caption font-extrabold text-white/40 tracking-widest">CONNECT</p>
+        <ul class="flex flex-col gap-2">
+          {
+            SOCIAL_LINKS.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  {...(link.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  class="type-caption text-white/70 hover:text-white transition-colors"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+    </div>
+
+    <!-- Bottom bar: logo + copyright -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/5 pt-6">
       <img
         src="/brand/suzaku-logo-color-white-horizontal.svg"
         alt="Suzaku"
         class="h-7 opacity-70"
       />
-      <div class="flex flex-wrap justify-center items-center gap-x-5 gap-y-2">
-        {
-          RESOURCE_LINKS.map((link) => {
-            const isExternal = link.href.startsWith("http");
-            return (
-              <a
-                href={link.href}
-                {...(isExternal
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
-                class="type-caption text-white/70 hover:text-white transition-colors"
-              >
-                {link.label}
-              </a>
-            );
-          })
-        }
-      </div>
-      <div class="flex items-center gap-6">
-        <SocialLinks iconClass="w-5 h-5" />
-        <a
-          href="mailto:contact@suzaku.network"
-          aria-label="Contact"
-          class="text-white/70 hover:text-white transition-colors"
-        >
-          <Icon name="lucide:mail" class="w-5 h-5" />
-        </a>
-      </div>
-    </div>
-    <!-- Bottom row: legal links + copyright -->
-    <div
-      class="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/5 pt-6"
-    >
-      <div class="flex flex-wrap justify-center sm:justify-start gap-x-5 gap-y-2">
-        {
-          LEGAL_LINKS.map((link) => (
-            <a
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="type-caption text-white/70 hover:text-white transition-colors"
-            >
-              {link.label}
-            </a>
-          ))
-        }
-      </div>
-      <p class="type-caption text-white/40 shrink-0">
+      <p class="type-caption text-white/40">
         &copy; 2025 ADDPHO. All rights reserved.
       </p>
     </div>

@@ -29,11 +29,11 @@ const SECTION_LINKS = sectionLinks;
       <!-- Mobile: current section indicator -->
       <span
         id="active-section-label"
-        class="md:hidden text-[0.6875rem] text-white/40 tracking-wider uppercase transition-opacity duration-300"
+        class="lg:hidden text-[0.6875rem] text-white/40 tracking-wider uppercase transition-opacity duration-300"
       ></span>
 
       <!-- Desktop: page links only (section links in FloatingNav) -->
-      <div class="hidden md:flex items-center gap-6">
+      <div class="hidden lg:flex items-center gap-6">
         {PAGE_LINKS.filter((l) => !l.button).map((link) => (
           <a
             href={link.href}
@@ -77,7 +77,7 @@ const SECTION_LINKS = sectionLinks;
       </div>
 
       <!-- Desktop: socials -->
-      <div class="hidden md:flex items-center gap-4">
+      <div class="hidden lg:flex items-center gap-4">
         <SocialLinks iconClass="w-5 h-5" />
       </div>
 
@@ -86,7 +86,7 @@ const SECTION_LINKS = sectionLinks;
         id="burger-btn"
         aria-label="Toggle menu"
         aria-expanded="false"
-        class="md:hidden text-white/70 hover:text-white transition-colors p-1"
+        class="lg:hidden text-white/70 hover:text-white transition-colors p-1"
       >
         <Icon id="icon-open" name="lucide:menu" class="w-6 h-6" />
         <Icon id="icon-close" name="lucide:x" class="w-6 h-6 hidden" />
