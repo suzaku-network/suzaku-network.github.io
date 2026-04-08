@@ -1,7 +1,8 @@
 ---
 title: "The State of Avalanche L1s Decentralization"
-description: ""
-date: 2026-04-07
+draft: true
+description: "We built a Dune dashboard to classify every live Avalanche L1 by decentralization stage. Here is what the data shows."
+date: 2026-04-08
 image: ../../assets/blog/articles/state-of-l1s-decentralization/the-state-of-avalanche-l1s-decentralization.png
 imageAlt: "The State of Avalanche L1s Decentralization thumbnail"
 author: suzaku-team
