@@ -3,6 +3,7 @@ export const NAV_LINKS: readonly {
   href: string;
   external: boolean;
   button?: boolean;
+  disabled?: boolean;
 }[] = [
   { label: "For builders", href: "/for-builders", external: false },
   { label: "Blog", href: "/blog", external: false },
@@ -17,6 +18,7 @@ export const NAV_LINKS: readonly {
     href: "https://auditor.suzaku.network",
     external: true,
     button: true,
+    disabled: true,
   },
   {
     label: "Docs",

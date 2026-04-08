@@ -99,7 +99,7 @@ const gridAreas: Record<string, string> = {
                     )}
                   </h3>
                   <p class="type-card-body node-desc" set:html={node.descriptionHtml} />
-                  {node.button === "highlight" && <ButtonHighlight class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3 mt-4" />}
+                  {node.button === "highlight" && <ButtonHighlight class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3 mt-4" disabled macaron="SOON" />}
                   {node.button === "standard" && <ButtonStandard class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3 mt-4" />}
                   {(node.trustedBy || node.logos) && (
                     <div class="mt-4">
@@ -145,7 +145,7 @@ const gridAreas: Record<string, string> = {
                         <span class="text-suzaku-green/70"> {node.subtitle}</span>
                       )}
                     </h3>
-                    {node.button === "highlight" && <ButtonHighlight class="text-[0.85rem] font-extrabold px-5 py-2 shrink-0" />}
+                    {node.button === "highlight" && <ButtonHighlight class="text-[0.85rem] font-extrabold px-5 py-2 shrink-0" disabled macaron="SOON" />}
                     {node.button === "standard" && <ButtonStandard class="text-[0.85rem] font-extrabold px-5 py-2 shrink-0" />}
                   </div>
                   <p class="type-card-body m-node-desc" set:html={node.descriptionHtml} />
