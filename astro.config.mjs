@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
+import { remarkAlert } from "remark-github-blockquote-alert";
 
 /** Wraps ![alt](src "caption") into <figure><img/><figcaption>caption</figcaption></figure> */
 function rehypeFigureCaption() {
@@ -41,6 +42,7 @@ function rehypeFigureCaption() {
 export default defineConfig({
   integrations: [tailwind(), icon(), sitemap()],
   markdown: {
+    remarkPlugins: [remarkAlert],
     rehypePlugins: [rehypeFigureCaption],
   },
   site: "https://suzaku.network",

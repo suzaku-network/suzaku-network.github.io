@@ -7,14 +7,14 @@ export const NAV_LINKS: readonly {
   { label: "For builders", href: "/for-builders", external: false },
   { label: "Blog", href: "/blog", external: false },
   {
-    label: "L1 Auditor",
-    href: "https://auditor.suzaku.network",
+    label: "App",
+    href: "https://app.suzaku.network",
     external: true,
     button: true,
   },
   {
-    label: "App",
-    href: "https://app.suzaku.network",
+    label: "L1 Auditor",
+    href: "https://auditor.suzaku.network",
     external: true,
     button: true,
   },

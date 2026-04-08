@@ -60,7 +60,7 @@ The **Suzaku Protocol** leverages the `BalancerValidatorManager` to enable **pro
 - All validator weight is managed by the L1 team or a trusted group.
 - The `BalancerValidatorManager` can be deployed from the start for future flexibility.
 
-![Phase 1](/blog/articles/balancervalidatormanager/balancervalidatormanager-1-poa.png)
+![Phase 1](../../assets/blog/articles/balancervalidatormanager/balancervalidatormanager-1-poa.png)
 
 ### Phase 2: Open to Permissionless Operators via PoS
 
@@ -68,14 +68,14 @@ The **Suzaku Protocol** leverages the `BalancerValidatorManager` to enable **pro
 - A permissionless module (e.g., `AvalancheL1Middleware`) is registered, initially with a small share of the total validator weight (e.g., 1/6th).
 - The L1 team retains control over the majority of the total weight, but begins to incentivize and onboard external operators.
 
-![Phase 2](/blog/articles/balancervalidatormanager/balancervalidatormanager-2-semi-permissioned.png)
+![Phase 2](../../assets/blog/articles/balancervalidatormanager/balancervalidatormanager-2-semi-permissioned.png)
 
 ### Phase 3: Increase PoS Weight
 
 - As the project matures and the community grows, the L1 team can **gradually increase** the weight allocated to permissionless validation (e.g., 60% PoS, 40% PoA).
 - The transition is smooth and non-disruptive: validator sets are managed independently by each module, but the `BalancerValidatorManager` enforces the global weight limits.
 
-![Phase 3](/blog/articles/balancervalidatormanager/balancervalidatormanager-3-increase-pos.png)
+![Phase 3](../../assets/blog/articles/balancervalidatormanager/balancervalidatormanager-3-increase-pos.png)
 
 ### Phase 4: Full Decentralization (PoS Only)
 
@@ -83,7 +83,7 @@ The **Suzaku Protocol** leverages the `BalancerValidatorManager` to enable **pro
 - The permissionless module (e.g., PoS or dual staking) now manages 100% of the validator set.
 - The L1 is now fully decentralized, with no special privileges for the original team, which can burn the ownership rights on the `BalancerValidatorManager`.
 
-![Phase 4](/blog/articles/balancervalidatormanager/balancervalidatormanager-4-permissionless.png)
+![Phase 4](../../assets/blog/articles/balancervalidatormanager/balancervalidatormanager-4-permissionless.png)
 
 ### Why is this powerful?
 
@@ -98,7 +98,7 @@ Suzaku's `AvalancheL1Middleware` module allows L1s to require operators to stake
 
 ## Comparison: BalancerValidatorManager vs. Ava Labs ValidatorManager
 
-![BalancerValidatorManager vs. Ava Labs ValidatorManager](/blog/articles/balancervalidatormanager/balancervalidatormanager-comparison.png)
+![BalancerValidatorManager vs. Ava Labs ValidatorManager](../../assets/blog/articles/balancervalidatormanager/balancervalidatormanager-comparison.png)
 
 ### Ava Labs ValidatorManager (V1/V2)
 

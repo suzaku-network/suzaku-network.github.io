@@ -1,6 +1,6 @@
 ---
 title: "The Suzaku Airdrop & Season 2 Kickoff"
-description: "Suzaku TGE is just around the corner, August 13th! Along with the TGE, participants of Season 1 will be able to claim their SUZ airdrop"
+description: "Suzaku TGE is just around the corner. Along with the TGE, participants of Season 1 will be able to claim their SUZ airdrop."
 date: 2025-08-12
 image: ../../assets/blog/articles/suz-airdrop/suz-airdrop.png
 imageAlt: "SUZ Airdrop thumbnail"
@@ -57,7 +57,7 @@ We're distributing **4,839,221 SUZ**, worth more than **$650,000** at the TGE pr
 
 Onchain users saw eye-popping APYs ranging from 6% **up to 300%**, with an average around **80%**! **30%** of onchain users have an airdrop worth **more than $100**.
 
-![Suzaku Season 1 Airdrop](/blog/articles/suz-airdrop/suzaku-season-1-airdrop-ranges.png)
+![Suzaku Season 1 Airdrop](../../assets/blog/articles/suz-airdrop/suzaku-season-1-airdrop-ranges.png)
 
 ## Suzaku Season 2 Kickoff
 

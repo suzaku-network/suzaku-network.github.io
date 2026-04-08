@@ -1,6 +1,6 @@
 ---
 title: "Introducing Suzaku, the (Re)staking Protocol for Sovereign Networks"
-description: "We are very excited to unveil Suzaku, a (re)staking protocol dedicated to helping Avalanche L1s scale and decentralize their validator set securely"
+description: "Suzaku is a (re)staking protocol dedicated to helping Avalanche L1s scale and decentralize their validator set securely."
 date: 2024-10-07
 image: ../../assets/blog/articles/introducing-suzaku/suzaku-restaking-for-sovereign-networks.jpg
 imageAlt: "Suzaku - (Re)staking for Sovereign Networks"
@@ -87,7 +87,7 @@ The next big milestones of Suzaku are:
 
 We are proud to reveal the list of partners that will be on our side at the beginning of this journey:
 
-![Suzaku launch partners](/blog/articles/introducing-suzaku/suzaku-launch-partners.png)
+![Suzaku launch partners](../../assets/blog/articles/introducing-suzaku/suzaku-launch-partners.png)
 
 - **[Avalanche](https://avax.network):** Suzaku is specifically tailored to secure sovereign networks built with the Avalanche L1 stack and the protocol core contracts will be deployed on the Avalanche C-Chain. Moreover, Suzaku supports BTC.b, Avalanche native wrapped Bitcoin, as a restaking collateral at launch.
 - **[Ash](https://ash.center):** As the one-stop shop for L1 development and operation on Avalanche, Ash is a match made in heaven with Suzaku! L1 builders can address all their needs by combining them: operate the core team/foundation validators with Ash and securely open their validator set to external operators with Suzaku.

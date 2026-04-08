@@ -93,12 +93,12 @@ const blogPostingSchema = {
       <div class="flex items-center gap-4 mb-10 pb-8 border-b border-white/10">
         {
           author?.avatar ? (
-            <img
+            <Image
               src={author.avatar}
               alt={author.name}
+              width={44}
+              height={44}
               class="w-11 h-11 rounded-full object-cover shrink-0"
-              width="44"
-              height="44"
               loading="lazy"
               decoding="async"
             />
@@ -246,5 +246,70 @@ const blogPostingSchema = {
     color: rgba(255, 255, 255, 0.4);
     text-align: center;
     font-style: italic;
+  }
+
+  /* ── GitHub-style callouts (remark-github-blockquote-alert) ── */
+  .prose-suzaku :global(.markdown-alert) {
+    border-left: 3px solid;
+    border-radius: 0 0.375rem 0.375rem 0;
+    padding: 0.75rem 1.25rem;
+    margin: 1.5rem 0;
+  }
+  .prose-suzaku :global(.markdown-alert > :last-child) {
+    margin-bottom: 0;
+  }
+  .prose-suzaku :global(.markdown-alert-title) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .prose-suzaku :global(.markdown-alert-title svg.octicon) {
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+  /* NOTE — teal */
+  .prose-suzaku :global(.markdown-alert-note) {
+    background: rgba(0, 164, 175, 0.07);
+    border-left-color: #00a4af;
+  }
+  .prose-suzaku :global(.markdown-alert-note .markdown-alert-title) {
+    color: #00a4af;
+  }
+  /* TIP — green */
+  .prose-suzaku :global(.markdown-alert-tip) {
+    background: rgba(67, 246, 171, 0.07);
+    border-left-color: #43f6ab;
+  }
+  .prose-suzaku :global(.markdown-alert-tip .markdown-alert-title) {
+    color: #43f6ab;
+  }
+  /* IMPORTANT — purple */
+  .prose-suzaku :global(.markdown-alert-important) {
+    background: rgba(163, 113, 247, 0.07);
+    border-left-color: #a371f7;
+  }
+  .prose-suzaku :global(.markdown-alert-important .markdown-alert-title) {
+    color: #a371f7;
+  }
+  /* WARNING — amber */
+  .prose-suzaku :global(.markdown-alert-warning) {
+    background: rgba(210, 153, 34, 0.07);
+    border-left-color: #d29922;
+  }
+  .prose-suzaku :global(.markdown-alert-warning .markdown-alert-title) {
+    color: #d29922;
+  }
+  /* CAUTION — red */
+  .prose-suzaku :global(.markdown-alert-caution) {
+    background: rgba(248, 81, 73, 0.07);
+    border-left-color: #f85149;
+  }
+  .prose-suzaku :global(.markdown-alert-caution .markdown-alert-title) {
+    color: #f85149;
   }
 </style>

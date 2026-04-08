@@ -1,7 +1,7 @@
 ---
 title: "Why L1 Decentralization Matters (More Than You Think)"
-description: "The truth is, most of the time, it doesn’t. But when it is eventually put to the test, you’d better hope your network is decentralized enough, or you might lose just about everything"
-date: 2026-02-02
+description: "We explain what risks centralized L1 networks face and what minimal requirements one should look for to minimize them."
+date: 2025-12-19
 image: ../../assets/blog/articles/why-l1-decentralization-matters/kids-dont-care-about-decentralization.png
 imageAlt: "Why L1 Decentralization Matters thumbnail"
 author: gauthier-leonard
@@ -28,7 +28,7 @@ For a long time, **smart contract hacks** have been the most common, and also th
 - [ByBit lost $1.4 billion](https://rekt.news/bybit-rekt) (!!!) in February 2025 because of a **Safe multisig front-end exploit**
 - [Swissborg lost $41.5 million](https://rekt.news/swissborg-rekt) in September 2025 because of a **Kiln (staking) API exploit**
 
-![Rekt news](/blog/articles/why-l1-decentralization-matters/bybit-rekt.png "Rekt")
+![Rekt news](../../assets/blog/articles/why-l1-decentralization-matters/bybit-rekt.png "Rekt")
 
 As AI auditing tools strengthen the robustness of smart contracts, the primary remaining attack vector becomes OpSec exploits: infra hacks (front-end, DNS, API), social engineering attacks, and supply chain attacks.
 
@@ -50,7 +50,7 @@ In the context of [Avalanche](https://avax.network/), an L1 communicates with ot
 
 While extremely efficient, **ICM has known weaknesses**, specifically for chains with a **low number of validators**, and more importantly, a **low number of operators** (= independent entities running validators).
 
-![ICM flow](/blog/articles/why-l1-decentralization-matters/icm-flow.png "ICM flow")
+![ICM flow](../../assets/blog/articles/why-l1-decentralization-matters/icm-flow.png "ICM flow")
 
 ICM relies on **[BLS](https://crypto.stanford.edu/~dabo/pubs/papers/BLSmultisig.html) signatures** to verify messages on destination chains, requiring a signature of at least **67% of the L1 weight** to be considered valid. A typical message would be the **bridging of assets** back to the Avalanche C-Chain.
 
@@ -71,7 +71,7 @@ Here, at least 2 scenarios could lead to the compromise of the 5 validator BLS k
 
 Once the attacker has the BLS keys, they can **bridge out all the L1 TVL back to the C-Chain**.
 
-![Adios TVL](/blog/articles/why-l1-decentralization-matters/adios-tvl.png "Manuel Rodrigues from DPRK bringing the TVL home to uncle Kim")
+![Adios TVL](../../assets/blog/articles/why-l1-decentralization-matters/adios-tvl.png "Manuel Rodrigues from DPRK bringing the TVL home to uncle Kim")
 
 Today, more than **80% of Avalanche L1s have less than 10 validators**, and often, there is a single operating entity (see [L1s stats](https://build.avax.network/stats/overview)).
 
@@ -105,7 +105,7 @@ On Avalanche, since the [Etna](https://build.avax.network/blog/etna-enhancing-so
 
 Like any smart contract, the security ultimately comes down to: **who has admin rights?** (in PoA, who can add/remove validators at will) And **who has upgrade rights?** (can change the security model and reshape the validator set). If both those accounts are **EOAs**, you've found yourself a **SPOF** again.
 
-![Hiding another SPOF](/blog/articles/why-l1-decentralization-matters/hiding-spof-are-you-not.png "Are you not?")
+![Hiding another SPOF](../../assets/blog/articles/why-l1-decentralization-matters/hiding-spof-are-you-not.png "Are you not?")
 
 **Critical validator set management functions** must be either **secured by multiple parties** (multisig, governance) or immutable.
 

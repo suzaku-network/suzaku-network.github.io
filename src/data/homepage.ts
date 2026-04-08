@@ -15,8 +15,8 @@ export const HOMEPAGE_PERSONAS = [
       "Stake on Proof-of-Stake Suzaku-powered Avalanche L1s. Earn rewards and other incentives while supporting the growth of projects you believe in.",
     ],
     cta: {
-      type: "standard" as const,
-      label: "Open the staking app",
+      type: "highlight" as const,
+      label: "Open the app",
       href: "https://app.suzaku.network",
       external: true,
     },

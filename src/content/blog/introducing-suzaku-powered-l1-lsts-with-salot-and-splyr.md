@@ -1,6 +1,6 @@
 ---
 title: "Introducing Suzaku-powered L1 LSTs with sALOT and sPLYR"
-description: "Suzaku announces the imminent deployment of the Suzaku core protocol to mainnet and the integration of the first two Avalanche L1s"
+description: "Suzaku announces the imminent deployment of the Suzaku core protocol to mainnet and the integration of the first two Avalanche L1s."
 date: 2025-10-10
 image: ../../assets/blog/articles/l1-lsts/dexalot-plyr-cover-pixelized.png
 imageAlt: "Suzaku-powered L1 LSTs thumbnail"
@@ -23,7 +23,7 @@ The most important need of any L1 is the **staking of its native token** to ensu
 
 Here's how liquid staking works on Suzaku:
 
-![Suzaku liquid staking](/blog/articles/l1-lsts/suzaku-liquid-staking.png)
+![Suzaku liquid staking](../../assets/blog/articles/l1-lsts/suzaku-liquid-staking.png)
 
 1. **The L1 team deploys an LST Vault** on the protocol to enable liquid staking from their community. At a higher maturity stage, the ownership of this Vault can be transferred to the project DAO, and later, the team can let anyone create other LSTs on top of their L1.
 2. Stakers from the community **liquid stake their tokens in the Vault**, and receive LST tokens in return.

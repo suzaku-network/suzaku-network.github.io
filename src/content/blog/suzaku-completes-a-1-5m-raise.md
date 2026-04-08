@@ -1,6 +1,6 @@
 ---
 title: "Suzaku completes a $1.5M raise to decentralize the Avalanche L1s ecosystem"
-description: "Suzaku announces the completion of a total raise of $1.5M to help Avalanche L1s decentralize securely, and become the staking layer of the Avalanche ecosystem!"
+description: "Suzaku announces the completion of a total raise of $1.5M to help Avalanche L1s decentralize securely, and more."
 date: 2025-08-29
 image: ../../assets/blog/articles/suzaku-raise/suzaku-raise.png
 imageAlt: "Suzaku completes a $1.5M raise thumbnail"
