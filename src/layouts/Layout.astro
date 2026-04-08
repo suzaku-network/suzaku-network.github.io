@@ -24,7 +24,7 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
-const defaultOgImage = new URL("/og-default.svg", Astro.site).href;
+const defaultOgImage = new URL("/suzaku-og-image.png", Astro.site).href;
 const ogImage = image
   ? new URL(image, Astro.site).href
   : defaultOgImage;

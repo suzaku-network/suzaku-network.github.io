@@ -45,5 +45,5 @@ export default defineConfig({
     remarkPlugins: [remarkAlert],
     rehypePlugins: [rehypeFigureCaption],
   },
-  site: "https://suzaku.network",
+  site: process.env.SITE_URL ?? "https://suzaku.network",
 });
