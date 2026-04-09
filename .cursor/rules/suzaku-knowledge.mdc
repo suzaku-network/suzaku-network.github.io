@@ -1,0 +1,105 @@
+---
+description: "Background knowledge about Suzaku — product details, blog articles, key facts, and tone of voice. Fetch this when drafting social media content or writing about Suzaku."
+---
+
+# Suzaku Knowledge Base
+
+Suzaku is the **Decentralization Hub for Avalanche L1s**. The protocol helps L1 networks securely scale and decentralize their validator sets through liquid staking, progressive decentralization, and advanced cryptoeconomic security models (staking, restaking, dual staking). Built by the Ash team.
+
+- **dApp:** https://app.suzaku.network
+- **LinkedIn:** https://www.linkedin.com/company/suzaku
+- **Token:** SUZ (total supply: 100M). Staked form: sSUZ.
+- **Key products:** BalancerValidatorManager (progressive decentralization), L1 LSTs (liquid staking tokens for Avalanche L1s), Suzaku Points (incentive program).
+- **Integrations:** Dexalot (sALOT), Yield Yak, Blackhole, SwissBorg, Colony.
+- **Backers:** Blizzard, Yield Yak, Tegridy Capital, 50 Partners, BENQI founders, Chorus One, Stable Jack founders, Avalanche Foundation.
+
+## Protocol TVL
+
+Live TVL data: `https://dune.suzaku.network/tvl`
+
+Read from: `json.result.rows[json.result.rows.length - 1].total_tvl_usd`
+
+As of 2026-01-05: **~$2.78M**
+
+## SUZ Token
+
+- **Name:** SUZ
+- **Total supply:** 100,000,000 (100M) — fixed maximum supply
+- **Staked form:** sSUZ
+- **Contract:** Avalanche C-Chain — `avax:0x451532F1C9eb7E4Dc2d493dB52b682C0Acf6F5EF`
+
+### Token Distribution
+
+| Allocation | % | Key vesting terms |
+|---|---|---|
+| Ecosystem & Community | 31.255% | 10% unlocked, 12-month linear vesting |
+| Airdrops | 7.5% | Multiple seasons |
+| Liquidity | 10% | 100% unlocked |
+| Private & Public Sales | 10.745% | Private: 30% unlocked + 9-month vesting; Public: 100% unlocked |
+| Core Contributors & Advisors | 22% | 18-month linear vesting |
+| Foundation Treasury | 18.5% | 15% unlocked, 24-month linear vesting |
+
+Sale prices: Seed at $0.10 (FDV $10M), Public at $0.135 (FDV $13.5M).
+
+### Live Token Price
+
+Price feed: `https://llama.suzaku.network/avax:0x451532F1C9eb7E4Dc2d493dB52b682C0Acf6F5EF`
+
+Read from: `json.coins['avax:0x451532F1C9eb7E4Dc2d493dB52b682C0Acf6F5EF'].price`
+
+FDV formula: `price × 100,000,000`
+
+As of 2026-01-05: price **~$0.01398**, FDV **~$1.4M**
+
+## Partner X Handles and websites
+
+Always use these when mentioning partners in posts:
+
+- Avalanche: @avax, https://avax.network
+- Ava Labs: @AvaLabs, https://avalabs.org
+- Avalanche Foundation: @AvalancheFDN, https://avax.network
+- Avalanche Team1 (ambassadors): @AvaxTeam1, https://www.team1.blog/
+- 50 Partners (incubator): @50Partners, https://50partners.fr/
+- Dexalot (L1): @dexalot, https://dexalot.com/
+- Kite AI (L1): @GoKiteAI, https://gokite.ai/
+- Yield Yak: @yieldyak\_, https://yieldyak.com/
+- BENQI: @BenqiFinance, https://benqi.fi/
+- SwissBorg: @swissborg, https://swissborg.com/
+
+## Blog Articles
+
+Full articles are in [context/](mdc:context). Read them when you need deeper context for a specific topic.
+
+### BalancerValidatorManager (May 2025)
+
+[Full article](mdc:context/articles/introducing-balancervalidatormanager.md) — Introduces the BalancerValidatorManager smart contract, which extends ACP-99 to support multiple security modules. Enables L1s to progressively decentralize from PoA to PoS at their own pace, without contract migration. Open source, audited by Omniscia.
+
+### Suzaku Airdrop & Season 2 Kickoff (Aug 2025)
+
+[Full article](mdc:context/articles/the-suzaku-airdrop-season-2-kickoff.md) — TGE on Aug 13, 2025. Season 1 airdrop: 4.75M SUZ to 10,000+ users. 50% unlocked + 50% as sSUZ vesting over 6 months. Season 2 started July 31 with SUZ staking (3x multiplier), Blackhole LP, and upcoming L1 launches.
+
+### $1.5M Raise (Aug 2025)
+
+[Full article](mdc:context/articles/suzaku-completes-a-1-5m-raise.md) — Suzaku completed a $1.5M raise across seed round, public sales, and Avalanche Foundation grants. Backed by Blizzard, Yield Yak, Tegridy Capital, 50 Partners, and angels from BENQI, SwissBorg, Chorus One, and Stable Jack.
+
+### L1 LSTs: sALOT (Oct 2025)
+
+[Full article](mdc:context/articles/introducing-suzaku-powered-l1-lsts-with-salot-and-splyr.md) — First deployment of Suzaku core protocol to mainnet. Dexalot is the first L1 integration with a liquid staking token (sALOT). LSTs live on C-Chain, 7-day epochs, rewards in L1 tokens + AVAX + 2.5x Suzaku points.
+
+### Why L1 Decentralization Matters (Dec 2025)
+
+[Full article](mdc:context/articles/why-l1-decentralization-matters-more-than-you-think.md) — Thought leadership by co-founder Gauthier Leonard. Argues that while decentralization seems unnecessary until tested, centralized L1s face catastrophic risk (BLS key compromise → bridged TVL theft). Advocates for Nakamoto coefficient > 2 as minimum, and proposes an L1 stages framework similar to L2BEAT.
+
+## Documentation
+
+The full Suzaku documentation is available as a git submodule in [context/suzaku-docs/](mdc:context/suzaku-docs). Read the relevant pages when you need precise technical details.
+
+Documentation pages are `.mdx` files in [context/suzaku-docs/pages/](mdc:context/suzaku-docs/pages):
+
+- **Protocol** — [How it works](mdc:context/suzaku-docs/pages/suzaku-protocol/for-builders/how-it-works.mdx), [progressive decentralization](mdc:context/suzaku-docs/pages/suzaku-protocol/for-builders/progressive-decentralization.mdx), [why decentralization matters](mdc:context/suzaku-docs/pages/suzaku-protocol/for-builders/why-decentralization-matters.mdx), [dual staking](mdc:context/suzaku-docs/pages/suzaku-protocol/for-builders/dual-staking-model.mdx), [LST-as-a-Service](mdc:context/suzaku-docs/pages/suzaku-protocol/for-builders/lst-as-a-service.mdx), [collateral classes](mdc:context/suzaku-docs/pages/suzaku-protocol/for-builders/collateral-class.mdx)
+- **Stakers** — [Staking guide](mdc:context/suzaku-docs/pages/suzaku-protocol/for-stakers/staking-guide.mdx), [restaking guide](mdc:context/suzaku-docs/pages/suzaku-protocol/for-stakers/restaking-guide.mdx), [L1 staking rewards](mdc:context/suzaku-docs/pages/suzaku-protocol/for-stakers/l1-staking-rewards.mdx), [Suzaku points](mdc:context/suzaku-docs/pages/suzaku-protocol/for-stakers/suzaku-points.mdx)
+- **Operators** — [Operator guide](mdc:context/suzaku-docs/pages/suzaku-protocol/for-operators/operator-guide.mdx)
+- **Curators** — [Curator guide](mdc:context/suzaku-docs/pages/suzaku-protocol/for-curators/curator-guide.mdx)
+- **SUZ Token** — [Token distribution](mdc:context/suzaku-docs/pages/suz-token/token-distribution.mdx), [staking](mdc:context/suzaku-docs/pages/suz-token/suz-staking.mdx), [airdrops](mdc:context/suzaku-docs/pages/suz-token/suz-airdrops.mdx), [incentives](mdc:context/suzaku-docs/pages/suz-token/suz-incentives.mdx), [utilities](mdc:context/suzaku-docs/pages/suz-token/utilities.mdx), [contracts](mdc:context/suzaku-docs/pages/suz-token/suz-contracts.mdx)
+- **Specs & Security** — [Protocol specs](mdc:context/suzaku-docs/pages/suzaku-protocol/protocol-specs.mdx), [security](mdc:context/suzaku-docs/pages/suzaku-protocol/security.mdx), [deployments](mdc:context/suzaku-docs/pages/suzaku-protocol/deployments.mdx)
+- **Other** — [FAQ](mdc:context/suzaku-docs/pages/faq.mdx), [disclaimer](mdc:context/suzaku-docs/pages/disclaimer.mdx)

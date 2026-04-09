@@ -1,0 +1,13 @@
+{
+  "index": "Introduction",
+  "for-builders": "For L1 Builders",
+  "for-operators": "For Operators",
+  "for-curators": {
+    "title": "For Curators",
+    "display": "hidden"
+  },
+  "for-stakers": "For Stakers",
+  "protocol-specs": "Protocol Specifications",
+  "deployments": "Deployments",
+  "security": "Security"
+}

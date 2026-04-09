@@ -1,0 +1,47 @@
+---
+interface Props {
+  class?: string;
+  href?: string;
+  label?: string;
+  external?: boolean;
+  disabled?: boolean;
+  macaron?: string;
+}
+const {
+  class: className,
+  href = "https://auditor.suzaku.network",
+  label = "Audit your L1",
+  external = true,
+  disabled = false,
+  macaron,
+} = Astro.props;
+---
+{disabled ? (
+  <span
+    class:list={["group relative inline-block w-max cursor-not-allowed", className]}
+  >
+    <span class="absolute inset-0 rounded bg-suzaku-gradient opacity-40 pointer-events-none"></span>
+    <span class="relative whitespace-nowrap text-suzaku-black">{label}</span>
+    {macaron && (
+      <span class="pointer-events-none absolute -top-1 -right-1 bg-suzaku-gradient text-suzaku-black text-[0.6rem] font-extrabold leading-none px-1.5 py-0.5 rounded-full tracking-wide">
+        {macaron}
+      </span>
+    )}
+    <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white/10 px-2 py-1 text-xs text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+      Coming soon
+    </span>
+  </span>
+) : (
+  <a
+    href={href}
+    {...external ? { target: "_blank", rel: "noopener noreferrer" } : {}}
+    class:list={["relative w-max inline-block whitespace-nowrap text-suzaku-black bg-suzaku-gradient rounded hover:opacity-90 transition-opacity", className]}
+  >
+    {label}
+    {macaron && (
+      <span class="pointer-events-none absolute -top-2 right-2 bg-suzaku-gradient text-suzaku-black text-[0.6rem] font-extrabold leading-none px-1.5 py-0.5 rounded-full tracking-wide">
+        {macaron}
+      </span>
+    )}
+  </a>
+)}

@@ -1,0 +1,43 @@
+---
+import { partners } from "@/data/partners";
+---
+
+<div class="relative overflow-hidden logo-carousel-mask">
+  <div id="logo-track" class="flex items-center gap-16 w-max">
+    {partners.map((partner) => (
+      <a href={partner.url} target="_blank" rel="noopener noreferrer" class="flex-shrink-0">
+        <img
+          src={partner.src}
+          alt={partner.alt}
+          class="w-44 h-auto object-contain opacity-60 brightness-0 invert hover:opacity-90 transition-opacity"
+        />
+      </a>
+    ))}
+    {partners.map((partner) => (
+      <a href={partner.url} target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1" class="flex-shrink-0">
+        <img
+          src={partner.src}
+          alt=""
+          class="w-44 h-auto object-contain opacity-60 brightness-0 invert hover:opacity-90 transition-opacity"
+        />
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  @keyframes marquee {
+    from { transform: translateX(0) }
+    to   { transform: translateX(-50%) }
+  }
+  #logo-track {
+    animation: marquee 28s linear infinite;
+  }
+  #logo-track:hover {
+    animation-play-state: paused;
+  }
+  .logo-carousel-mask {
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+</style>

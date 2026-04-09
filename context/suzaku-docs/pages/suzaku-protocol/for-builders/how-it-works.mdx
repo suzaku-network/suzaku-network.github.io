@@ -1,0 +1,90 @@
+import { Callout, Cards, Card, Steps } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+# How It Works
+
+Suzaku enables **liquid staking** for Avalanche L1s, allowing your community to participate in securing your network while maintaining capital efficiency through Liquid Staking Tokens (LSTs).
+
+## The Dominant Architecture
+
+The most common architecture used by L1s on Suzaku follows this simple model:
+
+![Suzaku participants](/img/suzaku-protocol/suzaku-liquid-staking.png)
+
+<Steps>
+
+### 1. Deploy an LST Vault
+
+The **L1 team deploys an LST Vault** on the Suzaku protocol to enable liquid staking from their community. The L1 team curates the vault with technical support from the Suzaku team.
+
+At a higher maturity stage, the ownership of this Vault can be transferred to the project DAO, and later, the team can let anyone create other LSTs on top of their L1.
+
+### 2. Community Stakes Native Tokens
+
+Stakers from the community **liquid stake their native L1 tokens in the Vault**, and receive LST tokens in return (e.g., `sPLYR` for PLYR tokens, `sALOT` for ALOT tokens).
+
+These LST tokens can be used across the DeFi ecosystem to earn additional yield while still contributing to the network's security.
+
+### 3. Vault Delegates to Operators
+
+The **Vault delegates staked tokens to different operators**. The more operators on the network, the better for effective decentralization.
+
+Operators are high-tier infrastructure providers who run validators for the L1.
+
+### 4. Operators Run Validators
+
+Operators, in turn, **run validators for the L1**. The amount of rewards distributed to each operator is adjusted based on the uptime of its validators.
+
+### 5. L1 Rewards Operators and Stakers
+
+**The L1 team rewards both operators and stakers** for their contributions to the network.
+
+Rewards include:
+- **Native L1 token rewards** (e.g., PLYR, ALOT)
+- **Incentives in AVAX**
+- **2.5x boosted Suzaku points**
+
+Rewards and incentives are distributed **twice per epoch**, based on the performance of the underlying validators.
+
+</Steps>
+
+## Key Features
+
+### Security
+
+Suzaku-powered **L1 LSTs live on the Avalanche C-Chain**, which ensures the highest degree of security for staked tokens.
+
+### Staking Epochs
+
+Staking epochs for Suzaku-powered LSTs are **7-day long**.
+
+After unstaking, a user can **withdraw their tokens after a full epoch has passed**. This effectively means that it takes **between 7 and 14 days** for your tokens to be withdrawable, depending on when you initiated the unstake during the current epoch.
+
+### Progressive Decentralization
+
+L1s can follow a **progressive decentralization** approach, starting for example with an **initial cap (e.g., 10%) of consensus power** allocated to PoS validators in the early phase. 
+
+Suzaku is flexible and allows each network to set its own decentralization pace—adapting these parameters as the network matures—so the L1 can gradually **increase reliance on PoS and expand the set of operators and validators** over time.
+
+## Restaking (Optional)
+
+While most L1s start with native token staking only, **restaking is available as an optional enhancement** to further increase and stabilize cryptoeconomic security.
+
+Restaking allows stakers to use blue-chip tokens (e.g., AVAX LSTs, wrapped BTC, stablecoins) in addition to or instead of the native L1 token. This can be especially useful for TVL-intensive L1s.
+
+Learn more about restaking in the [Dual Staking Model](/suzaku-protocol/for-builders/dual-staking-model) section.
+
+## Real-World Examples
+
+- **sPLYR**: PLYR L1's liquid staking token, [live now](https://staking.plyr.network)
+- **sALOT**: Dexalot L1's liquid staking token, launching later this quarter
+
+Both follow the architecture described above, with the L1 teams curating their vaults with Suzaku's technical support.
+

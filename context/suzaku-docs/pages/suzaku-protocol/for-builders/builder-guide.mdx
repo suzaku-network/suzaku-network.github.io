@@ -1,0 +1,320 @@
+import { Callout, Cards, Card, Steps, Tabs } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+# Builder Guide
+
+Before getting started, make sure you understand [why decentralization matters](/suzaku-protocol/for-builders/why-decentralization-matters) for L1 security.
+
+This guide walks you through the process of becoming a **Suzaku Network**.
+
+<Callout type="warning">
+  Suzaku is a very modular protocol with many smart contracts involved. L1 builders looking to leverage Suzaku to enhance their decentralization and security are encouraged to reach out via [X](https://x.com/SuzakuNetwork) or [Discord](https://discord.com/invite/4XP6aqFkKX).
+</Callout>
+
+## What is a Suzaku Network?
+
+A **Suzaku Network** is an **Avalanche L1** using Suzaku smart contracts as their **Validator Manager**.
+
+There are two contracts at the center of the Validator Manager setup:
+- `BalancerValidatorManager`: an ACP-99-compliant smart contract that can be used to manage the validator set of Avalanche L1s by allowing to **balance the weight** of an L1 between **multiple security modules**. Learn more in the [**Progressive Decentralization**](/suzaku-protocol/for-builders/progressive-decentralization#balancer-validator-manager) section.
+- `AvalancheL1Middleware`: a security module used to interact with the [Suzaku Core](/suzaku-protocol/protocol-specs) contracts, allowing L1 owner to set **staking** or **dual-staking** requirements for Operators to become validators. Learn more in the [**Dual staking model**](/suzaku-protocol/for-builders/dual-staking-model) section.
+
+## L1 setup
+
+<details>
+
+<summary>**I have already deployed an Avalanche L1**</summary>
+
+On which chain is the L1's Validator Manager? `ChainID` was provided as a parameter during the `ConvertSubnetToL1Tx`:
+- If the Chain ID is not the **C-Chain** (ID `yH8D7ThNJkxmtkuv2jgBa4P1Rn3Qpr4pPr7QYNfcdoS6k6HWp` on Fuji), **the L1 can not use Suzaku** at the moment but will be soon when [ACP-186](https://github.com/avalanche-foundation/ACPs/pull/186) is **implemented**!
+- If the L1's Validator Manager is on the C-Chain, the next step to make the L1 Suzaku-ready is [**Upgrade Validator Manager to BalancerValidatorManager**](#upgrade-validator-manager-to-balancervalidatormanager)
+
+</details>
+
+<details>
+
+<summary>**I have not deployed an Avalanche L1 yet**</summary>
+
+The best way to create a new L1 is to use the [L1 Toolbox](https://build.avax.network/tools/l1-toolbox) from the **Avalanche Builders Hub**.
+
+Here is an overview of the steps needed to create a new **Suzaku-ready L1**:
+
+<Steps>
+### Create Subnet
+
+![Create Subnet](/img/suzaku-builder-guide-create-subnet.png)
+
+### Create Chain
+
+![Create Chain](/img/suzaku-builder-guide-create-chain.png)
+
+### Deploy Validator Manager contracts
+
+```bash copy
+git clone git@github.com:suzaku-network/suzaku-deployer.git && cd suzaku-deployer
+forge install
+```
+
+Create the following JSON file at `configs/mySuzakuL1.json`:
+
+```json copy
+{
+    "proxyAddress": "0x0000000000000000000000000000000000000000",
+    "validatorManagerOwnerAddress": "0x0000000000000000000000000000000000000000",
+    "initialSecurityModuleMaxWeight": 0,
+    "migratedValidations": [],
+    "l1ID": "0x3cb97014ff27381387d35fbea2522ac5dfb4b5315f77a14fc2900f74e3207b8f",
+    "churnPeriodSeconds": 3600,
+    "maximumChurnPercentage": 20
+}
+```
+
+- `l1ID` is the Chain ID from previous step, in can be converted form CB58 to Hex in the [L1 Toolbox](https://build.avax.network/tools/l1-toolbox#formatConverter).
+- Only `l1ID`, `churnPeriodSeconds` and `maximumChurnPercentage` are used in this step.
+
+```bash copy
+export PK=0x...
+export FUJI_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
+export VERIFY_URL=https://api-testnet.snowscan.xyz/api
+export ETHERSCAN_API_KEY=your_snowscan_key...
+forge script script/l1/DeployPoAValidatorManager.s.sol --sig "run(string, uint256, uint256)" configs/mySuzakuL1.json $PK $PK --rpc-url fuji --broadcast --verify $VERIFY_URL --etherscan-api-key $ETHERSCAN_API_KEY
+```
+
+- `--verify` and `etherscan-api-key` can be omitted.
+
+Output:
+
+```
+== Logs ==
+  Deployed PoA proxy at: 0xfC39EeA8Bf30de48B0Ff9AB60799CAA555a6e3ab
+```
+
+### Convert Subnet to L1
+
+![Convert Subnet to L1](/img/suzaku-builder-guide-convert-subnet-to-l1.png)
+
+<Callout>Make sure to select C-Chain as **Validator Manager Blockchain ID** and the address of the `ValidatorManager` from the previous step for **Validator Manager Contract Address**. To avoid churn issues, set the total Consensus Weight to a higher value, e.g.: 1,000,000.</Callout>
+
+### Initialize Validator Set
+
+![Initialize Validator Set](/img/suzaku-builder-guider-initialize-validator-set.png)
+
+</Steps>
+
+The L1 has now been created, the next step to make the L1 Suzaku-ready is [**Upgrade Validator Manager to BalancerValidatorManager**](#upgrade-validator-manager-to-balancervalidatormanager)
+
+</details>
+
+### Upgrade Validator Manager to BalancerValidatorManager
+
+This script will update the Validator Manager to a [`BalancerValidatorManager`](/suzaku-protocol/for-builders/progressive-decentralization#balancer-validator-manager) with a PoA Security module.
+
+Update the `configs/mySuzakuL1.json` file:
+
+```json
+{
+    "proxyAddress": "0xfC39EeA8Bf30de48B0Ff9AB60799CAA555a6e3ab",
+    "validatorManagerOwnerAddress": "your_address...",
+    "initialSecurityModuleMaxWeight": 0,
+    "migratedValidations": ["validation_id..."],
+    "l1ID": "0x3cb97014ff27381387d35fbea2522ac5dfb4b5315f77a14fc2900f74e3207b8f",
+    "churnPeriodSeconds": 3600,
+    "maximumChurnPercentage": 20
+}
+```
+
+- `migratedValidations` are the validation ids from the **Initialize Validator Set** step. They can be queried from the "Query L1 Validator Set" page and converted in the [L1 Toolbox](https://build.avax.network/tools/l1-toolbox#formatConverter).
+
+```bash copy
+export PK=0x...
+export FUJI_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
+export VERIFY_URL=https://api-testnet.snowscan.xyz/api
+export ETHERSCAN_API_KEY=9JY13VKAWQA7CNX4J5HDM6MQRMB6USMVPR
+forge script script/l1/UpgradePoAToBalancer.s.sol --sig "run(string, uint256)" configs/mySuzakuL1.json $PK --rpc-url fuji --broadcast --verify $VERIFY_URL --etherscan-api-key $ETHERSCAN_API_KEY
+```
+
+Output:
+
+```
+== Logs ==
+  Upgraded PoA proxy at: 0xfC39EeA8Bf30de48B0Ff9AB60799CAA555a6e3ab
+  Deployed PoA security module at: 0x876f6587A95d76f268Df67F3635bC4b33f241202
+  Output JSON => ./deployments/43113/2025-05-16/poAUpgrade.json
+```
+
+### L1 Middleware deployment
+
+Create the following JSON file at `configs/mySuzakuL1Middleware.json`:
+
+```json copy
+{
+  "l1MiddlewareOwnerAddress": "your_address...",
+  "validatorManager": "validator_manager_proxy...",
+  "operatorRegistry": "0x46D45D6be6214F6bd8124187caD1a5302755d7A2",
+  "vaultFactory": "0xC3b09a650c78daFb79e3C5B782402C8dc523fE88",
+  "operatorL1OptIn": "0x0360C1cB32A20D97b358538D9Db71339ce2c9592",
+  "primaryAsset": "0x59fbBa1845690Fb202d69a77CFEc5564df12D3DE",
+  "primaryAssetMaxStake": 5000000000000000000000,
+  "primaryAssetMinStake": 100000000000000000000,
+  "primaryAssetWeightScaleFactor": 2e16,
+  "epochDuration": 1800,
+  "slashingWindow": 2100,
+  "stakeUpdateWindow": 900
+}
+```
+
+The main parameters are:
+- `operatorRegistry`, `vaultFactory`, `operatorL1OptIn` are common to all Suzaku L1s, see [Deployments](/suzaku-protocol/deployments)
+- `primaryAsset`: the address of a Collateral (see [Vaults & Collateral Classes](/suzaku-protocol/for-builders/collateral-class#vaults--collateral-classes)), [0x59fbBa1845690Fb202d69a77CFEc5564df12D3DE](https://testnet.snowscan.xyz/address/0x59fbBa1845690Fb202d69a77CFEc5564df12D3DE) is a mock $sAVAX Collateral that can be used for testing
+- `primaryAssetMinStake`: the minimum stake in the Primary Asset an Operator has to receive delegation to become a validator
+- `primaryAssetMaxStake` the maximum stake in the Primary Asset an Operator can receive as delegation
+- `primaryAssetWeightScaleFactor`: the stake to weight scale factor
+
+```bash copy
+export PK=0x...
+export FUJI_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
+export VERIFY_URL=https://api-testnet.snowscan.xyz/api
+export ETHERSCAN_API_KEY=your_snowscan_key...
+
+forge script script/l1/DeployMiddleware.s.sol --sig "run(string)" configs/mySuzakuL1Middleware.json --rpc-url fuji --private-key $PK --broadcast --verify $VERIFY_URL --etherscan-api-key $ETHERSCAN_API_KEY
+```
+
+Output:
+
+```
+== Logs ==
+  AvalancheL1Middleware deployed at: 0xB4Aa3dd44e34a2621474386DF42c99B837013522
+  MiddlewareVaultManager deployed at: 0xb098d078AaF75dBF4CE8478858bD7E280b46ED97
+  Using validatorManager at: 0xfC39EeA8Bf30de48B0Ff9AB60799CAA555a6e3ab
+  Using operatorRegistry at: 0x46D45D6be6214F6bd8124187caD1a5302755d7A2
+  Using vaultFactory at: 0xC3b09a650c78daFb79e3C5B782402C8dc523fE88
+  Using operatorL1OptIn at: 0x0360C1cB32A20D97b358538D9Db71339ce2c9592
+  Deployed L1 middleware to: 0xB4Aa3dd44e34a2621474386DF42c99B837013522
+  Deployed VaultManager to: 0xb098d078AaF75dBF4CE8478858bD7E280b46ED97
+  Output JSON => ./deployments/43113/2025-05-19/l1Middleware.json
+```
+
+## Suzaku Core L1 interactions
+
+**Requirements**
+- [suzaku-cli](https://github.com/suzaku-network/suzaku-cli/) installed
+- A private key for the **L1** owner with AVAX balance on the C-Chain
+- An Avalanche L1 live on Fuji with its Validator Manager upgraded to **`BalancerValidatorManager` contract on the C-Chain** (see [L1 Setup](/suzaku-protocol/for-builders/builder-guide#l1-setup))
+- **`AvalancheL1Middleware`** contract deployed
+
+1. Setup the L1 Middleware as Security Module:
+
+```bash copy
+BALANCER_VALIDATOR_MANAGER=...
+L1_MIDDLEWARE=...
+SECURITY_MODULE_MAX_WEIGHT=200000
+pnpm cli --network fuji balancer-set-up-security-module $BALANCER_VALIDATOR_MANAGER $L1_MIDDLEWARE $SECURITY_MODULE_MAX_WEIGHT --private-key $PK
+```
+
+The arguments are:
+- `BALANCER_VALIDATOR_MANAGER`: The `BalanceValidatorManager` address, deployed previously
+- `L1_MIDDLEWARE`: The `AvalancheL1Middleware` address, deployed previously
+- `SECURITY_MODULE_MAX_WEIGHT`: The total maximum weight in the P-Chain for the validators that are managed by the security module being set up, here the `AvalancheL1Middleware`
+
+<Callout type="info">
+See [Progressive Decentralization](/suzaku-protocol/for-builders/progressive-decentralization) to learn more about `BalanceValidatorManager` and `AvalancheL1Middleware`.
+</Callout>
+
+2. (Optional) Verify the Security Module has been set up:
+
+```bash copy
+pnpm cli --network fuji balancer-get-security-modules $BALANCER_VALIDATOR_MANAGER
+```
+
+### L1 registration in the L1 Registry
+
+1. Register the L1 in the **L1 Registry** contract:
+
+```bash copy
+BALANCER_VALIDATOR_MANAGER=...
+L1_MIDDLEWARE=...
+L1_METADATA_URL=https://l1.com
+pnpm cli --network fuji --private-key $PK register-l1 $BALANCER_VALIDATOR_MANAGER $L1_MIDDLEWARE $L1_METADATA_URL
+```
+
+The arguments are:
+- `BALANCER_VALIDATOR_MANAGER`: The `BalanceValidatorManager` address, deployed previously
+- `L1_MIDDLEWARE`: The `AvalancheL1Middleware` address, deployed previously
+- `L1_METADATA_URL`: URL to a JSON file providing metadata for the L1, format is TBD, in the meantime L1s are encouraged to use any link to a website or social media profile
+
+<Callout type="info">
+Registering an L1 in the L1 Registry costs 1 \$AVAX (0.1 \$AVAX in Fuji). This is to avoid malicious actors to flood the protocol.
+</Callout>
+
+2. (Optional) Verify the L1 is registered in the **L1 Registry**:
+
+```bash copy
+pnpm cli --network fuji get-l1s
+```
+
+### Vault registration in MiddlewareVaultManager
+
+<Callout type="warning">
+**Stake vs Weight**
+
+In a typical **Suzaku L1** setup, the `BalancerValidatorManager` manages 2 security modules: a `PoASecurityModule` and a `AvalancheL1Middleware`, each managing a portion of the total **weight** of the Avalanche L1 as tracked in the **P-Chain**.
+Assets deposited in Vaults are denominated in **stake** from which the `AvalancheL1Middleware` will calculate a corresponding **weight**.
+</Callout>
+
+<Callout type="info">
+**Vault Curation**: The L1 team typically deploys and curates a single LST vault for their network, with technical support from the Suzaku team. The vault manages the delegation of staked tokens to operators.
+</Callout>
+
+1. Register a Vault in the `MiddlewareVaultManager`:
+
+```bash copy
+MIDDLEWARE_VAULT_MANAGER=...
+VAULT=0x85F212C69f0C567011E1eCFf956dCc0014754A2c
+ASSET_CLASS=1
+MAX_LIMIT=200000000000000000000000
+pnpm cli --network fuji --private-key $PK vault-manager-register-vault-l1 $MIDDLEWARE_VAULT_MANAGER $VAULT $ASSET_CLASS $MAX_LIMIT
+```
+
+The arguments are:
+- `MIDDLEWARE_VAULT_MANAGER`: the address of the `MiddlewareVaultManager`.
+- `VAULT` is the address of a Vault. The Suzaku team has deployed a Vault on the Fuji testnet at address.
+  [`0x85F212C69f0C567011E1eCFf956dCc0014754A2c`](https://testnet.snowscan.xyz/address/0x85F212C69f0C567011E1eCFf956dCc0014754A2c) for testing purposes.
+- `ASSET_CLASS` is `1` since we are setting up a Vault for the Primary Asset Class is the first requirement before adding other asset classes.
+- `MAX_LIMIT` is the maximum stake the L1 can receive from this Vault. It is set to an arbitrary high value of 200,000 sAVAX in the example and can be adapted accordingly.
+
+### Set L1 limit
+
+DONE BY THE L1???
+
+```bash copy
+DELEGATOR=...
+L1_LIMIT=100000000000000000000000
+ASSET_CLASS=1
+pnpm cli --network fuji --private-key $PK set-l1-limit $DELEGATOR $BALANCER_VALIDATOR_MANAGER $L1_LIMIT $ASSET_CLASS
+```
+
+The arguments are:
+- `DELEGATOR` it the address of the `L1RestakeDelegator`
+- `L1_LIMIT` is the maximum stake the L1 can receive from the `L1RestakeDelegator`. It is set to an arbitrary high value of 200,000 sAVAX in the example and can be adapted accordingly.
+- `ASSET_CLASS` is `1` since we are setting the maxium stake for the Primary Asset Class.
+
+### Operator registration in L1
+
+```bash copy
+L1_MIDDLEWARE=...
+OPERATOR=0xfFF4224c953682C0866cb45643512D8Eee6eB608
+pnpm cli --network fuji --private-key $PK middleware-register-operator $L1_MIDDLEWARE $OPERATOR
+```
+
+The arguments are:
+- `L1_MIDDLEWARE`: the address of the `AvalancheL1Middleware`.
+- `OPERATOR`: the address of an **Operator** registered in the Operator Registry and opted-in to the L1 (see [Operator Guide](/suzaku-protocol/for-operators/operator-guide#operator-l1-opt-in)).
+
+At this point, everything is setup on the **L1** side. The L1 team (with Suzaku's technical support) manages the vault and delegates stake to operators. Stakers can now deposit their native tokens into the vault to receive LST tokens.

@@ -1,0 +1,390 @@
+import { Callout, Cards, Card, Steps, Tabs } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+# Operator Guide
+
+<Callout emoji="🚧">
+  Suzaku is in testnet phase. This documentation is subject to change.
+</Callout>
+
+During Suzaku's **testnet**, we offer operators the ability to become validators of multiple **permissionless Avalanche L1s** and the **first Suzaku-secured networks**. This important step will allow us to set up workflows and communication channels with operators.
+
+This guide walks you through the process of becoming a Suzaku operator: from Suzaku Core smart contract interaction to hardware setup.
+
+## Testnet phases overview
+
+The Suzaku testnet is divided into 4 phases, each with its own set of goals and requirements. The testnet phases are as follows:
+
+- Phase 1 - 🐉 **Seiryu**: Proof-of-Authority (PoA) L1 with `ValidatorManager` contract deployed on the L1 itself.  
+  This is the most basic post-ACP-77 L1 deployment and will allow testing tooling and coordination end-to-end.
+- Phase 2 - 🐢 **Genbu**: Suzaku-secured PoS L1 (only using the L1 staking token for security).  
+  All validator set management will go through the Suzaku protocol core, involving stakers, curators, and operators.
+- Phase 3 - 🦌 **Kirin**: Multiple Suzaku-secured L1s, using different security models: restaking, dual-staking, etc.
+
+<Callout type="info">
+
+Current active phase: **Phase 2 - 🐢 Genbu**
+
+- Network ID: `fuji`
+- Chain name: `SuzakuGenbu`
+- Subnet ID: [`mytZou2gmpqQyoeGcQhetnfsFUggUcDLik36jySE1r7te6EqB`](https://subnets-test.avax.network/subnets/mytZou2gmpqQyoeGcQhetnfsFUggUcDLik36jySE1r7te6EqB)
+- Blockchain ID: `RowPQ5qE8GidVb5d268AK2KBizpotTKSxQrTQke7wwQ1B7vWu`
+- `AvalancheL1Middleware`: [`0xbf9e863cF9F00f48D3Ed9D009515114365502569`](https://testnet.snowscan.xyz/address/0xbf9e863cF9F00f48D3Ed9D009515114365502569)
+- `MiddlewareVaultManager`: [`0xc892ef1A2AB00909fbc7d63B3b38DBf16ef56590`](https://testnet.snowscan.xyz/address/0xc892ef1A2AB00909fbc7d63B3b38DBf16ef56590)
+- `ValidatorManager` Proxy: [`0x84F2B4D4cF8DA889701fBe83d127896880c04325`](https://testnet.snowscan.xyz/address/0x84F2B4D4cF8DA889701fBe83d127896880c04325)
+- RPC: http://62.210.92.52:9650/ext/bc/RowPQ5qE8GidVb5d268AK2KBizpotTKSxQrTQke7wwQ1B7vWu/rpc
+
+</Callout>
+
+## Suzaku Core Operator interactions
+
+Suzaku is a **permissionless protocol** that allows any entity to register as an Operator, opt-in to L1s, receive delegation from stakers, and participate in the protocol.
+
+**Requirements**
+
+- [suzaku-cli](https://github.com/suzaku-network/suzaku-cli/) installed
+- A private key for the **Operator** owner with AVAX balance on the C-Chain **and** P-Chain
+
+### Operator registration
+
+1. Register the operator in the **Operator Registry** contract:
+
+```bash copy
+METADATA_URL=https://operator1.com
+pnpm cli --network fuji --private-key $PK register-operator $METADATA_URL
+```
+
+The arguments are:
+- `METADATA_URL`: link to an Operator's metadata. The format for this metadata is TBD, in the meantime Operators are encouraged to use any link to a website or social media profile.
+
+### Operator L1 opt-in
+
+2. Opt-in to the **Suzaku Genbu L1**:
+
+```bash copy
+L1=0x84F2B4D4cF8DA889701fBe83d127896880c04325
+pnpm cli --network fuji --private-key $PK opt-in-l1 $L1
+```
+
+The arguments are:
+- `L1`: address on a L1 registered in the L1 Registry contract. Here the L1 address is the [`ValidatorManager`](https://testnet.snowscan.xyz/address/0x84F2B4D4cF8DA889701fBe83d127896880c04325) contract address of the Suzaku Genbu L1.
+
+1. (Optional) Check the opt-in status of the Operator:
+
+```bash copy
+pnpm cli --network fuji check-opt-in-l1 $OPERATOR_ADDRESS 0x84F2B4D4cF8DA889701fBe83d127896880c04325
+```
+
+### Operator Vault opt-in
+
+4. Opt-in to the **Suzaku testnet $sAVAX Vault**:
+
+```bash copy
+VAULT=0x85F212C69f0C567011E1eCFf956dCc0014754A2c
+pnpm cli --network fuji --private-key $PK opt-in-vault $VAULT
+```
+
+The arguments are:
+- `VAULT`: the address of a Vault. For testing purpose, the Suzaku team has deployed a Vault on the Fuji testnet at address [`0x85F212C69f0C567011E1eCFf956dCc0014754A2c`](https://testnet.snowscan.xyz/address/0x85F212C69f0C567011E1eCFf956dCc0014754A2c).
+
+1. (Optional) Check the opt-in status of the Operator:
+
+```bash copy
+pnpm cli --network fuji check-opt-in-vault $OPERATOR_ADDRESS 0x85F212C69f0C567011E1eCFf956dCc0014754A2c
+```
+
+### Receive delegated stake
+
+Before adding a node to the L1 Middleware, Operators need to receive delegated stake from a Curator managing a Vault that has opted in to the L1.
+
+<Callout>
+  During the testnet phase, Operators registered in the Operator Registry
+  contract automatically receive delegated stake for the Suzaku Genbu L1.
+</Callout>
+
+1. (Optional) Check the delegated stake of the Operator:
+
+```bash copy
+MIDDLEWARE_VAULT_MANAGER=0xc892ef1A2AB00909fbc7d63B3b38DBf16ef56590
+pnpm cli --network fuji opstakes $MIDDLEWARE_VAULT_MANAGER $OPERATOR_ADDRESS
+```
+
+The arguments are:
+- `MIDDLEWARE_VAULT_MANAGER`: the address of a `MiddlewareVaultManager`. Here [0xc892ef1A2AB00909fbc7d63B3b38DBf16ef56590](https://testnet.snowscan.xyz/address/0xc892ef1A2AB00909fbc7d63B3b38DBf16ef56590) is the address for Suzaku Genbu L1 `MiddlewareVaultManager` (see [Testnet Phases Overview](/suzaku-protocol/for-operators/operator-guide#testnet-phases-overview)).
+- `OPERATOR_ADDRESS`: the address of the Operator.
+
+The output should look like this:
+
+```bash copy
+Operator: 0x9Cd2620D59f3D635A052850644574596625CcE2a
+Found 1 vault(s).
+
+Vault #0: 0x85F212C69f0C567011E1eCFf956dCc0014754A2c
+    L1: 0x84F2B4D4cF8DA889701fBe83d127896880c04325 => stake = 500000000000000000000 (vault=0x85F212C69f0C567011E1eCFf956dCc0014754A2c)
+
+Aggregated stakes by collateral:
+   Collateral=0x59fbBa1845690Fb202d69a77CFEc5564df12D3DE totalStakeWei=500000000000000000000 => 500
+```
+
+### Add a node to the L1 Middleware
+
+Registering a node to the L1 Middleware is a two-step process. This is because post [ACP-77](https://github.com/avalanche-foundation/ACPs/tree/main/ACPs/77-reinventing-subnets), Validator weight management on the Avalanche P-Chain needs to be performed by providing a signed warped message from the L1's `ValidatorManager` chain.
+
+1. Add node to the L1 Middleware:
+
+```bash copy
+L1_MIDDLEWARE=0xbf9e863cF9F00f48D3Ed9D009515114365502569
+NODE_ID=...
+BLS_KEY=...
+pnpm cli --network fuji middleware-add-node $L1_MIDDLEWARE $NODE_ID $BLS_KEY --private-key $PK
+```
+
+The arguments are:
+- `L1_MIDDLEWARE`: the `AvalancheL1Middleware` (see [Builder Guide](/suzaku-protocol/for-builders/builder-guide)). Here [`0xbf9e863cF9F00f48D3Ed9D009515114365502569`](https://testnet.snowscan.xyz/address/0xbf9e863cF9F00f48D3Ed9D009515114365502569) is the address of the Suzaku Genbu L1's `AvalancheL1Middleware`.
+- `NODE_ID`: The CB58 Node ID
+- `BLS_KEY`: The BLS public key of the node
+
+<Callout>
+  Don't have a NodeID and BLS key yet? Check the [AvalancheGo node setup](#avalanchego-node-setup) section below.
+</Callout>
+
+2. Complete validator registration:
+
+```bash copy
+L1_MIDDLEWARE=0xbf9e863cF9F00f48D3Ed9D009515114365502569
+OPERATOR_ADDRESS=...
+NODE_ID=...
+ADD_NODE_TX_HASH=tx_hash_from_previous_step...
+BLS_PROOF_OF_POSSESSION=...
+pnpm cli --network fuji middleware-complete-validator-registration $L1_MIDDLEWARE $OPERATOR_ADDRESS $NODE_ID $ADD_NODE_TX_HASH $BLS_PROOF_OF_POSSESSION --private-key $PK
+```
+
+The arguments are:
+- `L1_MIDDLEWARE`: the `AvalancheL1Middleware`
+- `OPERATOR_ADDRESS`: the address of the Operator
+- `NODE_ID`: The CB58 Node ID
+- `ADD_NODE_TX_HASH`: the transaction ID of the `middleware-add-node` command
+- `BLS_PROOF_OF_POSSESSION`: The BLS proof of possession
+
+<Callout>
+  This command sends a transaction to the Avalanche P-Chain, the private key provided
+  will be used to sign the transaction. Thus the underlying account needs to
+  have AVAX balance on the P-Chain. The
+  [avalanche-cli](https://github.com/ava-labs/avalanche-cli) can be used to move
+  AVAX between the C-Chain and the P-Chain.
+</Callout>
+
+Upon successful registration, an operator can confirm that their node is part of the validator set by running the following commands:
+
+```bash copy
+curl --location --request POST https://api.avax-test.network/ext/bc/P \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "jsonrpc":"2.0",
+    "id"     :1,
+    "method" :"platform.getValidatorsAt",
+    "params" :{
+      "height": "proposed",
+      "subnetID":"mytZou2gmpqQyoeGcQhetnfsFUggUcDLik36jySE1r7te6EqB"
+    }
+  }' | jq
+```
+
+**Output:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    [...]
+    "NodeID-78ibWpjtZz5ZGT6EyTEdu8VKmboUHTuGT": {
+      "publicKey": "0x8327dbe1ba411c270637b080a8471fb41eeb8a9b3917af0727501ef8bdaa901d063780bd702f30f458a61f3d4297dc98",
+      "weight": "100"
+    },
+    [...]
+  },
+  "id": 1
+}
+```
+
+If your validator's **NodeID** is in the list, you are successfully registered as a Suzaku operator and validating !
+
+### Update a node weight
+
+1. Initiate stake update:
+
+```bash copy
+L1_MIDDLEWARE=0xbf9e863cF9F00f48D3Ed9D009515114365502569
+NODE_ID=...
+TOTAL_NEW_STAKE=...
+pnpm cli --network fuji middleware-init-stake-update $L1_MIDDLEWARE $NODE_ID $TOTAL_NEW_STAKE --private-key $PK
+```
+
+The arguments are:
+- `L1_MIDDLEWARE`: the `AvalancheL1Middleware`
+- `NODE_ID`: The CB58 Node ID
+- `TOTAL_NEW_STAKE`: The new total stake that will be used by the node
+
+1. Complete stake update:
+
+```bash copy
+L1_MIDDLEWARE=0xbf9e863cF9F00f48D3Ed9D009515114365502569
+NODE_ID=...
+INIT_STAKE_UPDATE_TX_HASH=tx_hash_from_previous_step...
+pnpm cli --network fuji middleware-complete-stake-update $L1_MIDDLEWARE $NODE_ID $INIT_STAKE_UPDATE_TX_HASH --private-key $PK
+```
+
+The arguments are:
+- `L1_MIDDLEWARE`: the `AvalancheL1Middleware`
+- `NODE_ID`: The CB58 Node ID
+- `INIT_STAKE_UPDATE_TX_HASH`: the transaction ID of the `middleware-init-stake-update` command
+
+<Callout type="info">
+Like `middleware-add-node`, updating the weight of a node according to the delegated stake is a two step task because the weight needs to be changed on the P-Chain and reported back to the L1 Middleware through ICM and signature aggregation.
+</Callout>
+
+### Remove a node
+
+1. Initiate remove node:
+
+```bash copy
+L1_MIDDLEWARE=0xbf9e863cF9F00f48D3Ed9D009515114365502569
+NODE_ID=...
+pnpm cli --network fuji middleware-remove-node $L1_MIDDLEWARE $NODE_ID --private-key $PK
+```
+
+The arguments are:
+- `L1_MIDDLEWARE`: the `AvalancheL1Middleware`
+- `NODE_ID`: The CB58 Node ID
+
+2. Complete remove node:
+
+```bash copy
+L1_MIDDLEWARE=0xbf9e863cF9F00f48D3Ed9D009515114365502569
+NODE_ID=...
+REMOVE_NODE_TX_HASH=tx_hash_from_previous_step...
+pnpm cli --network fuji middleware-complete-validator-removal $L1_MIDDLEWARE $NODE_ID $REMOVE_NODE_TX_HASH --private-key $PK
+```
+
+The arguments are:
+- `L1_MIDDLEWARE`: the `AvalancheL1Middleware`
+- `NODE_ID`: The CB58 Node ID
+- `REMOVE_NODE_TX_HASH`: the transaction ID of the `middleware-remove-node` command
+
+<Callout type="info">
+Like `middleware-add-node`, removing a node from the validator set is a two step task because the weight needs to be changed on the P-Chain and reported back to the L1 Middleware through ICM and signature aggregation.
+</Callout>
+
+## AvalancheGo node setup
+
+Being a Suzaku operator during the testnet phase boils down to running an [AvalancheGo](https://github.com/ava-labs/avalanchego/) node and tracking one or more Avalanche L1s that are part of the Suzaku protocol.
+
+There are multple ways to run an AvalancheGo node:
+
+- Using the [`ansible-avalanche-collection`](https://ash.center/docs/toolkit/) Ansible role: recommended **if you are creating a new AvalancheGo node** and are familiar with Ansible and/or **you use a cloud provider not supported** by the Ash Console
+- Manually: i.e., you are already running an AvalancheGo node
+
+### Node hardware requirements
+
+- CPU: Equivalent of 2 AWS vCPU
+- RAM: 4 GiB
+- Storage: 50 GiB
+- OS: Ubuntu 22.04 or 24.04
+
+<Callout type="info">
+  Those hardware requirements are **minimum** for the Suzaku testnet and will be
+  different on mainnet based on each Suzaku-secured L1 profile.
+</Callout>
+
+<Tabs items={['ansible-avalanche-collection', 'Manually']}>
+  <Tabs.Tab>
+
+**Requirements**
+
+- Python >=3.9 with `venv` module installed
+- A VPS / bare metal machine with Ubuntu 22.04 LTS / 24.04 LTS and SSH access to a user with `sudo` privileges
+
+**Setup the environment**
+
+1. Clone the Getting Started repository:
+
+   ```bash copy
+   git clone https://github.com/suzaku-network/suzaku-operator-boilerplate
+   cd suzaku-operator-boilerplate
+   ```
+
+2. Setup and activate Python venv:
+
+   ```bash copy
+   bin/setup.sh
+   source .venv/bin/activate
+   ```
+
+3. Install the [`ash.avalanche`](https://github.com/AshAvalanche/ansible-avalanche-collection) collection:
+
+   ```bash copy
+   ansible-galaxy collection install git+https://github.com/AshAvalanche/ansible-avalanche-collection.git
+   ```
+
+4. Edit the `inventories/fuji/hosts` file to include the IP addresses of the Avalanche nodes:
+
+   ```ini
+   suzaku-testnet-node ansible_host=X.X.X.X avalanchego_http_host=0.0.0.0 ansible_user=ubuntu ansible_ssh_private_key_file=files/ansible_key.pem
+   ```
+
+- Replace `X.X.X.X` with the IP address of the VPS / bare metal machine used to run the Suzaku Operator.
+- Provide the path to `ansible_ssh_private_key_file` to allow Ansible to SSH into the target machine with the configured `ansible_user`.
+
+**Run the Avalanche node**
+
+1. Bootstrap the Avalanche nodes:
+
+   ```bash copy
+   ansible-playbook ash.avalanche.provision_nodes -i inventories/fuji
+   ```
+
+   This command **installs AvalancheGo** on the target machine, configures it to **track the _SuzakuSeiryu_ Suzaku network** and **start the AvalancheGo service**.
+
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+  Operator running an AvalancheGo node manually will need to:
+  - Make sure they are running release [`v1.13.0`](https://github.com/ava-labs/avalanchego/releases/tag/v1.13.0) of AvalancheGo.
+  - Install the Subnet EVM version [v0.7.2](https://github.com/ava-labs/subnet-evm/releases/tag/v0.7.2) binary in the `plugins` dir of the AvalancheGo installation with file name `dkr3SJRCf2QfRUaepreGf2PtfEtpLHuPixeBMNrf1QQBxWLNN`.
+  - Set the `--track-subnets` flag to the Suzaku network subnet ID, e.g.: `--track-subnets mytZou2gmpqQyoeGcQhetnfsFUggUcDLik36jySE1r7te6EqB`.
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+To easily get the NodeID and BLS information of your node, you can use the `info.getNodeID` JSON-RPC method, e.g.:
+
+```bash copy
+curl -s -X POST --data '{
+  "jsonrpc":"2.0",
+  "id"     :1,
+  "method" :"info.getNodeID"
+  }' -H 'content-type:application/json;' X.X.X.X:9650/ext/info | jq
+```
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "nodeID": "NodeID-A8rdxK5Yddh9kwbMkgkpb7oEN1GAxiBkz",
+    "nodePOP": {
+      "publicKey": "0xa2d8524afaa3954d6d030e372af6606e959cf62b5442be07d1113c75c67c4cf6742a3338180eec1a325e9010eaaa3656",
+      "proofOfPossession": "0xaeb3362dba19f937825f671c2a8395e91b5350909bff25918eb759f7c79bbd7beb86f67d36082f63a98504c1e6ef3bcf0980ea141e8a583373f4294f01401644c2386f39c47b53aa91a47ae90310c2c29e536de4d12f862f7d74c11f5ab2899a"
+    }
+  },
+  "id": 1
+}
+```
+
+</Callout>

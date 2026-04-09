@@ -1,0 +1,38 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Nav from "@/components/Nav.astro";
+import FloatingNav from "@/components/FloatingNav.astro";
+import ScrollToTop from "@/components/ScrollToTop.astro";
+import Hero from "@/components/Hero.astro";
+import TheRisks from "@/components/TheRisks.astro";
+import TakeAction from "@/components/TakeAction.astro";
+import TheProtocol from "@/components/TheProtocol.astro";
+import AboutUs from "@/components/AboutUs.astro";
+import FinalCta from "@/components/FinalCta.astro";
+import Footer from "@/components/Footer.astro";
+import { FOR_BUILDERS_SECTIONS } from "@/data/navigation";
+---
+
+<Layout
+  title="For Builders | Suzaku"
+  description="Suzaku helps Avalanche L1 networks securely scale and decentralize their validator sets through liquid staking, progressive decentralization, and advanced cryptoeconomic security models."
+>
+  <header><Nav sectionLinks={FOR_BUILDERS_SECTIONS} /></header>
+  <FloatingNav />
+  <ScrollToTop />
+  <main id="main-content">
+    <Hero />
+    <TheRisks />
+    <TakeAction />
+    <TheProtocol />
+    <AboutUs />
+    <FinalCta />
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  import { initSectionSnap } from '@/utils/sectionSnap';
+
+  initSectionSnap();
+</script>

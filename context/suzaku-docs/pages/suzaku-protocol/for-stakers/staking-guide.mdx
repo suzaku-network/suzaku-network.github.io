@@ -1,0 +1,229 @@
+import { Callout, Steps, Tabs, Tab } from "nextra/components";
+
+To secure the Layer 1 (L1) blockchain in a decentralized way, the network uses a Liquid Staking Token (LST).
+
+When users stake tokens, they are deposited into a shared vault that delegates stake on their behalf to secure the L1. In return for helping secure the network, stakers earn rewards each epoch, distributed proportionally based on their share of the total stake. The LST represents each user’s staked position and accrued rewards.
+
+There are two main ways to stake and mint the LST:
+
+- **L1 Staking UI:** The official staking front-end of the L1, tailored for its community
+- **Suzaku App:** The staking hub of the Avalanche L1s ecosystem
+
+Both platforms ultimately issue the same LST, granting you liquidity and access to staking rewards while your tokens contribute to securing the underlying network.
+
+# Staking Guide
+
+<Tabs items={['LST App', 'Suzaku App']}>
+<Tab>
+
+### Staking
+
+<Steps>
+
+![App View](/img/suzaku-protocol/staking-guide/lst-app-view.png)
+
+### Enter the amount to stake
+
+1. Ensure the `Stake` tab is selected.
+2. Enter the amount of tokens you wish to stake in the input field.
+3. Optionally, click MAX to stake your entire available balance.
+
+The interface will display:
+
+- The equivalent USD value (if available)
+- Your current balance of tokens
+
+<Callout type="info">
+  If the input is empty or invalid, the staking action will be disabled.
+</Callout>
+
+### Approve tokens for staking
+
+![Approve](/img/suzaku-protocol/staking-guide/lst-app-approve.png)
+
+Before staking, you must approve the staking contract to use your tokens.
+
+1. After entering an amount, click `Approve`.
+2. Confirm the approval transaction in your wallet.
+3. Wait for the transaction to be confirmed on-chain.
+
+<Callout type="warning">
+  Approval does not stake your tokens; it only grants permission.
+</Callout>
+
+### Stake your tokens
+
+![Stake](/img/suzaku-protocol/staking-guide/lst-app-stake.png)
+
+Once approval is complete, the action button will change from `Approve` to `Stake`.
+
+1. Click `Stake`.
+2. Confirm the staking transaction in your wallet.
+3. Wait for confirmation.
+
+After a successful transaction:
+
+- Your staked position will update
+- You will receive the staked asset, representing your liquid staking position
+- Your stake will start accruing eligible rewards
+
+![Current Position](/img/suzaku-protocol/staking-guide/lst-app-position.png)
+
+Once staked, you can:
+
+- View your position under `Current Position`
+- Track rewards in the `Rewards` section
+- Claim rewards when available
+- Unstake at any time from the `Unstake` tab (see the follow-up guide)
+
+</Steps>
+
+### Unstaking
+
+<Steps>
+
+### Enter the amount to unstake
+
+1. Ensure the `Unstake` tab is selected.
+2. Enter the amount of tokens you wish to unstake in the input field.
+3. Optionally, click MAX to unstake your entire position.
+
+The interface will display:
+
+- The equivalent USD value (if available)
+- Your current staked position
+
+<Callout type="info">
+  If the input is empty or invalid, the unstaking action will be disabled.
+</Callout>
+
+### Unstake your tokens
+
+![Unstake](/img/suzaku-protocol/staking-guide/lst-app-unstake.png)
+
+1. Click `Unstake`.
+2. Confirm the unstaking transaction in your wallet.
+3. Wait for confirmation.
+
+<Callout type="warning">
+  Unstaking is subject to a withdrawal period, during which assets cannot be
+  immediately withdrawn.
+</Callout>
+
+After a successful transaction:
+
+- Your staked position will update
+- A message telling you when your assets will be withdrawable will appear
+
+![Withdraw Message](/img/suzaku-protocol/staking-guide/lst-app-withdraw-message.png)
+
+</Steps>
+
+</Tab>
+
+<Tab>
+
+### Staking
+
+<Steps>
+
+![App View](/img/suzaku-protocol/staking-guide/suzaku-app-view.png)
+
+### Enter the amount to stake
+
+1. Ensure the `Stake` tab is selected.
+2. Enter the amount of tokens you wish to stake in the input field.
+3. Optionally, click MAX to stake your entire available balance.
+
+The interface will display:
+
+- Your current balance of tokens
+
+<Callout type="info">
+  If the input is empty or invalid, the staking action will be disabled.
+</Callout>
+
+### Approve tokens for staking
+
+![Approve](/img/suzaku-protocol/staking-guide/suzaku-app-approve.png)
+
+Before staking, you must approve the staking contract to use your tokens.
+
+1. After entering an amount, click `Approve`.
+2. Confirm the approval transaction in your wallet.
+3. Wait for the transaction to be confirmed on-chain.
+
+<Callout type="warning">
+  Approval does not stake your tokens; it only grants permission.
+</Callout>
+
+### Stake your tokens
+
+![Stake](/img/suzaku-protocol/staking-guide/suzaku-app-stake.png)
+
+Once approval is complete, the action button will change from `Approve` to `Stake`.
+
+1. Click `Stake`.
+2. Confirm the staking transaction in your wallet.
+3. Wait for confirmation.
+
+After a successful transaction:
+
+- Your staked position will update
+- You will receive the staked asset, representing your liquid staking position
+- Your stake will start accruing eligible rewards
+
+![Current Position](/img/suzaku-protocol/staking-guide/suzaku-app-position.png)
+
+Once staked, you can:
+
+- View your position under `Current Position`
+- Track rewards in the `Rewards` section
+- Claim rewards when available
+- Unstake at any time from the `Unstake` tab (see the follow-up guide)
+
+</Steps>
+
+### Unstaking
+
+<Steps>
+
+### Enter the amount to unstake
+
+1. Ensure the `Unstake` tab is selected.
+2. Enter the amount of tokens you wish to unstake in the input field.
+3. Optionally, click MAX to unstake your entire position.
+
+The interface will display:
+
+- Your current staked position
+
+<Callout type="info">
+  If the input is empty or invalid, the unstaking action will be disabled.
+</Callout>
+
+### Unstake your tokens
+
+![Unstake](/img/suzaku-protocol/staking-guide/suzaku-app-unstake.png)
+
+1. Click `Unstake`.
+2. Confirm the unstaking transaction in your wallet.
+3. Wait for confirmation.
+
+<Callout type="warning">
+  Unstaking is subject to a withdrawal period, during which assets cannot be
+  immediately withdrawn.
+</Callout>
+
+After a successful transaction:
+
+- Your staked position will update
+- A message telling you when your assets will be withdrawable will appear
+
+![Withdraw Message](/img/suzaku-protocol/staking-guide/suzaku-app-withdraw-message.png)
+
+</Steps>
+
+</Tab>
+
+</Tabs>

@@ -1,0 +1,274 @@
+# FAQ
+
+## Suzaku protocol
+
+<details>
+<summary>**What is Suzaku?**</summary>
+
+Suzaku is a protocol that enables **liquid staking** for Avalanche L1s, allowing communities to participate in securing their networks while maintaining capital efficiency through Liquid Staking Tokens (LSTs).
+
+L1 teams deploy and curate an **LST vault** for their network (with technical support from the Suzaku team). Community members stake their native L1 tokens to receive LST tokens (e.g., `sPLYR`, `sALOT`) that can be used across the DeFi ecosystem while still contributing to network security.
+
+**Restaking** (using blue-chip tokens like AVAX LSTs, wrapped BTC, or stablecoins) is available as an optional enhancement for L1s that want to further increase their cryptoeconomic security.
+
+L1 teams rely on Suzaku to scale and decentralize their validator set securely.
+
+</details>
+
+<details>
+<summary>**What is a collateral class?**</summary>
+
+A collateral class is a **collection of collateral tokens** that are used to **economically secure an L1**. Collateral tokens of the same class are often **derivatives of the same token** (e.g. AVAX and AVAX LSTs like sAVAX can be in the same class).
+
+</details>
+
+<details>
+<summary>**What are the L1's primary and secondary collateral classes?**</summary>
+
+The L1's primary collateral class is used as the **main staking token** of the L1. It is used to **compute the weight of validators in consensus**. The validator weight is determined **only by the native token stake** (primary asset). It is often the L1's native token (and its derivatives).
+
+The L1's secondary collateral classes are used as **extra staking tokens** for the L1. They are **extra requirements** for L1 validators to join the validator set, but they **do not contribute to validator weight**. A secondary collateral class is often a **blue-chip asset** like AVAX, USDC, BTC, etc. (and their derivatives). Secondary collateral classes are optional and can be enabled from the beginning or added later.
+
+</details>
+
+<details>
+<summary>**How long are staking epochs?**</summary>
+
+Staking epochs for Suzaku-powered LSTs are **7 days long**.
+
+Rewards and incentives are distributed **twice per epoch**, based on the performance of the underlying validators.
+
+</details>
+
+<details>
+<summary>**How long does unstaking take?**</summary>
+
+After unstaking, a user can **withdraw their tokens after a full epoch has passed**. This effectively means that it takes **between 7 and 14 days** for your tokens to be withdrawable, depending on when you initiated the unstake during the current epoch.
+
+For example, if you unstake on day 1 of a 7-day epoch, you'll be able to withdraw after 8 days (remaining 6 days of current epoch + 1 day into next epoch). If you unstake on day 6, you'll need to wait 8 days (1 day remaining + full 7-day epoch).
+
+</details>
+
+<details>
+<summary>**What are some examples of L1s using Suzaku?**</summary>
+
+- **sPLYR**: PLYR L1's liquid staking token, [live now](https://staking.plyr.network). PLYR is following a progressive decentralization approach, starting with a maximum of 10% of consensus power allocated to PoS validators in the first phase.
+
+- **sALOT**: Dexalot L1's liquid staking token, launching later this quarter.
+
+Both follow the single vault architecture, with the L1 teams curating their vaults with Suzaku's technical support.
+
+</details>
+
+## Educational content
+
+<details>
+<summary>**How does a (re)staking marketplace work?**</summary>
+
+All (re)staking protocols can be seen as marketplaces between:
+
+1. 🥞 Stakers, who provide cryptoeconomic security
+2. 🧑‍💻 Operators, who run the infrastructure, a.k.a. nodes/validators
+3. 🕸️ Networks, who reward 1. and 2. for contributing to the security and decentralization
+
+Each participant has its own goals:
+
+- 🥞 Stakers want to (i) generate more yield on their assets and (ii) participate in the growth of new networks
+- 🧑‍💻 Operators want to increase their recurring income at minimal cost and risk
+- 🕸️ Networks want to decentralize securely
+
+Here is how the (re)staking workflow unfolds:
+
+1. Stakers delegate their assets to Operators of their choice
+2. Operators opt-in to validate Networks they deem profitable and low-risk
+3. Networks reward both Operators and Stakers
+
+![Restaking Marketplace](/img/suzaku-protocol/restaking-marketplace.png)
+
+Now, what happens if an Operator tries to harm a Network? 😈
+
+1. The Operator and its Stakers will lose all potential rewards 💸
+2. For the most strict Networks, some assets delegated to this Operator by Stakers will get slashed (can be burned 🔥 or redistributed to users 🤕)
+
+This is why cryptoeconomic security is needed 🔒
+
+If an Operator loses its reputation, Stakers will naturally find other more reliable Operators to delegate to!
+
+The marketplace design encourages virtuous behavior from all participants 🤝
+
+</details>
+
+<details>
+<summary>**What rewards do stakers receive?**</summary>
+
+Stakers receive rewards from the L1 networks they secure, including:
+
+- **Native L1 token rewards** (e.g., PLYR, ALOT)
+- **Incentives in AVAX**
+- **2.5x boosted Suzaku points** for L1 LST stakers
+
+Rewards and incentives are distributed **twice per epoch**, based on the performance of the underlying validators.
+
+</details>
+
+<details>
+<summary>**How does progressive decentralization work?**</summary>
+
+Suzaku enables Avalanche L1s to **progressively decentralize** their validator set through a flexible approach:
+
+1. **Launch with PoA**: L1s typically start as Proof of Authority networks, where all node operators are trustworthy partners of the project.
+
+2. **Open to PoS**: The L1 team upgrades to a hybrid model, opening a small percentage (e.g., 10%) of consensus power to permissionless Proof-of-Stake validators, as seen with PLYR L1.
+
+3. **Gradually increase PoS weight**: As the network matures, the L1 can progressively increase the weight of permissionless validators (e.g., from 10% to 50%, then 80%).
+
+4. **Reach full decentralization**: Once confident with the maturity of the L1 and the good distribution of stake and validator set, the L1 can become 100% permissionless by removing the PoA validator set.
+
+Suzaku is flexible and allows each network to set its own decentralization pace, adapting parameters as the network matures.
+
+</details>
+
+<details>
+<summary>**How does Suzaku (Re)staking work?**</summary>
+
+The most common architecture used by L1s on Suzaku follows this simple model:
+
+1. **L1 team deploys an LST vault** on the Suzaku protocol to enable liquid staking from their community. The L1 team curates the vault with technical support from the Suzaku team.
+
+2. **Stakers deposit their native L1 tokens** into the vault and receive LST tokens in return (e.g., `sPLYR` for PLYR tokens, `sALOT` for ALOT tokens). These LST tokens can be used across the DeFi ecosystem while still contributing to network security.
+
+3. **The vault delegates staked tokens to operators**. The more operators on the network, the better for effective decentralization.
+
+4. **Operators run validators** for the L1. The amount of rewards distributed to each operator is adjusted based on the uptime of its validators.
+
+5. **The L1 team rewards both operators and stakers** for their contributions to the network.
+
+![Suzaku participants](/img/suzaku-protocol/suzaku-liquid-staking.png)
+
+**Restaking** (using blue-chip tokens like AVAX LSTs, wrapped BTC, or stablecoins) is available as an optional enhancement for L1s that want to further increase their cryptoeconomic security. Most L1s start with native token staking only.
+
+</details>
+
+<details>
+<summary>**Why does restaking mean more stable security?**</summary>
+
+> **Note:** Restaking is optional. Most L1s start with native token staking only. Restaking can be added from the beginning or later as an enhancement to increase and stabilize cryptoeconomic security.
+
+Launching a new PoS L1 is hard. To launch and decentralize its chain, the L1 team must:
+
+1. 🛡️ Ensure the L1 is secure enough to protect bridged assets
+2. 💰 Incentivize stakers (and delegators) to purchase the L1 token and stake it with validators
+
+🛡️ Cryptoeconomic security problematics
+
+If only relying on its native token for security, an L1 is subject to the early death spiral risk:
+
+- L1 token price drops → security weakens
+- Users panic and leave → TVL drops
+- L1 token price drops lower, etc.
+
+![Death Spiral](/img/suzaku-protocol/death-spiral-risk.png)
+
+→ With restaking:
+
+In a "dual-staking" security setup, the L1 team complements its L1 token with a blue-chip restaked token in its validator requirements 🔒
+
+For the overall L1 security, asset-specific or global market events result in way lower security weakening!
+
+🧑‍💼 Concrete example:
+
+Scenario: a market downswing makes the L1 token drop by 25% and the blue-chip token drop by 5%
+
+- Without restaking, the economic security drops by 25% 😱
+- With restaking (e.g. 40/60 dual-staking), the economic security drops by 13% only 💪
+
+![Restaking Security](/img/suzaku-protocol/stable-cryptoeconomic-security.png)
+
+As the L1 and its token mature, reliance on the restaked asset can be slowly reduced until being totally removed.
+
+This is how restaking can ensure a more stable cryptoeconomic security and guarantee the growth of new L1s.
+
+</details>
+
+<details>
+<summary>**Why does restaking mean cheaper security?**</summary>
+
+> **Note:** Restaking is optional. It's an enhancement that can be added from the beginning or later, not a requirement for using Suzaku.
+
+Launching a new PoS L1 is hard. To launch and decentralize its chain, the L1 team must:
+
+1. 🛡️ Ensure the L1 is secure enough to protect bridged assets
+2. 💰 Incentivize stakers (and delegators) to purchase the native L1 token and stake it with validators
+
+💰 Staker incentives problematics
+
+The L1 native token, often an unknown and volatile market asset, poses a risk for holders.
+
+As a result, the L1 team must offer enticing APY rates to attract stakers, often in the range of 15-20% 💸, which leads to high selling pressure 📉
+
+→ With restaking:
+
+In a "dual-staking" security setup, the L1 team can complement its native L1 token with a blue-chip restaked token in its validator requirements 🔒
+
+Blue-chip token holders secure multiple L1s simultaneously, requiring way lower APYs per L1, e.g. 1-1.5% 👀
+
+To elaborate on that: AVAX liquid-stakers earn 5.5-7% APY
+
+Increasing this yield by 4-6% is already significant for them 🚀
+
+This can be achieved by restaking AVAX LSTs on Suzaku and securing only 4 L1s.
+
+As a bonus, they also help the growth of projects that they like 🤗
+
+🧑‍💼 Concrete example:
+
+Scenario: an L1 wants to reach \$10m of cryptoeconomic security. Its native token stakers want 20% APY, and restakers want 1.5% APY
+
+- Without restaking, the 1-year security budget is \$2m 🤯
+
+- With restaking, the 1-year security budget is \$0.89m 👌
+
+![Cheap Security](/img/suzaku-protocol/cheaper-cryptoeconomic-security.png)
+
+This is how restaking can lower the security budget paid out in L1 token issuance, creating healthier long-term growth.
+
+</details>
+
+<details>
+<summary>**What does the Etna upgrade unlock for L1s?**</summary>
+
+Etna was the biggest upgrade of Avalanche to date!
+
+It brings groundbreaking changes for L1 builders:
+
+1. The L1 validator nodes don't have to be part of the Primary Network anymore
+2. L1s can set custom rules for their validator set
+
+Let's study each of them 🤓
+
+#### 1. No need to validate the Primary Network
+
+You can now spin up an [Avalanche](https://www.avax.network/) validator that ONLY VALIDATES L1s.
+
+Instead of having to stake 2,000 AVAX, L1 validators pay a 1.33 AVAX per month continuous fee 🤯
+
+This shifts the financial requirements for L1 builders
+
+- from CAPEX (2k AVAX x 5 nodes = \$450,000 💀)
+- to OPEX (1.33 AVAX x 5 nodes = \$300 🤗)
+
+for bootstrapping their L1!
+
+A side effect is better fault isolation for L1s: a transaction spike on the C-Chain won't impact L1 validators 🔓
+
+#### 2. Custom rules for L1 validator sets
+
+Each L1 team can now delegate the management of its validator set to an address on ANY Avalanche chain, especially its own.
+
+This means that it is possible to write rules as Solidity smart contracts, enabling any kind of logic 🚀
+
+The `ValidatorManager` smart contract can be deployed on the C-Chain for maximum security or for L1 itself for maximum sovereignty.
+
+Suzaku relies on the flexibility of the Etna upgrade to implement its (re)staking marketplace 💪
+
+</details>

@@ -1,0 +1,64 @@
+import { Callout, Cards, Card } from "nextra/components";
+
+<Cards>
+  <Card
+    title="🚀 Restake now to earn Suzaku points!"
+    href="https://app.suzaku.network"
+    target="_blank"
+  />
+</Cards>
+
+# Introduction to Suzaku for Stakers
+
+## Staking
+
+### What is staking?
+
+Staking is the process of **locking up tokens to secure a blockchain network or protocol** and, in return, receive rewards. It is an essential part of **Proof-of-Stake (PoS) consensus mechanisms** used by many blockchain networks, including Avalanche.
+
+<Callout type="info">
+  Staking to secure Avalanche L1s is not yet available on Suzaku.
+</Callout>
+
+## Restaking
+
+### What is restaking?
+
+Restaking is the process of **using a token already staked on one network or protocol** to stake and **secure another network or protocol**.
+
+For example, Suzaku Restaking allows you to **reuse your AVAX staked** through LSTs (Liquid Staking Tokens), like [BENQI](https://benqi.fi/)'s sAVAX, to **secure Avalanche L1s**.
+
+### Why restake on Suzaku?
+
+There are several reasons why you might want to restake:
+
+1. **Help new networks grow their security**: By restaking, you're helping Avalanche L1s bootstrap their cryptoeconomic security.
+2. **Earn extra rewards on your assets**: By restaking, you're earning rewards from the Avalanche L1s you're securing, on top of the rewards you're already earning through those assets.
+3. **Earn Suzaku points**: By restaking, you're earning [Suzaku points](/suzaku-protocol/for-stakers/suzaku-points).
+
+### How does restaking work on Suzaku?
+
+<Callout type="info">
+  The workflow described below will be available in the next release of Suzaku,
+  when the core contracts are deployed. But you can still start restaking and
+  earn Suzaku points now! See the [Restaking
+  Guide](/suzaku-protocol/for-stakers/restaking-guide) for more details.
+</Callout>
+
+Suzaku is a **marketplace** connecting different protocol participants: **stakers**, **operators**, **networks** (a.k.a. L1s), and **curators**. Learn more about the interactions between them [here](/suzaku-protocol/introduction#protocol-participants).
+
+Here is how it works for a staker:
+
+1. The **staker** deposits their tokens into Suzaku, e.g. `100 sAVAX`, and delegates them to a **curator**.
+2. (Optional) The **curator** emits LRTs (Liquid Restaking Tokens) to the staker, e.g. `100 lrtAVAX`, that can be used within the broader DeFi ecosystem.
+3. The **curator** selects **networks** to secure and delegates the staked tokens to **operators** running validators on those networks.
+4. The **operators** and the **curator** earn rewards from the networks they secure.
+5. The **curator** distributes the rewards to the staker.
+
+<Callout>
+
+**Curator strategies**:  
+Different strategies are available for rewards distribution, like streamlining the L1 native token rewards to the staker, auto-compounding them, or building advanced strategies with them.  
+Make sure to choose a **curator** that offers the one that best fits your needs.
+
+</Callout>

@@ -1,0 +1,43 @@
+# L1 Staking Rewards
+
+## Overview
+
+L1 token holders can liquid-stake their tokens through Suzaku to secure L1s and earn staking rewards. Rewards are distributed to stakers every epoch and are deacreasing over time.
+
+## Rewards formula
+
+The following rewards formula is used as a baseline to calculate L1 staking rewards for each epoch:
+
+<br />
+<div align="center">
+
+$\Large R(e) = Res(e) \cdot \frac{L(e)}{L_{\max}} \cdot \frac{D}{365} \cdot C \cdot \exp(-d \cdot e)$
+
+</div>
+
+Where:
+
+- $e$ – Epoch index (starting from 0)
+- $R(e)$ – Reward emitted during epoch $e$
+- $Res(e)$ – Remaining reward reservoir at the start of epoch $e$
+- $L(e)$ – Staking limit at epoch $e$
+- $L_{\max}$ – Maximum network staking limit
+- $D$ – Epoch duration in days (usually 3.5 days)
+- $C$ – Base emission coefficient
+- $d$ – Exponential decay coefficient
+
+## Specific L1 parameters
+
+### PLYR L1
+
+The [PLYR L1](https://plyr.network) uses the following parameters:
+
+| Parameter  | Value            |
+| ---------- | ---------------- |
+| $L_{\max}$ | 250,000,000 PLYR |
+| $L(0)$     | 27,500,000 PLYR  |
+| $R(0)$     | 150,000,000 PLYR |
+| $C$        | 30               |
+| $d$        | 0.0005           |
+
+PLYR has allocated 150,000,000 PLYR to the staking rewards reservoir. The initial epoch rewards compute to **47,465.75 PLYR**, or an APR of **18%** (if $L(0)$ is reached).

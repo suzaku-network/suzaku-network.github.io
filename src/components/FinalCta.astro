@@ -1,0 +1,41 @@
+---
+import ButtonHighlight from "@/components/ButtonHighlight.astro";
+import ButtonStandard from "@/components/ButtonStandard.astro";
+import Section from "@/components/Section.astro";
+---
+
+<Section id="final-cta" class="px-6 pt-32 pb-16 md:py-16 flex items-center justify-center text-center">
+  <div class="max-w-3xl mx-auto">
+    <h2 class="type-heading mb-6">
+      Start with a free audit.<br />
+      <span class="bg-suzaku-gradient bg-clip-text text-transparent">
+        Know exactly where your L1 stands.
+      </span>
+    </h2>
+    <p class="type-subheading text-white/70 mb-10">
+      The L1 Auditor shows your decentralization stage in seconds. Free, no
+      signup required.
+    </p>
+    <div class="flex flex-row gap-3 sm:gap-4 justify-center">
+      <ButtonHighlight class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3" disabled macaron="SOON" />
+      <ButtonStandard class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3" />
+    </div>
+  </div>
+</Section>
+
+<script>
+  const DESKTOP_BP = 1024;
+
+  function sizeFinalCta() {
+    const section = document.getElementById("final-cta");
+    const footer = document.querySelector("footer");
+    if (!section || !footer) return;
+    const isMobile = window.innerWidth < DESKTOP_BP;
+    section.style.minHeight = isMobile
+      ? "100dvh"
+      : `calc(100dvh - ${footer.offsetHeight}px)`;
+  }
+
+  sizeFinalCta();
+  window.addEventListener("resize", sizeFinalCta);
+</script>

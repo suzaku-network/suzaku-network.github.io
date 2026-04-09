@@ -1,0 +1,118 @@
+---
+description: Website narrative, tone, and structure guidelines for the Suzaku landing page
+alwaysApply: true
+---
+
+# Suzaku Website Guidelines
+
+## Narrative: L1 Builders Are the Main Character
+
+The website speaks **directly to L1 builders and teams**. Every section should make them feel understood — they are building something ambitious, and Suzaku exists to help them protect it.
+
+The story has two acts:
+
+### Act 1 — The Threat (Make the Risk Real)
+
+Surface the security risks that are silently hanging over every L1:
+
+- **Bridged TVL theft**: A low Nakamoto coefficient (e.g. 1–2) means an attacker who compromises enough BLS keys can forge ICM messages and drain bridged assets. The risk scales with TVL.
+- **Liveness failure**: Few validators = single points of failure. One outage can halt the chain.
+- **Censorship**: Centralized validator sets can be coerced or captured.
+- **OpSec exploits**: Even large players get hacked (ByBit $1.4B, Swissborg $41.5M). L1 teams and their service providers are not immune.
+
+Key framing: "Decentralization doesn't matter — until it does. And when it's tested, you'd better be ready."
+
+Source material: `context/suzaku-docs/pages/suzaku-protocol/for-builders/why-decentralization-matters.mdx` and `context/articles/why-l1-decentralization-matters-more-than-you-think.md`.
+
+### Act 2 — The Solution (Suzaku as the Guide)
+
+Position Suzaku as the expert partner who walks L1 teams through decentralization:
+
+- **Expert guidance**: Plan and execute a progressive decentralization journey — from PoA to PoS — without contract migration, at the L1's own pace.
+- **BalancerValidatorManager**: The technical backbone. Open source, audited, ACP-99 compliant. Enables multiple security modules simultaneously.
+- **Protocol alignment**: Use the Suzaku protocol to align stakers and operators around the L1's security model — liquid staking (LSTs), restaking, dual staking.
+- **First steps matter**: Even moving from Nakamoto coefficient 1 to 3 dramatically reduces risk. It doesn't require going fully permissionless.
+
+## Tone
+
+- Authoritative but approachable. Written by builders, for builders.
+- Concrete over vague: use real numbers (Nakamoto coefficient, TVL at risk, examples like ByBit/Swissborg)
+- No hype language. Avoid "revolutionary", "game-changing", etc.
+- Short sentences. Direct claims.
+- **Never use em dashes (—).** Break into two sentences instead.
+
+## Visual Identity
+
+Source: `context/suzaku-brand/Suzaku-Brand-Guidelines.pdf`. Logo files: `context/suzaku-brand/assets/`.
+
+### Colors
+
+| Name | Hex |
+|---|---|
+| Deep Black (primary bg) | `#101010` |
+| Pure White | `#FFFFFF` |
+| Teal (gradient start) | `#00A4AF` |
+| Green (gradient end) | `#43F6AB` |
+
+The **Suzaku Gradient** goes from `#00A4AF` → `#43F6AB`. Use it for accent elements, CTAs, and highlights. The default background is **Deep Black `#101010`**, not pure black.
+
+### Typography
+
+Single font family throughout: **Inconsolata** (Google Fonts).
+- Weights in use: Light, Regular, Extrabold
+- Monospaced character — lean into it for technical credibility
+- **Titles (h1, h2, h3) must use `font-semibold` — never `font-bold` or `font-extrabold`**
+- `font-extrabold` is reserved for small accent labels, button text, and data callouts only
+
+### Logo Usage
+
+Prefer SVGs from `context/suzaku-brand/assets/`. Key variants:
+
+| File | When to use |
+|---|---|
+| `suzaku-logo-color-white-horizontal.svg` | Primary — dark backgrounds, header |
+| `suzaku-logo-color-white-vertical.svg` | Hero or centered layouts on dark bg |
+| `suzaku-symbol-color.svg` | Favicon, small UI spots |
+| `suzaku-symbol-white.svg` | Monochrome contexts on dark bg |
+
+Never place the color logo on a light background — use the black variant (`*-black-*`) instead.
+
+### Design Principles
+
+- Dark-first: the site lives on `#101010`, not white
+- Gradient accents should feel purposeful, not decorative — use for CTAs and key data points
+- Monospaced font reinforces the technical, builder-facing identity
+- Keep generous whitespace — the brand has a clean, minimal feel
+
+## Links & Legal
+
+### Social Links
+| Label | URL |
+|---|---|
+| X | https://x.com/SuzakuNetwork |
+| Discord | https://discord.gg/4XP6aqFkKX |
+| GitHub | https://github.com/suzaku-network |
+| Contact | mailto:contact@suzaku.network |
+
+### Legal Links
+| Label | URL |
+|---|---|
+| Terms & Conditions | https://docs.suzaku.network/pdf/Suzaku-TermsAndConditions.pdf |
+| Legal Notice | https://docs.suzaku.network/pdf/Suzaku-LegalNotice.pdf |
+| Privacy Policy | https://docs.suzaku.network/pdf/Suzaku-PrivacyPolicy.pdf |
+| Disclaimer | https://docs.suzaku.network/disclaimer |
+
+### Copyright
+© 2025 ADDPHO. All rights reserved.
+
+## Discontinued Integrations
+
+- **PLYR** — this L1 has been discontinued. Never mention PLYR or sPLYR anywhere on the site or in copy.
+
+## What to Avoid
+
+- Do not lead with token/airdrop content — that is secondary to the core protocol value
+- Do not make Suzaku the hero — the builder is the hero, Suzaku is the guide
+- Do not use generic DeFi landing page tropes ("unlock liquidity", "earn yield")
+- Do not use any font other than Inconsolata
+- Do not use pure black (`#000000`) — use Deep Black (`#101010`) instead

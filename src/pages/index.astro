@@ -1,0 +1,95 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Nav from "@/components/Nav.astro";
+import Footer from "@/components/Footer.astro";
+import ButtonHighlight from "@/components/ButtonHighlight.astro";
+import ButtonStandard from "@/components/ButtonStandard.astro";
+import PartnersAndBackers from "@/components/PartnersAndBackers.astro";
+import GlobeBackground from "@/components/GlobeBackground.astro";
+import { HOMEPAGE_TAGLINE, HOMEPAGE_PERSONAS } from "@/data/homepage";
+---
+
+<Layout
+  title="Suzaku | Decentralization Hub for Avalanche L1s"
+  description="Suzaku connects L1 builders with stakers and operators to secure their networks through decentralization."
+>
+  <div class="min-h-dvh flex flex-col">
+  <header><Nav /></header>
+  <main id="main-content" class="flex-1 flex flex-col px-6 pt-28">
+  <div class="flex-1 flex flex-col items-center lg:justify-center pb-16 lg:pb-8">
+    <!-- Tagline -->
+    <div id="globe-section" class="relative w-full flex justify-center py-4">
+      <!-- <GlobeBackground /> -->
+      <div class="text-center mt-10 mb-8 lg:mb-20 max-w-5xl relative z-10">
+        <p class="type-label text-suzaku-green/80 mb-6">{HOMEPAGE_TAGLINE.label}</p>
+        <h1 class="type-display mb-5">
+          The<br class="hidden sm:block" /> <span class="bg-suzaku-gradient bg-clip-text text-transparent">Decentralization Hub</span><br />for L1s
+        </h1>
+        <p class="type-subheading text-white/60">
+          {HOMEPAGE_TAGLINE.subheading.map((line, j) => (
+            <>{j > 0 && <br />}{line}</>
+          ))}
+        </p>
+      </div>
+    </div>
+
+    <!-- Persona columns: overflow-hidden clips dividers so they can't bleed outside -->
+    <div class="w-full max-w-7xl overflow-hidden pt-10 lg:pt-14 pb-16 lg:pb-20">
+    <div class="flex flex-col divide-y divide-white/10 lg:grid lg:grid-cols-[1fr_1px_1.6fr_1px_1fr] lg:grid-rows-[auto_auto_1fr_auto] lg:divide-y-0">
+
+      {HOMEPAGE_PERSONAS.map((persona, i) => (
+        <>
+          {i > 0 && <div class="hidden lg:block bg-white/10 lg:row-span-4" />}
+          <div class={`flex flex-col gap-5 px-4 py-8 items-center text-center lg:grid lg:grid-rows-subgrid lg:row-span-4 lg:gap-y-5 lg:justify-items-center lg:px-0 lg:py-0 ${'featured' in persona ? 'lg:relative' : ''}`}>
+            {'featured' in persona && (
+              <img
+                src="/brand/zaku-no-background.png"
+                alt=""
+                aria-hidden="true"
+                class="hidden lg:block absolute right-0 bottom-[-18px] w-28 z-10 pointer-events-none select-none"
+              />
+            )}
+            <p class="type-label bg-suzaku-gradient bg-clip-text text-transparent lg:px-16 lg:pt-8 lg:self-center">
+              {persona.label}
+            </p>
+            <h2 class={`font-semibold leading-snug lg:px-16 lg:self-center ${'featured' in persona ? 'text-4xl lg:text-5xl' : 'text-2xl lg:text-3xl'}`}>
+              {persona.heading}
+            </h2>
+            <p class={`type-card-body text-white/55 text-justify lg:self-start ${'featured' in persona ? 'lg:px-16 sm:!text-xl' : 'lg:px-10'}`}>
+              {persona.body.map((line, j) => (
+                <>{j > 0 && <br />}{line}</>
+              ))}
+            </p>
+            {persona.cta.type === "highlight" ? (
+              <ButtonHighlight
+                href={persona.cta.href}
+                label={persona.cta.label}
+                external={persona.cta.external}
+                class={`font-extrabold px-5 py-2 sm:px-8 sm:py-3 lg:mb-8 lg:self-end ${'featured' in persona ? 'text-base sm:text-xl' : 'text-[0.85rem] sm:text-lg'}`}
+              />
+            ) : (
+              <ButtonStandard
+                href={persona.cta.href}
+                label={persona.cta.label}
+                external={persona.cta.external}
+                class={`font-extrabold px-5 py-2 sm:px-8 sm:py-3 lg:mb-8 lg:self-end ${'featured' in persona ? 'text-base sm:text-xl' : 'text-[0.85rem] sm:text-lg'}`}
+              />
+            )}
+          </div>
+        </>
+      ))}
+
+    </div>
+    </div>
+
+    <!-- Partners & Backers -->
+    <div class="w-full max-w-3xl pb-28 lg:pb-36">
+      <PartnersAndBackers labelAlign="center" />
+    </div>
+
+  </div>
+  </main>
+  <Footer />
+  </div>
+
+</Layout>

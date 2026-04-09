@@ -1,0 +1,241 @@
+---
+import Card from "@/components/Card.astro";
+import PartnersAndBackers from "@/components/PartnersAndBackers.astro";
+import Section from "@/components/Section.astro";
+---
+
+<Section id="about-us" class="h-[300vh] lg:h-auto lg:min-h-screen lg:flex lg:items-center">
+  <div id="about-us-sticky" class="about-us-inner px-6">
+    <div id="about-us-content" class="max-w-5xl mx-auto w-full">
+      <p class="type-label text-suzaku-green/80 mb-4">About us</p>
+      <h2 class="type-heading mb-4">
+        4 years of L1 blockchains expertise
+      </h2>
+      <p class="type-subheading text-white/70 mb-8">
+        We've been building tooling for L1 blockchains since 2021.<br />
+        We know what breaks. We build to prevent it.
+      </p>
+
+      <!-- Expertise -->
+      <div id="about-us-cards" class="grid md:grid-cols-3 gap-3 md:gap-5 mb-10">
+        <Card>
+          <div class="type-card-title text-suzaku-green mb-3">Deep operator experience</div>
+          <p class="type-card-body text-white/70">
+            Running validators across multiple networks taught us the struggles of decentralization.
+            We know where to focus our efforts to make it work.
+          </p>
+        </Card>
+        <Card>
+          <div class="type-card-title text-suzaku-green mb-3">Co-authors of ACP-99</div>
+          <p class="type-card-body text-white/70">
+            ACP-99, written with Ava Labs, is the Avalanche standard for
+            L1 validator set management. Our BalancerValidatorManager is built
+            directly on this foundation.
+          </p>
+        </Card>
+        <Card>
+          <div class="type-card-title text-suzaku-green mb-3">Open-source infrastructure</div>
+          <p class="type-card-body text-white/70">
+            We built Ash, an open-source toolkit for L1 operations, and are maintaining Ash Wallet, the multisig infrastructure for Avalanche L1s.
+          </p>
+        </Card>
+      </div>
+
+      <!-- Partners & Backers carousel -->
+      <div id="about-us-partners">
+        <PartnersAndBackers labelAlign="left" />
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .about-us-inner {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow: hidden;
+    padding-top: 6rem;
+    padding-bottom: 2rem;
+  }
+  #about-us-content {
+    will-change: transform;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .about-us-inner {
+      padding-top: 5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .about-us-inner {
+      position: static;
+      height: auto;
+      overflow: visible;
+      padding-top: 0;
+      padding-bottom: 0;
+      width: 100%;
+    }
+    #about-us-content {
+      will-change: auto;
+    }
+  }
+</style>
+
+<script>
+  import lenis, {
+    registerVirtualScrollInterceptor,
+    isPassingThrough,
+  } from "@/utils/lenis";
+
+  const DESKTOP_BP = 1024;
+  const STEP_COUNT = 3;
+  const outer = document.getElementById("about-us")!;
+  const sticky = document.getElementById("about-us-sticky")!;
+  const content = document.getElementById("about-us-content")!;
+  const cards = document.getElementById("about-us-cards")!;
+
+  const cardsOffset =
+    cards.getBoundingClientRect().top - content.getBoundingClientRect().top;
+
+  function getBottomAlignTranslate(): number {
+    const styles = getComputedStyle(sticky);
+    const visible =
+      sticky.clientHeight -
+      parseFloat(styles.paddingTop) -
+      parseFloat(styles.paddingBottom);
+    return Math.max(0, content.scrollHeight - visible);
+  }
+
+  function getTranslateTargets(): number[] {
+    return [0, cardsOffset, getBottomAlignTranslate()];
+  }
+
+  function getOuterTop(): number {
+    return outer.getBoundingClientRect().top + window.scrollY;
+  }
+
+  function getScrollBudget(): number {
+    return Math.max(0, outer.offsetHeight - window.innerHeight);
+  }
+
+  function getSnapPositions(): number[] {
+    const top = getOuterTop();
+    const budget = getScrollBudget();
+    const positions: number[] = [];
+    for (let i = 0; i < STEP_COUNT; i++) {
+      positions.push(top + (i / (STEP_COUNT - 1)) * budget);
+    }
+    return positions;
+  }
+
+  function isInStickyZone(): boolean {
+    if (window.innerWidth >= DESKTOP_BP) return false;
+    if (getScrollBudget() < 10) return false;
+    const rect = outer.getBoundingClientRect();
+    return rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
+  }
+
+  function getNearestStep(): number {
+    const positions = getSnapPositions();
+    const sy = window.scrollY;
+    let closest = 0;
+    let minDist = Infinity;
+    for (let i = 0; i < positions.length; i++) {
+      const d = Math.abs(sy - positions[i]);
+      if (d < minDist) {
+        minDist = d;
+        closest = i;
+      }
+    }
+    return closest;
+  }
+
+  let locked = false;
+  let prevInZone = false;
+
+  function update() {
+    if (window.innerWidth >= DESKTOP_BP) {
+      content.style.transform = "";
+      return;
+    }
+    if (isPassingThrough(outer)) return;
+
+    const budget = getScrollBudget();
+    if (budget <= 0) return;
+
+    const scrolled = Math.max(
+      0,
+      Math.min(budget, -outer.getBoundingClientRect().top),
+    );
+    const rawProgress = scrolled / budget;
+
+    const targets = getTranslateTargets();
+    const scrollProgress = rawProgress * (STEP_COUNT - 1);
+    const stepIdx = Math.min(
+      Math.floor(scrollProgress),
+      targets.length - 2,
+    );
+    const stepFrac = scrollProgress - stepIdx;
+    const translate =
+      targets[stepIdx] +
+      stepFrac * (targets[stepIdx + 1] - targets[stepIdx]);
+
+    content.style.transform = `translateY(${-translate}px)`;
+  }
+
+  // Entry-snap + visual update
+  lenis.on("scroll", () => {
+    const inZone = isInStickyZone();
+
+    if (inZone && !prevInZone && !locked && !lenis.isLocked) {
+      const positions = getSnapPositions();
+      if (Math.abs(window.scrollY - positions[0]) > 10) {
+        locked = true;
+        lenis.scrollTo(positions[0], {
+          lock: true,
+          force: true,
+          duration: 0.4,
+          easing: (t: number) => 1 - Math.pow(1 - t, 3),
+          onComplete: () => {
+            locked = false;
+          },
+        });
+      }
+    }
+
+    prevInZone = inZone;
+    update();
+  });
+
+  // Step interceptor: snaps between heading, cards, and partners
+  registerVirtualScrollInterceptor((deltaY: number): boolean => {
+    if (!isInStickyZone()) return false;
+    if (locked) return true;
+
+    const direction = deltaY > 0 ? 1 : -1;
+    const step = getNearestStep();
+
+    if (direction < 0 && step === 0) return false;
+    if (direction > 0 && step === STEP_COUNT - 1) return false;
+
+    const positions = getSnapPositions();
+    const nextStep = step + direction;
+    locked = true;
+
+    lenis.scrollTo(positions[nextStep], {
+      lock: true,
+      force: true,
+      duration: 0.8,
+      easing: (t: number) => 1 - Math.pow(1 - t, 3),
+      onComplete: () => {
+        locked = false;
+      },
+    });
+
+    return true;
+  });
+
+  update();
+</script>

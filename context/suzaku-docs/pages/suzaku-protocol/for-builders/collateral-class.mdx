@@ -1,0 +1,59 @@
+import { Callout, Cards, Card, Steps } from "nextra/components";
+
+<Cards>
+  <Card
+    title="Building a blockchain? Get in touch with us!"
+    href="https://forms.gle/US695J3BYoy8tztu9"
+    target="_blank"
+  />
+</Cards>
+
+---
+
+# Collateral & Collateral Classes
+
+<Callout type="info">
+This is an advanced topic. Most L1s only need to understand the **Primary Collateral Class** (the L1 native token). Secondary classes are only needed if you want to enable restaking (dual staking).
+</Callout>
+
+## What Are Collateral Classes?
+
+In Suzaku, **every collateral token** (an ERC-20) belongs to exactly one **"collateral class"**. Each **collateral class** can contain **one or more** ERC-20 tokens that the L1 accepts for a specific staking requirement.  
+
+### Primary Collateral Class
+
+Each L1 **must** have at least one collateral class designated as **"primary"**. This is typically the L1's native token.
+
+- Often, this class corresponds to the L1's own token—potentially including **multiple derivative versions** of that token. For example, if the L1's native coin is `TOKEN`, builders can put both `TOKEN` **and** a vested version of this token `veTOKEN` under the same **primary collateral class** (`collateralClassId = 1`).  
+- Validators **must** stake *some* amount of one of these tokens to meet the L1's primary requirement (ensuring they have "skin in the game").  
+- Primary collateral classes have `minValidatorStake` (minimum per-validator) and `maxValidatorStake` (maximum) that each node must adhere to when becoming a validator.
+
+### Secondary Collateral Class(es) (Optional)
+
+<Callout type="info">
+Secondary collateral classes are only needed if you want to enable [restaking (dual staking)](/suzaku-protocol/for-builders/dual-staking-model). Most L1s start with native token staking only.
+</Callout>
+
+An L1 may also define additional collateral classes for other tokens—e.g., stablecoins, LSTs, or cross-chain assets. These are **secondary** and are optional.  
+
+- Requiring a secondary collateral can help the L1 attract stable or diversified collateral—for instance, a chain might demand "min. 100 native token + min. 200 stablecoin", effectively implementing a [Dual-Staking](/suzaku-protocol/for-builders/dual-staking-model) model.
+- A secondary class can also contain multiple **Collateral** tokens. It usually only has a `minValidatorStake` enforced.
+
+## Collateral Tokens & Burners
+- A **Collateral** in Suzaku is simply an **ERC-20 token** with extended functionality for ERC-20 normalization, points tracking, and possible slashing (in the future).  
+- If the token **supports** principal slashing, the Collateral owner attaches a **Burner** contract that can actually burn or redeem the underlying (e.g., withdrawing ETH from an LST).  
+
+## How It Works: L1 Staking Requirements
+1. **Primary Requirement**  
+   - The L1 sets min/max rules for the **primary collateral class**. All tokens in that collateral class collectively fulfill the [Operator](/suzaku-protocol#operators)'s primary stake when validating.  
+2. **Secondary Requirement**  
+   - If the L1 wants a dual-staking approach, it activates one or more **secondary classes** (each with its own minimum).  
+   - Operators must stake the required amounts from **both** primary and secondary classes. For example, an L1 could require ***at least 100 tokens from the primary class** plus **at least 50 from the secondary stablecoin class**. 
+
+## Vaults & Collateral Classes
+- When **deploying a vault**, **one specific Collateral ERC-20** is picked to be the vault's underlying token.  
+- That token belongs to exactly **one** collateral class. If the token is recognized under the L1's **primary** class, the vault's stake satisfies the L1's primary requirement; if it's in a **secondary** class, it goes toward the L1's secondary requirement.  
+
+<Callout type="info">
+  Each L1's [`AvalancheL1Middleware`](https://github.com/suzaku-network/suzaku-contracts-library/blob/main/src/contracts/Middleware/AvalancheL1Middleware.sol) contract consults `ICollateralClassRegistry` to verify which tokens belong to which class and to enforce min/max staking requirements. Operators must have delegations of all required collateral classes to spin up validators for an L1.
+</Callout> 

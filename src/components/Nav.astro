@@ -1,0 +1,288 @@
+---
+import { Icon } from "astro-icon/components";
+import SocialLinks from "@/components/SocialLinks.astro";
+import { NAV_LINKS } from "@/data/navigation";
+
+interface Props {
+  sectionLinks?: readonly { label: string; id: string }[];
+}
+
+const { sectionLinks = [] } = Astro.props;
+const PAGE_LINKS = NAV_LINKS;
+const SECTION_LINKS = sectionLinks;
+---
+
+<nav id="main-nav" class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
+  <div class="max-w-5xl w-full">
+    <!-- Pill bar -->
+    <div
+      class="flex items-center justify-between bg-suzaku-black/90 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3"
+    >
+      <a href="/" aria-label="Back to home">
+        <img
+          src="/brand/suzaku-logo-color-white-horizontal.svg"
+          alt="Suzaku"
+          class="h-7"
+        />
+      </a>
+
+      <!-- Mobile: current section indicator -->
+      <span
+        id="active-section-label"
+        class="lg:hidden text-[0.6875rem] text-white/40 tracking-wider uppercase transition-opacity duration-300"
+      ></span>
+
+      <!-- Desktop: page links only (section links in FloatingNav) -->
+      <div class="hidden lg:flex items-center gap-6">
+        {PAGE_LINKS.filter((l) => !l.button).map((link) => (
+          <a
+            href={link.href}
+            {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            class="nav-link text-base text-white/70 hover:text-white transition-colors"
+          >
+            {link.label}
+          </a>
+        ))}
+        <!-- Button group -->
+        <div class="flex items-center">
+          {PAGE_LINKS.filter((l) => l.button).map((link, i, arr) => (
+            link.disabled ? (
+              <span
+                class={[
+                  "relative group cursor-not-allowed text-base text-white/30 border border-white/10 px-4 py-1.5",
+                  i === 0 ? "rounded-l" : "-ml-px",
+                  i === arr.length - 1 ? "rounded-r" : "",
+                ].join(" ")}
+              >
+                {link.label}
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white/10 px-2 py-1 text-xs text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+                  Coming soon
+                </span>
+              </span>
+            ) : (
+              <a
+                href={link.href}
+                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                class={[
+                  "nav-link text-base text-white/70 border border-white/10 px-4 py-1.5 hover:text-white hover:border-suzaku-green transition-colors",
+                  i === 0 ? "rounded-l" : "-ml-px",
+                  i === arr.length - 1 ? "rounded-r" : "",
+                ].join(" ")}
+              >
+                {link.label}
+              </a>
+            )
+          ))}
+        </div>
+      </div>
+
+      <!-- Desktop: socials -->
+      <div class="hidden lg:flex items-center gap-4">
+        <SocialLinks iconClass="w-5 h-5" />
+      </div>
+
+      <!-- Mobile: burger button -->
+      <button
+        id="burger-btn"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+        class="lg:hidden text-white/70 hover:text-white transition-colors p-1"
+      >
+        <Icon id="icon-open" name="lucide:menu" class="w-6 h-6" />
+        <Icon id="icon-close" name="lucide:x" class="w-6 h-6 hidden" />
+      </button>
+    </div>
+
+    <!-- Mobile dropdown -->
+    <div
+      id="mobile-menu"
+      class="hidden mt-2 bg-suzaku-black/95 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-4 flex-col"
+    >
+      <!-- Section links (only rendered on pages that pass sectionLinks) -->
+      {SECTION_LINKS.length > 0 && (
+        <>
+          <div class="flex flex-col gap-0.5 pb-3">
+            {SECTION_LINKS.map((link) => (
+              <a
+                href={`#${link.id}`}
+                data-section={link.id}
+                class="mobile-section-link nav-link text-sm text-white/70 hover:text-white transition-colors py-1.5 px-2.5 rounded-lg"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+          <div class="border-t border-white/10"></div>
+        </>
+      )}
+
+      <!-- Page links -->
+      <div class="flex flex-col gap-0.5 py-3">
+        {PAGE_LINKS.filter((l) => !l.button).map((link) => (
+          <a
+            href={link.href}
+            {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            class="mobile-nav-link nav-link text-sm text-white/70 hover:text-white transition-colors py-1.5 px-2.5"
+          >
+            {link.label}
+          </a>
+        ))}
+        <!-- Button group -->
+        <div class="flex flex-col mt-1">
+          {PAGE_LINKS.filter((l) => l.button).map((link, i, arr) => (
+            link.disabled ? (
+              <span
+                class={[
+                  "text-sm text-white/30 border border-white/10 px-2.5 py-1.5 cursor-not-allowed",
+                  i === 0 ? "rounded-t" : "-mt-px",
+                  i === arr.length - 1 ? "rounded-b" : "",
+                ].join(" ")}
+              >
+                {link.label} <span class="text-white/20 text-xs">(Coming soon)</span>
+              </span>
+            ) : (
+              <a
+                href={link.href}
+                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                class={[
+                  "mobile-nav-link nav-link text-sm text-white/70 border border-white/10 px-2.5 py-1.5 hover:text-white hover:border-suzaku-green transition-colors",
+                  i === 0 ? "rounded-t" : "-mt-px",
+                  i === arr.length - 1 ? "rounded-b" : "",
+                ].join(" ")}
+              >
+                {link.label} ↗
+              </a>
+            )
+          ))}
+        </div>
+      </div>
+
+      <div class="border-t border-white/10"></div>
+
+      <div class="flex items-center gap-5 pt-3 px-2.5">
+        <SocialLinks iconClass="w-6 h-6" />
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style is:global>
+  .mobile-section-link[data-active="true"] {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.06);
+  }
+</style>
+
+<script>
+  import lenis from "@/utils/lenis";
+
+  const btn = document.getElementById("burger-btn") as HTMLButtonElement;
+  const menu = document.getElementById("mobile-menu") as HTMLDivElement;
+  const iconOpen = document.getElementById("icon-open") as HTMLElement;
+  const iconClose = document.getElementById("icon-close") as HTMLElement;
+  const sectionLabel = document.getElementById("active-section-label");
+
+  function openMenu() {
+    menu.classList.remove("hidden");
+    menu.classList.add("flex");
+    iconOpen.classList.add("hidden");
+    iconClose.classList.remove("hidden");
+    btn.setAttribute("aria-expanded", "true");
+  }
+
+  function closeMenu() {
+    menu.classList.add("hidden");
+    menu.classList.remove("flex");
+    iconOpen.classList.remove("hidden");
+    iconClose.classList.add("hidden");
+    btn.setAttribute("aria-expanded", "false");
+  }
+
+  btn.addEventListener("click", () => {
+    const isOpen = btn.getAttribute("aria-expanded") === "true";
+    isOpen ? closeMenu() : openMenu();
+  });
+
+  document.addEventListener("click", (e) => {
+    const nav = document.getElementById("main-nav");
+    if (nav && !nav.contains(e.target as Node)) closeMenu();
+  });
+
+  // ── Active section detection ──────────────────────────────────────────────
+
+  const SECTION_IDS = [
+    "the-risks",
+    "take-action",
+    "the-protocol",
+    "about-us",
+    "final-cta",
+  ];
+
+  const sectionLabelMap: Record<string, string> = {};
+  document
+    .querySelectorAll<HTMLAnchorElement>(".mobile-section-link")
+    .forEach((link) => {
+      const id = link.getAttribute("data-section");
+      if (id) sectionLabelMap[id] = link.textContent?.trim() ?? "";
+    });
+
+  function getActiveSection(): string | null {
+    const midY = window.scrollY + window.innerHeight * 0.45;
+    let active: string | null = null;
+    for (const id of SECTION_IDS) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      if (top <= midY) active = id;
+    }
+    return active;
+  }
+
+  function updateActiveSection() {
+    const activeId = getActiveSection();
+
+    if (sectionLabel) {
+      sectionLabel.textContent = activeId
+        ? (sectionLabelMap[activeId] ?? "")
+        : "";
+    }
+
+    document
+      .querySelectorAll<HTMLAnchorElement>(".mobile-section-link")
+      .forEach((link) => {
+        link.setAttribute(
+          "data-active",
+          link.getAttribute("data-section") === activeId ? "true" : "false",
+        );
+      });
+  }
+
+  window.addEventListener("scroll", updateActiveSection, { passive: true });
+  updateActiveSection();
+
+  // ── Smooth-scroll for nav links ───────────────────────────────────────────
+
+  document
+    .querySelectorAll<HTMLAnchorElement>("a.nav-link")
+    .forEach((anchor) => {
+      anchor.addEventListener("click", (e) => {
+        const href = anchor.getAttribute("href") ?? "";
+        const url = new URL(href, window.location.href);
+
+        if (url.pathname !== window.location.pathname) return;
+        if (!url.hash) return;
+
+        e.preventDefault();
+        closeMenu();
+
+        const isSection = anchor.hasAttribute("data-section");
+        lenis.scrollTo(url.hash, {
+          lock: true,
+          force: true,
+          offset: isSection ? 0 : -80,
+          duration: 1.4,
+          easing: (t: number) => 1 - Math.pow(1 - t, 4),
+        });
+      });
+    });
+</script>

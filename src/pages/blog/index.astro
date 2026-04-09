@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Nav from "@/components/Nav.astro";
+import Footer from "@/components/Footer.astro";
+import BlogCard from "@/components/BlogCard.astro";
+import { authors } from "@/data/authors";
+
+const posts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Layout
+  title="Suzaku | Blog"
+  description="Insights on Avalanche L1 decentralization, validator security, and cryptoeconomic design from the Suzaku team."
+>
+  <header><Nav /></header>
+
+  <main id="main-content" class="min-h-screen pt-32 pb-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header -->
+      <div class="mb-16">
+        <h1 class="type-heading text-white">Blog</h1>
+        <p class="type-subheading text-white/70 mt-4 max-w-2xl">
+          Insights on Avalanche L1 decentralization, validator security, and
+          cryptoeconomic design.
+        </p>
+      </div>
+
+      <!-- Grid -->
+      {
+        posts.length === 0 ? (
+          <p class="type-body text-white/70">No articles published yet.</p>
+        ) : (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.map((post, i) => (
+              <BlogCard
+                title={post.data.title}
+                description={post.data.description}
+                date={post.data.date}
+                image={post.data.image}
+                imageAlt={post.data.imageAlt}
+                slug={post.id}
+                author={authors[post.data.author]}
+                tags={post.data.tags}
+                eager={i < 3}
+              />
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

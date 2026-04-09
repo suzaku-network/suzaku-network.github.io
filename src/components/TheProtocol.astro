@@ -1,0 +1,452 @@
+---
+import snarkdown from "snarkdown";
+import Card from "@/components/Card.astro";
+import Section from "@/components/Section.astro";
+import ButtonHighlight from "@/components/ButtonHighlight.astro";
+import { decentralizationPhases, protocolParticipants, auditors } from "@/data/protocolData";
+
+const phases = decentralizationPhases.map((p) => ({ ...p, descHtml: snarkdown(p.description) }));
+const participants = protocolParticipants.map((p) => ({ ...p, descHtml: snarkdown(p.description) }));
+
+const SUZ_CONTRACT = "avax:0x451532F1C9eb7E4Dc2d493dB52b682C0Acf6F5EF";
+const SUZ_TOTAL_SUPPLY = 100_000_000;
+
+function formatUsd(value: number): string {
+  return `$${Math.round(value).toLocaleString("en-US")}`;
+}
+function formatPrice(value: number): string {
+  if (value < 0.01) return `$${value.toFixed(5)}`;
+  return `$${value.toFixed(4)}`;
+}
+
+let tvl: string = "—";
+let suzPrice: string = "—";
+let fdv: string = "—";
+
+try {
+  const [tvlRes, priceRes] = await Promise.all([
+    fetch("https://dune.suzaku.network/tvl"),
+    fetch(`https://llama.suzaku.network/${SUZ_CONTRACT}`),
+  ]);
+  if (tvlRes.ok) {
+    const tvlJson = await tvlRes.json();
+    const rows = tvlJson?.result?.rows;
+    if (rows?.length) tvl = formatUsd(rows[rows.length - 1].total_tvl_usd);
+  }
+  if (priceRes.ok) {
+    const priceJson = await priceRes.json();
+    const price = priceJson?.coins?.[SUZ_CONTRACT]?.price;
+    if (price != null) { suzPrice = formatPrice(price); fdv = formatUsd(price * SUZ_TOTAL_SUPPLY); }
+  }
+} catch (_) {}
+---
+
+<!--
+  All content is always visible (natural scroll flow).
+
+  A custom virtualScroll interceptor creates pause points:
+    Desktop (≥1024px): 2 steps
+      Step 0 → section top   (title + stats + phases visible)
+      Step 1 → participants  (participants + auditors scroll into view)
+    Mobile (<1024px): 4 steps
+      Step 0 → section top  (title + stats)
+      Step 1 → phases
+      Step 2 → participants
+      Step 3 → auditors
+
+  Pattern mirrors TakeAction mobile: content always rendered, scroll pauses.
+  A bottom spacer (h-screen) ensures every snap target is reachable via scrollTo.
+-->
+<Section id="the-protocol" class="px-6 pt-24 md:pt-20 pb-20 lg:pt-24 lg:pb-24">
+  <div class="max-w-5xl mx-auto">
+
+    <!-- 1. Title + subheading + stats + CTA -->
+    <div id="proto-header">
+      <p class="type-label text-suzaku-green/80 mb-4">The protocol</p>
+      <h2 class="type-heading mb-4">Decentralization Hub for L1s</h2>
+      <p class="type-subheading text-white/70 mb-4 lg:mb-6">
+        The Suzaku protocol connects L1 teams with stakers and operators.<br />L1s move from PoA to PoS at their own pace.
+      </p>
+      <div class="flex flex-wrap items-center gap-8 mb-14 lg:mb-16">
+        <div>
+          <p class="type-label text-white/50 mb-1">Protocol TVL</p>
+          <p class="font-extrabold text-xl bg-suzaku-gradient bg-clip-text text-transparent">{tvl}</p>
+        </div>
+        <div class="w-px bg-white/10 self-stretch hidden sm:block"></div>
+        <ButtonHighlight
+          href="https://app.suzaku.network"
+          label="Open the app"
+          class="text-[0.85rem] sm:text-lg font-extrabold px-5 py-2 sm:px-8 sm:py-3"
+        />
+      </div>
+    </div>
+
+    <!-- 2. L1 Decentralization Phases -->
+    <div id="proto-phases">
+      <p class="type-label text-white/50 mb-6">L1 Decentralization Phases</p>
+      <div class="grid grid-cols-1 gap-3 md:gap-4 mb-14 lg:mb-16">
+        {phases.map((phase, i) => (
+          <Card padding="sm" class={phase.isOrigin ? "" : "border-suzaku-green/30"}>
+            <div class="flex items-center gap-4">
+              <div class:list={[
+                "phase-circle flex-shrink-0 w-10 h-10 rounded-full border",
+                phase.isOrigin ? "border-white/20 text-white/50" : "border-suzaku-green/30 text-suzaku-green",
+              ]}>{i + 1}</div>
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 min-w-0">
+                <div class:list={[
+                  "flex-shrink-0 sm:w-52 type-card-title whitespace-nowrap",
+                  phase.isOrigin ? "text-white" : "text-suzaku-green",
+                ]}>{phase.title}</div>
+                <p class="type-card-body text-white/70" set:html={phase.descHtml} />
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+
+    <!-- 3. Protocol Participants -->
+    <div id="proto-participants">
+      <p class="type-label text-white/50 mb-6">Protocol participants</p>
+
+      <!-- Mobile: simple card stack -->
+      <div class="grid grid-cols-1 gap-3 md:gap-4 mb-14 lg:hidden">
+        {participants.map((p) => (
+          <Card>
+            <div class="participant-title mb-2">{p.title}</div>
+            <p class="type-card-body text-white/70" set:html={p.descHtml} />
+          </Card>
+        ))}
+      </div>
+
+      <!--
+        Desktop: triangle layout
+        Vertices (circle centers as % of container):
+          L1 teams  → (50%, 15%)
+          Stakers   → (30%, 85%)
+          Operators → (70%, 85%)
+      -->
+      <div id="participants-triangle" class="hidden lg:block relative mb-16">
+        <svg
+          id="participant-edges"
+          class="absolute inset-0 w-full h-full pointer-events-none z-0"
+          fill="none"
+        >
+          <defs>
+            <linearGradient id="pe-l1-s" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="0">
+              <stop offset="0%" stop-color="#00A4AF" /><stop offset="100%" stop-color="#43F6AB" />
+            </linearGradient>
+            <linearGradient id="pe-l1-o" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="0">
+              <stop offset="0%" stop-color="#00A4AF" /><stop offset="100%" stop-color="#43F6AB" />
+            </linearGradient>
+            <linearGradient id="pe-s-o" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="0">
+              <stop offset="0%" stop-color="#00A4AF" /><stop offset="100%" stop-color="#43F6AB" />
+            </linearGradient>
+          </defs>
+          <path id="pe-edge-l1-s"    stroke="url(#pe-l1-s)" stroke-width="3" />
+          <path id="pe-edge-l1-o"    stroke="url(#pe-l1-o)" stroke-width="3" />
+          <path id="pe-edge-s-o-fwd" stroke="url(#pe-s-o)"  stroke-width="3" />
+          <path id="pe-edge-s-o-bwd" stroke="url(#pe-s-o)"  stroke-width="3" />
+        </svg>
+
+        <div id="pnode-l1" class="participant-node absolute flex items-center gap-5"
+          style="right:calc(50% - 44px);top:calc(15% - 44px)">
+          <div class="text-right">
+            <div class="participant-title mb-1">{participants[0].title}</div>
+            <p class="type-card-body text-white/70 max-w-[380px]" set:html={participants[0].descHtml} />
+          </div>
+          <div class="participant-ring flex-shrink-0" data-pcircle>
+            <div class="participant-inner">{participants[0].label}</div>
+          </div>
+        </div>
+
+        <div id="pnode-stakers" class="participant-node absolute flex items-center gap-5"
+          style="right:calc(70% - 44px);top:calc(85% - 44px)">
+          <div class="text-right">
+            <div class="participant-title mb-1">{participants[1].title}</div>
+            <p class="type-card-body text-white/70 max-w-[260px]" set:html={participants[1].descHtml} />
+          </div>
+          <div class="participant-ring flex-shrink-0" data-pcircle>
+            <div class="participant-inner">{participants[1].label}</div>
+          </div>
+        </div>
+
+        <div id="pnode-operators" class="participant-node absolute flex items-center gap-5"
+          style="left:calc(70% - 44px);top:calc(85% - 44px)">
+          <div class="participant-ring flex-shrink-0" data-pcircle>
+            <div class="participant-inner">{participants[2].label}</div>
+          </div>
+          <div>
+            <div class="participant-title mb-1">{participants[2].title}</div>
+            <p class="type-card-body text-white/70 max-w-[260px]" set:html={participants[2].descHtml} />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Audited by -->
+    <div id="proto-auditors">
+      <p class="type-label text-white/50 mb-8">Audited by</p>
+      <div class="flex flex-wrap items-center gap-6 md:gap-10">
+        {auditors.map((a) => (
+          <a href={a.url} target="_blank" rel="noopener noreferrer">
+            <img src={a.logo} alt={a.name}
+              class="w-24 md:w-44 h-auto object-contain opacity-50 hover:opacity-90 transition-opacity" />
+          </a>
+        ))}
+      </div>
+    </div>
+
+  </div>
+
+</Section>
+
+<script>
+  import lenis from '@/utils/lenis';
+  import { registerVirtualScrollInterceptor } from '@/utils/lenis';
+
+  const outer = document.getElementById("the-protocol") as HTMLElement;
+
+  function getNavClearance(): number {
+    return 80;
+  }
+  const SNAP_DUR    = 0.8;
+  const SNAP_EASE   = (t: number) => 1 - Math.pow(1 - t, 4);
+
+  // ── Triangle edge animation ─────────────────────────────────────────────────
+
+  let edgesReady      = false;
+  let triangleAnimated = false;
+
+  function layoutParticipantEdges() {
+    const triangle = document.getElementById("participants-triangle");
+    if (!triangle || getComputedStyle(triangle).display === "none") return;
+    const svg = document.getElementById("participant-edges") as SVGSVGElement | null;
+    if (!svg) return;
+    const triRect = triangle.getBoundingClientRect();
+
+    function circleCenter(nodeId: string) {
+      const node = document.getElementById(nodeId);
+      if (!node) return null;
+      const circle = node.querySelector<HTMLElement>("[data-pcircle]");
+      if (!circle) return null;
+      const r = circle.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - triRect.left, y: r.top + r.height / 2 - triRect.top };
+    }
+
+    const l1 = circleCenter("pnode-l1");
+    const st = circleCenter("pnode-stakers");
+    const op = circleCenter("pnode-operators");
+    if (!l1 || !st || !op) return;
+
+    const R = 44;
+    const edgeDefs = [
+      { pathId: "pe-edge-l1-s",    gradId: "pe-l1-s", from: l1, to: st },
+      { pathId: "pe-edge-l1-o",    gradId: "pe-l1-o", from: l1, to: op },
+      { pathId: "pe-edge-s-o-fwd", gradId: "pe-s-o",  from: st, to: op },
+      { pathId: "pe-edge-s-o-bwd", gradId: null,       from: op, to: st },
+    ];
+
+    edgeDefs.forEach(({ pathId, gradId, from, to }) => {
+      const path = document.getElementById(pathId) as SVGPathElement | null;
+      if (!path) return;
+      const dx = to.x - from.x, dy = to.y - from.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 1) return;
+      const ux = dx / dist, uy = dy / dist;
+      const sx = from.x + ux * R, sy = from.y + uy * R;
+      const ex = to.x   - ux * R, ey = to.y   - uy * R;
+      const pathLen = Math.sqrt((ex - sx) ** 2 + (ey - sy) ** 2);
+      path.setAttribute("d", `M ${sx} ${sy} L ${ex} ${ey}`);
+      path.style.strokeDasharray = String(pathLen);
+      if (!edgesReady) path.style.strokeDashoffset = String(pathLen);
+      if (gradId) {
+        const grad = svg!.querySelector(`#${gradId}`) as SVGLinearGradientElement | null;
+        if (grad) {
+          grad.setAttribute("x1", String(sx)); grad.setAttribute("y1", String(sy));
+          grad.setAttribute("x2", String(ex)); grad.setAttribute("y2", String(ey));
+        }
+      }
+    });
+    edgesReady = true;
+  }
+
+  function resetEdges() {
+    ["pe-edge-l1-s","pe-edge-l1-o","pe-edge-s-o-fwd","pe-edge-s-o-bwd"].forEach((id) => {
+      const path = document.getElementById(id) as SVGPathElement | null;
+      if (!path) return;
+      // Cancel any running/committed Web Animations so the inline style takes effect.
+      path.getAnimations().forEach((a) => a.cancel());
+      const len = parseFloat(path.style.strokeDasharray);
+      if (len) path.style.strokeDashoffset = String(len);
+    });
+    triangleAnimated = false;
+  }
+
+  function animatePath(id: string, delay: number) {
+    const path = document.getElementById(id) as SVGPathElement | null;
+    if (!path) return;
+    const len = parseFloat(path.style.strokeDasharray);
+    if (!len) return;
+    path.animate(
+      [{ strokeDashoffset: String(len) }, { strokeDashoffset: "0" }],
+      { duration: 900, delay, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" },
+    );
+  }
+
+  function animateEdges() {
+    animatePath("pe-edge-l1-s", 0);
+    animatePath("pe-edge-l1-o", 0);
+    animatePath("pe-edge-s-o-fwd", 1000);
+    animatePath("pe-edge-s-o-bwd", 1000);
+  }
+
+  // ── Scroll interceptor ──────────────────────────────────────────────────────
+
+  let step = 0;
+  let locked = false;
+  let prevInZone = false;
+
+  /** True when the section is "active" — top is at or above viewport, bottom still visible. */
+  function isInZone(): boolean {
+    const r = outer.getBoundingClientRect();
+    return r.top <= 5 && r.bottom > 100;
+  }
+
+  /** Absolute scroll Y to bring `el` just below the navigation chrome. */
+  function snapTargetFor(el: HTMLElement): number {
+    return el.getBoundingClientRect().top + window.scrollY - getNavClearance();
+  }
+
+  /**
+   * The last target aligns the section bottom with the viewport bottom so no
+   * content from the next section ever bleeds into the final TheProtocol view.
+   *
+   * Desktop: 2 targets — [sectionTop, sectionBottom - vh]
+   * Mobile:  4 targets — [sectionTop, phasesTop, participantsTop, sectionBottom - vh]
+   */
+  function getSnapTargets(): number[] {
+    const outerTop    = outer.getBoundingClientRect().top + window.scrollY;
+    const outerBottom = outerTop + outer.offsetHeight;
+    const vh          = window.innerHeight;
+    const lastTarget  = Math.max(outerTop, outerBottom - vh);
+
+    if (window.innerWidth >= 1024) {
+      return [outerTop, lastTarget];
+    }
+    const phEl = document.getElementById("proto-phases")        as HTMLElement;
+    const pEl  = document.getElementById("proto-participants")  as HTMLElement;
+    return [outerTop, snapTargetFor(phEl), snapTargetFor(pEl), lastTarget];
+  }
+
+  // Reset step on section entry; reset triangle on section exit.
+  lenis.on("scroll", () => {
+    const inZone = isInZone();
+    if (inZone && !prevInZone) {
+      step = 0;
+    }
+    if (!inZone && prevInZone) {
+      resetEdges();
+    }
+    prevInZone = inZone;
+  });
+
+  const interceptor = (deltaY: number): boolean => {
+    if (locked) return true;
+
+    const dir = deltaY > 0 ? 1 : -1;
+
+    // ── Backward entry from about-us ──────────────────────────────────────────
+    // Intercept before sectionSnap so we land at the last step, not step 0.
+    if (!isInZone() && dir < 0) {
+      const aboutEl = document.getElementById("about-us");
+      if (aboutEl && Math.abs(aboutEl.getBoundingClientRect().top) < 80) {
+        const targets = getSnapTargets();
+        step = 0;
+        locked = true;
+        lenis.scrollTo(targets[0], {
+          lock: true, force: true, duration: SNAP_DUR, easing: SNAP_EASE,
+          onComplete: () => { locked = false; },
+        });
+        return true;
+      }
+    }
+
+    if (!isInZone()) return false;
+
+    const targets = getSnapTargets();
+    const N = targets.length;
+    // Clamp in case of resize while inside the section
+    step = Math.min(step, N - 1);
+
+    // Scrolling up from step 0: let sectionSnap handle the exit
+    if (dir < 0 && step === 0) return false;
+
+    // Scrolling down from last step: snap to the next section
+    if (dir > 0 && step === N - 1) {
+      locked = true;
+      const nextEl = document.getElementById("about-us");
+      const targetY = nextEl
+        ? nextEl.getBoundingClientRect().top + window.scrollY
+        : window.scrollY + window.innerHeight;
+      lenis.scrollTo(targetY, {
+        lock: true, force: true, duration: SNAP_DUR, easing: SNAP_EASE,
+        onComplete: () => { locked = false; },
+      });
+      return true;
+    }
+
+    step += dir;
+    locked = true;
+    lenis.scrollTo(targets[step], {
+      lock: true, force: true, duration: SNAP_DUR, easing: SNAP_EASE,
+      onComplete: () => {
+        locked = false;
+        // Trigger triangle animation when reaching participants on desktop
+        if (window.innerWidth >= 1024 && step === 1 && !triangleAnimated) {
+          triangleAnimated = true;
+          layoutParticipantEdges();
+          animateEdges();
+        }
+      },
+    });
+    return true;
+  };
+
+  // Register synchronously so this interceptor runs before sectionSnap.
+  registerVirtualScrollInterceptor(interceptor);
+
+  window.addEventListener("resize", layoutParticipantEdges);
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    layoutParticipantEdges();
+  }));
+</script>
+
+<style>
+  .phase-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  #participants-triangle { aspect-ratio: 2 / 1; }
+
+  .participant-node { align-items: center; }
+
+  .participant-ring {
+    width: 88px; height: 88px; border-radius: 50%; padding: 4px;
+    background: linear-gradient(135deg, #00A4AF, #43F6AB); flex-shrink: 0;
+  }
+
+  .participant-inner {
+    width: 100%; height: 100%; border-radius: 50%; background: #101010;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 1.375rem; color: white; letter-spacing: 0.02em;
+  }
+
+  .participant-title { font-size: 1.125rem; font-weight: 800; color: #43F6AB; line-height: 1.2; }
+</style>
