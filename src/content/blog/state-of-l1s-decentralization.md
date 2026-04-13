@@ -1,7 +1,7 @@
 ---
 title: "The State of Avalanche L1s Decentralization"
 description: "We built a Dune dashboard to classify every live Avalanche L1 by decentralization stage. Here is what the data shows."
-date: 2026-04-08
+date: 2026-04-13
 image: ../../assets/blog/articles/state-of-l1s-decentralization/the-state-of-avalanche-l1s-decentralization.png
 imageAlt: "The State of Avalanche L1s Decentralization thumbnail"
 author: suzaku-team
@@ -10,7 +10,7 @@ tags:
   - Decentralization
 ---
 
-As discussed in our previous article, [_Why L1 Decentralization Matters_](/blog/why-l1-decentralization-matters), centralized Layer One (L1) blockchains face significant **operational security (OpSec) risks**. Decentralization of the L1’s control, both at the software and hardware level, is the only viable protection mechanism.
+As discussed in our previous article, [_Why L1 Decentralization Matters_](/blog/why-l1-decentralization-matters), centralized Layer One (L1) blockchains face significant **operational security (OpSec) risks**. Decentralization of L1 control, at both the software and hardware levels, is the only viable protection mechanism.
 
 Many Avalanche L1s are not sufficiently decentralized. **Not because they don’t care about security**, but because **they are not aware of the risks** they face. This is why, in the past few months, we set out to **build tooling for L1 builders** to help them better identify those risks and what quick-win actions they can take.
 
@@ -18,7 +18,7 @@ Today, we share our first tool: the [**Avalanche L1s Decentralization Dashboard*
 
 # Reminder of the risks
 
-Most Avalanche L1s face **two layers of security risk** that often go unaddressed. At the hardware level, **a single provider running all validators** means one breach, like the $1.4B ByBit hack of February 2025, gives an attacker enough control to **drain all bridged TVL**. At the software level, validator set contracts with **admin and upgrade rights held by a single account** are just as dangerous: one compromised wallet and **the entire validator set can be reshaped** at will.
+Most Avalanche L1s face **two layers of security risk** that often go unaddressed. At the hardware level, **a single provider running all validators** means one breach, like the $1.4B ByBit hack of February 2025, gives an attacker enough control to **drain all bridged TVL**. At the software level, validator set contracts with **admin and upgrade rights held by a single account** are just as dangerous: a single compromised wallet can **reshape the entire validator set** at will.
 
 The good news is that both risks have the same remedy: **distribute control**. Onboarding **two extra independent operators** can already eliminate the hardware SPOF. Securing contract admin rights behind a **multisig or governance** does the same on the software side. These first steps go a long way, and the longer a team waits, the more is at stake.
 
