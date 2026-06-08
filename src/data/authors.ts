@@ -1,6 +1,7 @@
 import type { ImageMetadata } from "astro";
 import zakuHeadshot from "@/assets/blog/authors/zaku-headshot.png";
 import gauthierDokkaebi from "@/assets/blog/authors/gauthier-dokkaebi.jpeg";
+import AshLogo from "@/assets/blog/authors/ash-by-suzaku-logo-color-transparent.png";
 
 export interface Author {
   name: string;
@@ -27,5 +28,10 @@ export const authors: Record<string, Author> = {
     avatar: gauthierDokkaebi,
     x: "https://x.com/Nutymoon",
     linkedin: "https://www.linkedin.com/in/gauthier-leonard/",
+  },
+  "ash-by-suzaku": {
+    name: "Ash by Suzaku",
+    avatar: AshLogo,
+    x: "https://x.com/ash_avax",
   },
 };
