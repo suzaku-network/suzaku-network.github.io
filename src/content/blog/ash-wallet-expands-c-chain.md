@@ -17,9 +17,6 @@ Since then, up to 10 L1 teams have used Ash Wallet in mainnet for their daily tr
 
 Today, Ash Wallet expands to **support the Avalanche C-Chain on mainnet**, becoming your **preferred interface** for interacting with your Safe wallets on the network.
 
-> [!WARNING]
-> The [app.safe.global](https://app.safe.global) interface **support for the C-Chain will be discontinued** on June 18th, 2026.
-
 # What you need to know
 
 [wallet.ash.center](https://wallet.ash.center) is now the **unified interface to interact with Safes** across the **Avalanche ecosystem**, for the C-Chain and L1s alike.
@@ -49,7 +46,7 @@ To create a new Safe, go through the [**Create account** wizard](https://wallet.
 
 # Never fully trust a web UI for your critical operations
 
-While we are doing everything possible to adhere to **best-in-class SecOps standards** for Ash Wallet, we have seen that **even the best teams can be hacked**. The [Safe team itself has been hacked](https://rekt.news/bybit-rekt), compromising the official Safe web UI and resulting in a loss of over $1.4B for [ByBit](https://www.bybit.com), a leading centralized exchange.
+While we are doing everything possible to adhere to **best-in-class SecOps standards** for Ash Wallet, we have seen  in recent years that **even the best teams can be hacked**.
 
 To **maximize the security** of your Safe operations, always follow the **best practices outlined in the transaction signing process**:
 
